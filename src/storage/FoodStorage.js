@@ -10,7 +10,5 @@ export default class FoodStorage  {
         foods.push(food)
 
         localStorage.setItem(this.key, JSON.stringify(foods))
-
-        return foods
     }
 }

@@ -19,8 +19,15 @@ export function initApp() {
             fat: fatInput.value
         }
 
-        const foods = storage.add(newFood)
+        try {
+            storage.add(newFood)
 
-        console.log("저장 완료:", foods);
+            // 성공하면 폼 초기화
+            form.reset()
+            console.log('저장 성공')
+
+        } catch (error) {
+            console.error("저장 실패", error)
+        }
     })
 }
