@@ -1,4 +1,5 @@
 import foodStorage from './storage/FoodStorage.js'
+import {capitalize, calculateCalories} from "./helpers.js";
 
 export function initApp() {
     const form = document.querySelector('#create-form')
@@ -34,8 +35,8 @@ export function initApp() {
         foodList.insertAdjacentHTML('beforeend', `
             <li class="card">
                 <div>
-                  <h3 class="name">음식이름</h3>
-                  <div class="calories">음식칼로리 calories</div>
+                  <h3 class="name">${newFood.name}</h3>
+                  <div class="calories">${calculateCalories(newFood.carbs, newFood.protein, newFood.fat)} calories</div>
                   <ul class="macros">
                     <li class="carbs"><div>Carbs</div><div class="value">탄수화물 g</div></li>
                     <li class="protein"><div>Protein</div><div class="value">단백질 g</div></li>
