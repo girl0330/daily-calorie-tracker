@@ -2,6 +2,7 @@ import foodStorage from './storage/FoodStorage.js'
 import {calculateCalories} from "./helpers.js";
 import Snackbar from "snackbar";
 import "snackbar/dist/snackbar.min.css";
+import NutritionData from "./data/NutritionData.js";
 
 export function initApp() {
     const form = document.querySelector('#create-form')
@@ -12,6 +13,7 @@ export function initApp() {
     const foodList = document.querySelector('#food-list');
 
     const storage = new foodStorage()
+    const nutritionData = new NutritionData()
     let storagedData = []
 
     const displayEntry = (name, carbs, protein, fat) => {
