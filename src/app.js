@@ -1,5 +1,7 @@
 import foodStorage from './storage/FoodStorage.js'
-import {capitalize, calculateCalories} from "./helpers.js";
+import {calculateCalories} from "./helpers.js";
+import Snackbar from "snackbar";
+import "snackbar/dist/snackbar.min.css";
 
 export function initApp() {
     const form = document.querySelector('#create-form')
@@ -24,12 +26,15 @@ export function initApp() {
         try {
             storage.add(newFood)
 
-            // 성공하면 폼 초기화
+            Snackbar.show('저장 성공')
+
+
             form.reset()
-            console.log('저장 성공')
+
 
         } catch (error) {
             console.error("저장 실패", error)
+            Snackbar.show('저장 실패')
         }
 
         foodList.insertAdjacentHTML('beforeend', `
@@ -44,6 +49,6 @@ export function initApp() {
                   </ul>
                 </div>
               </li>
-        `)
+            `)
     })
 }
