@@ -2,7 +2,6 @@ import foodStorage from './storage/FoodStorage.js'
 import {calculateCalories} from "./helpers.js";
 import Snackbar from "snackbar";
 import "snackbar/dist/snackbar.min.css";
-import FoodStorage from "./storage/FoodStorage.js";
 
 export function initApp() {
     const form = document.querySelector('#create-form')
@@ -14,6 +13,27 @@ export function initApp() {
 
     const storage = new foodStorage()
     let storagedData = []
+
+    const displayEntry = (name, carbs, protein, fat) => {
+        foodList.insertAdjacentHTML(
+            "beforeend",
+            `<li class="card">
+        <div>
+          <h3 class="name">${name}</h3>
+          <div class="calories">${calculateCalories(
+                carbs,
+                protein,
+                fat
+            )} calories</div>
+          <ul class="macros">
+            <li class="carbs"><div>Carbs</div><div class="value">${carbs}g</div></li>
+            <li class="protein"><div>Protein</div><div class="value">${protein}g</div></li>
+            <li class="fat"><div>Fat</div><div class="value">${fat}g</div></li>
+          </ul>
+        </div>
+      </li>`
+        );
+    };
 
     form.addEventListener('submit', event => {
         event.preventDefault()
@@ -39,19 +59,7 @@ export function initApp() {
             Snackbar.show('저장 실패')
         }
 
-        foodList.insertAdjacentHTML('beforeend', `
-            <li class="card">
-                <div>
-                  <h3 class="name">${newFood.name}</h3>
-                  <div class="calories">${calculateCalories(newFood.carbs, newFood.protein, newFood.fat)} calories</div>
-                  <ul class="macros">
-                    <li class="carbs"><div>Carbs</div><div class="value">탄수화물 g</div></li>
-                    <li class="protein"><div>Protein</div><div class="value">단백질 g</div></li>
-                    <li class="fat"><div>Fat</div><div class="value">지방 g</div></li>
-                  </ul>
-                </div>
-              </li>
-            `)
+        displayEntry(newFood.name, newFood.carbs, newFood.protein, newFood.fat,)
     })
 
     const init = () => {
@@ -60,19 +68,8 @@ export function initApp() {
 
         storagedData?.forEach((food) => {
             if (storagedData) {
-                foodList.insertAdjacentHTML('beforeend', `
-                    <li class="card">
-                        <div>
-                            <h3 class="name">${food.name}</h3>
-                            <div class="calories">${calculateCalories(food.carbs, food.protein, food.fat)} calories</div>
-                            <ul class="macros">
-                               <li class="carbs"><div>Carbs</div><div class="value">${food.carbs}g</div></li>
-                               <li class="protein"><div>Protein</div><div class="value">${food.protein}g</div></li>
-                               <li class="fat"><div>Fat</div><div class="value">${food.fat}g</div></li>
-                            </ul>
-                        </div>
-                    </li>
-                `)
+                displayEntry(food.name, food.carbs, food.protein, food.fat)
+
             }
         })
     }
