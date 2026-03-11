@@ -3,6 +3,11 @@ export default class FoodStorage  {
         this.key = key
     }
 
+    getAll() {
+        const data = localStorage.getItem(this.key)
+        return data ? JSON.parse(data) : []
+    }
+
     add(food) {
         const storedFoods = localStorage.getItem(this.key)
         const foods = storedFoods ? JSON.parse(storedFoods) : []
@@ -10,5 +15,7 @@ export default class FoodStorage  {
         foods.push(food)
 
         localStorage.setItem(this.key, JSON.stringify(foods))
+
+        return this.getAll()
     }
 }
