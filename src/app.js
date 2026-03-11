@@ -1,9 +1,13 @@
+import foodStorage from './storage/FoodStorage.js'
+
 export function initApp() {
     const form = document.querySelector('#create-form')
     const foodNameInput = document.querySelector('#create-name')
     const carbsInput = document.querySelector('#create-carbs')
     const proteinInput = document.querySelector('#create-protein')
     const fatInput = document.querySelector('#create-fat')
+
+    const storage = new foodStorage()
 
     form.addEventListener('submit', event => {
         event.preventDefault()
@@ -15,11 +19,7 @@ export function initApp() {
             fat: fatInput.value
         }
 
-        const foods = []
-
-        foods.push(newFood)
-
-        localStorage.setItem('foods', JSON.stringify(foods));
+        const foods = storage.add(newFood)
 
         console.log("저장 완료:", foods);
     })
