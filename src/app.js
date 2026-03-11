@@ -3,6 +3,7 @@ import {calculateCalories} from "./helpers.js";
 import Snackbar from "snackbar";
 import "snackbar/dist/snackbar.min.css";
 import NutritionData from "./data/NutritionData.js";
+import { Chart } from "chart.js/auto";
 
 export function initApp() {
     const form = document.querySelector('#create-form')
@@ -17,6 +18,7 @@ export function initApp() {
     let storagedData = []
 
     const displayEntry = (name, carbs, protein, fat) => {
+        nutritionData.addFood(carbs, protein, fat)
         foodList.insertAdjacentHTML(
             "beforeend",
             `<li class="card">
@@ -62,6 +64,7 @@ export function initApp() {
         }
 
         displayEntry(newFood.name, newFood.carbs, newFood.protein, newFood.fat,)
+        render()
     })
 
     const init = () => {
@@ -74,6 +77,49 @@ export function initApp() {
 
             }
         })
+        render()
+    }
+
+    let chartInstance = null;
+    const renderChart = () => {
+        chartInstance?.destroy();
+
+        const context = document.querySelector("#app-chart").getContext("2d");
+
+        chartInstance = new Chart(context, {
+            type: "bar",
+            data: {
+                labels: ["탄수화물", "단백질", "지방"],
+                datasets: [
+                    {
+                        label: "Macronutrients",
+                        data: [nutritionData.getTotalCarbs(), nutritionData.getTotalProtein(), nutritionData.getTotalFat()],
+                        backgroundColor: ["#f3ad6c", "#c7443e", "#f9dc6e"],
+                        borderWidth: 1, // example of other customization
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    }
+
+    const totalCalories = document.querySelector("#total-calories");
+
+    const updateTotalCalories = () => {
+        totalCalories.textContent = nutritionData.getTotalCalories();
+    }
+
+    const render = () => {
+        renderChart();
+        updateTotalCalories();
     }
     init()
 

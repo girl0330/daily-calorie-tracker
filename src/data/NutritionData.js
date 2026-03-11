@@ -34,4 +34,7 @@ export default class NutritionData {
         })
         return sumFat
     }
+    getTotalCalories() {
+        return this.getTotalCarbs() * 4 + this.getTotalProtein() * 4 + this.getTotalFat() * 9
+    }
 }
