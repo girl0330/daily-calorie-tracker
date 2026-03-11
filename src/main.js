@@ -1,4 +1,4 @@
-const test = () => {console.log('js test 성공')}
+import './main.css'
+import {initApp} from './app.js'
 
-test()
-
+initApp();
