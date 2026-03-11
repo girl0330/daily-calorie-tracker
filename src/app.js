@@ -6,6 +6,7 @@ export function initApp() {
     const carbsInput = document.querySelector('#create-carbs')
     const proteinInput = document.querySelector('#create-protein')
     const fatInput = document.querySelector('#create-fat')
+    const foodList = document.querySelector('#food-list');
 
     const storage = new foodStorage()
 
@@ -29,5 +30,19 @@ export function initApp() {
         } catch (error) {
             console.error("저장 실패", error)
         }
+
+        foodList.insertAdjacentHTML('beforeend', `
+            <li class="card">
+                <div>
+                  <h3 class="name">음식이름</h3>
+                  <div class="calories">음식칼로리 calories</div>
+                  <ul class="macros">
+                    <li class="carbs"><div>Carbs</div><div class="value">탄수화물 g</div></li>
+                    <li class="protein"><div>Protein</div><div class="value">단백질 g</div></li>
+                    <li class="fat"><div>Fat</div><div class="value">지방 g</div></li>
+                  </ul>
+                </div>
+              </li>
+        `)
     })
 }
