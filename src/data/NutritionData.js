@@ -1,36 +1,35 @@
 export default class NutritionData {
     constructor() {
-        this.food = []
+        this.entries = []
     }
 
-    addFood(carbs, protein, fat) {
+    addEntry(carbs, protein, fat) {
         const entry = {
             carbs: Number.parseInt(carbs, 10),
             protein: Number.parseInt(protein, 10),
             fat: Number.parseInt(fat, 10),
         }
-
-        this.food.push(entry)
+        this.entries.push(entry)
     }
 
     getTotalCarbs() {
         let sumCarbs = 0
-        this.food.forEach(food => {
-            sumCarbs += food.carbs
+        this.entries.forEach(entry => {
+            sumCarbs += entry.carbs
         })
         return sumCarbs
     }
     getTotalProtein() {
         let sumProtein = 0
-        this.food.forEach(food => {
-            sumProtein += food.protein
+        this.entries.forEach(entry => {
+            sumProtein += entry.protein
         })
         return sumProtein
     }
     getTotalFat() {
         let sumFat = 0
-        this.food.forEach(food => {
-            sumFat += food.fat
+        this.entries.forEach(entry => {
+            sumFat += entry.fat
         })
         return sumFat
     }
