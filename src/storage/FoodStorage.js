@@ -13,11 +13,19 @@ export default class FoodStorage  {
         const foods = storedFoods ? JSON.parse(storedFoods) : []
 
         foods.push(food)
-
         localStorage.setItem(this.key, JSON.stringify(foods))
-
-        return this.getAll()
     }
 
+
+    updateFoods(updatedFood) {
+        const storedFoods = localStorage.getItem(this.key)
+        const foods = storedFoods ? JSON.parse(storedFoods) : []
+
+        const newFoods = foods.map(food => {
+            return food.foodId === updatedFood.foodId ? updatedFood : food
+        })
+
+        localStorage.setItem(this.key, JSON.stringify(newFoods))
+    }
 
 }

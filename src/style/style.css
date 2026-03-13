@@ -187,7 +187,6 @@ input:not(.btn) {
   font-weight: bold;
 }
 
-
 .card {
   background-color: white;
   box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.07);
@@ -269,11 +268,22 @@ input:not(.btn) {
   color: #777;
   font-size: 18px;
 }
+.save-btn {
+  all: unset;
+  cursor: pointer;
+  position: absolute;
+  top: 40px;   /* delete 버튼 아래 */
+  right: 10px;
+  color: #777;
+  font-size: 18px;
+}
 
 .delete-btn:hover,
-.edit-btn:hover {
+.edit-btn:hover,
+.save-btn:hover{
   color: #333;
 }
+
 #total-calories-container {
   border: 1px solid var(--primary-3);
 }
