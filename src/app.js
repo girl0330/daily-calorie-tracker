@@ -42,7 +42,7 @@ export function initApp() {
                 );
             };
 
-    // TODO 빈 상태 ui
+    // 빈 상태 ui
     const renderEmptyCard = (card) => {
         const foodId = card.dataset.id
         const cardId = card.dataset.cardId
@@ -114,21 +114,22 @@ export function initApp() {
         render()
     })
 
-    // TODO 칼로리 카드 삭제 기능
+    // 칼로리 카드 삭제 기능
     foodList.addEventListener('click', event => {
         event.preventDefault()
         const deleteButton = event.target.closest('.delete-btn')
+        if (!deleteButton) return
 
         const card = deleteButton.closest('.card')
+        if (!card) return
 
         const foodId = card.dataset.id
-
         storage.removeFood(foodId)
         render()
         init()
     })
 
-    // TODO 칼로리 카드 수정 기능
+    // 칼로리 카드 수정 기능
     foodList.addEventListener('click', (event) => {
         const editButton = event.target.closest('.edit-btn')
         if (editButton) {
