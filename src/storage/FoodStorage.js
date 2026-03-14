@@ -20,7 +20,7 @@ export default class FoodStorage  {
         const storedFoods = localStorage.getItem(this.key)
         const foods = storedFoods ? JSON.parse(storedFoods) : []
 
-        const id = Number(foodId)
+        const id = foodId
 
         const newFoods = foods.filter(food => food.foodId !== id)
         localStorage.setItem(this.key, JSON.stringify(newFoods))

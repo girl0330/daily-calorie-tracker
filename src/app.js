@@ -12,30 +12,28 @@ export function initApp() {
     const proteinInput = document.querySelector('#create-protein')
     const fatInput = document.querySelector('#create-fat')
     const foodList = document.querySelector('#food-list');
+    const totalCalories = document.querySelector("#total-calories");
 
     const storage = new foodStorage()
     const nutritionData = new NutritionData()
-    let storagedData = []
-    let newFood = {}
 
-    const foodCard = (foodId, name, carbs, protein, fat) => {
-        nutritionData.addEntry(carbs, protein, fat)
+    let storagedData = []
+
+    // 카드 랜더링 함수
+    const foodCard = (food, cardId) => {
         foodList.insertAdjacentHTML(
             "beforeend",
-            `<div id="card-div"><li class="card" data-id="${foodId}">
+            `<div id="card-div"><li class="card" data-id="${food.foodId}" data-card-id="${cardId}">
                     <button class="delete-btn" type="button" aria-label="Delete entry">✕</button>
                     <button class="edit-btn" type="button">✎</button>
                     <div>
-                      <h3 class="name">${name}</h3>
-                      <div class="calories">${calculateCalories(
-                            carbs,
-                            protein,
-                            fat
-                        )} calories</div>
+                      <h3 class="name">${food.name}</h3>
+                      <div class="calories">${calculateCalories(Number(food.carbs), Number(food.protein), Number(food.fat))} calories</div>
+
                       <ul class="macros">
-                        <li class="carbs"><div>Carbs</div><div class="value">${carbs}g</div></li>
-                        <li class="protein"><div>Protein</div><div class="value">${protein}g</div></li>
-                        <li class="fat"><div>Fat</div><div class="value">${fat}g</div></li>
+                        <li class="carbs"><div>Carbs</div><div class="value">${food.carbs}g</div></li>
+                        <li class="protein"><div>Protein</div><div class="value">${food.protein}g</div></li>
+                        <li class="fat"><div>Fat</div><div class="value">${food.fat}g</div></li>
                       </ul>
                     </div>
                   </li></div>`
@@ -53,7 +51,7 @@ export function initApp() {
 
 
         card.innerHTML =
-            `<div id="card-div"><li class="card" data-id="${foodId}" data-card-id="${cardId}">
+            `<li class="card" data-id="${foodId}" data-card-id="${cardId}">
               <button class="delete-btn" type="button">✕</button>
               <button class="save-btn" type="button">✔</button>
             
@@ -62,11 +60,7 @@ export function initApp() {
                     <input class="card-name-input" id="edit-name-input" placeholder="Food name" value="${name}" />
                 </h3>
             
-                <div class="calories">${calculateCalories(
-                carbs,
-                protein,
-                fat
-            )} calories</div>
+                <div class="calories">${calculateCalories(Number(carbs), Number(protein), Number(fat))} calories</div>
             
                 <ul class="macros">
                   <li class="carbs">
@@ -85,15 +79,15 @@ export function initApp() {
                   </li>
                 </ul>
               </div>
-            </li></div>
+            </li>
         `
     }
 
-    // 음식 추가 기능
+    // 음식카드 추가 이벤트
     form.addEventListener('submit', event => {
         event.preventDefault()
 
-        newFood = {
+        let newFood = {
             foodId: Date.now(),
             name: foodNameInput.value,
             carbs: carbsInput.value,
@@ -105,16 +99,14 @@ export function initApp() {
             storage.addFood(newFood)
             Snackbar.show('저장 성공')
             form.reset()
+            init()
         } catch (error) {
             console.error("저장 실패", error)
             Snackbar.show('저장 실패')
         }
-
-        foodCard(newFood.foodId, newFood.name, newFood.carbs, newFood.protein, newFood.fat)
-        render()
     })
 
-    // 클릭 이벤트
+    // 음식카드 삭제/수정 이벤트
     foodList.addEventListener('click', event => {
         event.preventDefault()
         // 삭제 버튼
@@ -124,8 +116,7 @@ export function initApp() {
             if (!card) return
 
             const foodId = card.dataset.id
-            storage.removeFood(foodId)
-            render()
+            storage.removeFood(Number(foodId))
             init()
             return
         }
@@ -140,12 +131,13 @@ export function initApp() {
             return
         }
 
+        // 저장 버튼
         const saveButton = event.target.closest('.save-btn')
         if (saveButton) {
             const card = saveButton.closest('.card')
             if (!card) return
 
-            const updatedFood = {
+            let updatedFood = {
                 foodId: Number(card.dataset.id),
                 name: card.querySelector('.card-name-input').value,
                 carbs: card.querySelector('.carbs-input').value,
@@ -165,15 +157,16 @@ export function initApp() {
         nutritionData.reset()
 
         storagedData = storage.getAll()
-        console.log('저장된 데이터?', storagedData)
 
-        storagedData?.forEach((food) => {
-            if (storagedData) {
-                foodCard(food.foodId, food.name, food.carbs, food.protein, food.fat)
-
-            }
+        storagedData.forEach((food, index) => {
+            nutritionData.addEntry(food.carbs, food.protein, food.fat)
+            foodCard(food, index)
         })
         render()
+    }
+
+    const renderTotalCalories = () => {
+        totalCalories.textContent = nutritionData.getTotalCalories();
     }
 
     let chartInstance = null;
@@ -207,16 +200,10 @@ export function initApp() {
         });
     }
 
-    const totalCalories = document.querySelector("#total-calories");
-
-    const updateTotalCalories = () => {
-        totalCalories.textContent = nutritionData.getTotalCalories();
-    }
-
     const render = () => {
         renderChart();
-        updateTotalCalories();
+        renderTotalCalories();
     }
-    init()
 
+    init()
 }
