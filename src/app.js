@@ -114,27 +114,28 @@ export function initApp() {
         render()
     })
 
-    // 칼로리 카드 삭제 기능
+    // 클릭 이벤트
     foodList.addEventListener('click', event => {
         event.preventDefault()
+        // 삭제 버튼
         const deleteButton = event.target.closest('.delete-btn')
-        if (!deleteButton) return
+        if(deleteButton) {
+            const card = deleteButton.closest('.card')
+            if (!card) return
 
-        const card = deleteButton.closest('.card')
-        if (!card) return
+            const foodId = card.dataset.id
+            storage.removeFood(foodId)
+            render()
+            init()
+            return
+        }
 
-        const foodId = card.dataset.id
-        storage.removeFood(foodId)
-        render()
-        init()
-    })
-
-    // 칼로리 카드 수정 기능
-    foodList.addEventListener('click', (event) => {
+        // 수정 버튼
         const editButton = event.target.closest('.edit-btn')
         if (editButton) {
             const card = editButton.closest('.card')
             if (!card) return
+
             renderEmptyCard(card)
             return
         }
@@ -144,11 +145,8 @@ export function initApp() {
             const card = saveButton.closest('.card')
             if (!card) return
 
-            const foodId = card.dataset.id
-            const cardId = card.dataset.cardId
-
             const updatedFood = {
-                foodId: Number(foodId),
+                foodId: Number(card.dataset.id),
                 name: card.querySelector('.card-name-input').value,
                 carbs: card.querySelector('.carbs-input').value,
                 protein: card.querySelector('.protein-input').value,
@@ -159,6 +157,7 @@ export function initApp() {
             init()
         }
     })
+
     // TODO 유효성 검사
 
     const init = () => {
