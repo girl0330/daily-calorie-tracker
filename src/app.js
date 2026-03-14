@@ -18,11 +18,11 @@ export function initApp() {
     let storagedData = []
     let newFood = {}
 
-    const displayEntry = (cardId, foodId, name, carbs, protein, fat) => {
+    const foodCard = (foodId, name, carbs, protein, fat) => {
         nutritionData.addEntry(carbs, protein, fat)
         foodList.insertAdjacentHTML(
             "beforeend",
-            `<div id="card-div"><li class="card" data-id="${foodId}" data-card-id="${cardId}">
+            `<div id="card-div"><li class="card" data-id="${foodId}">
                     <button class="delete-btn" type="button" aria-label="Delete entry">✕</button>
                     <button class="edit-btn" type="button">✎</button>
                     <div>
@@ -110,11 +110,23 @@ export function initApp() {
             Snackbar.show('저장 실패')
         }
 
-        displayEntry(newFood.foodId, newFood.name, newFood.carbs, newFood.protein, newFood.fat)
+        foodCard(newFood.foodId, newFood.name, newFood.carbs, newFood.protein, newFood.fat)
         render()
     })
 
     // TODO 칼로리 카드 삭제 기능
+    foodList.addEventListener('click', event => {
+        event.preventDefault()
+        const deleteButton = event.target.closest('.delete-btn')
+
+        const card = deleteButton.closest('.card')
+
+        const foodId = card.dataset.id
+
+        storage.removeFood(foodId)
+        render()
+        init()
+    })
 
     // TODO 칼로리 카드 수정 기능
     foodList.addEventListener('click', (event) => {
@@ -143,40 +155,21 @@ export function initApp() {
             }
 
             storage.updateFoods(updatedFood)
-
-            card.innerHTML = `
-            <button class="delete-btn" type="button" aria-label="Delete entry">✕</button>
-            <button class="edit-btn" type="button">✎</button>
-            <div>
-              <h3 class="name">${updatedFood.name}</h3>
-              <div class="calories">${calculateCalories(
-                updatedFood.carbs,
-                updatedFood.protein,
-                updatedFood.fat
-            )} calories</div>
-              <ul class="macros">
-                <li class="carbs"><div>Carbs</div><div class="value">${updatedFood.carbs}g</div></li>
-                <li class="protein"><div>Protein</div><div class="value">${updatedFood.protein}g</div></li>
-                <li class="fat"><div>Fat</div><div class="value">${updatedFood.fat}g</div></li>
-              </ul>
-            </div>
-        `
-
-            return
+            init()
         }
     })
     // TODO 유효성 검사
 
-    // TODO 수정/삭제 성공 메시지
-
-
     const init = () => {
+        foodList.innerHTML = ''
+        nutritionData.reset()
+
         storagedData = storage.getAll()
         console.log('저장된 데이터?', storagedData)
 
-        storagedData?.forEach((food, index) => {
+        storagedData?.forEach((food) => {
             if (storagedData) {
-                displayEntry(index, food.foodId, food.name, food.carbs, food.protein, food.fat)
+                foodCard(food.foodId, food.name, food.carbs, food.protein, food.fat)
 
             }
         })

@@ -16,6 +16,15 @@ export default class FoodStorage  {
         localStorage.setItem(this.key, JSON.stringify(foods))
     }
 
+    removeFood(foodId) {
+        const storedFoods = localStorage.getItem(this.key)
+        const foods = storedFoods ? JSON.parse(storedFoods) : []
+
+        const id = Number(foodId)
+
+        const newFoods = foods.filter(food => food.foodId !== id)
+        localStorage.setItem(this.key, JSON.stringify(newFoods))
+    }
 
     updateFoods(updatedFood) {
         const storedFoods = localStorage.getItem(this.key)

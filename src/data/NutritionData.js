@@ -12,6 +12,10 @@ export default class NutritionData {
         this.entries.push(entry)
     }
 
+    reset() {
+        this.entries = []
+    }
+
     getTotalCarbs() {
         let sumCarbs = 0
         this.entries.forEach(entry => {
