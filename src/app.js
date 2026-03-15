@@ -23,25 +23,29 @@ export function initApp() {
     const foodCard = (food, cardId) => {
         foodList.insertAdjacentHTML(
             "beforeend",
-            `<div id="card-div"><li class="card" data-id="${food.foodId}" data-card-id="${cardId}">
-                    <button class="delete-btn" type="button" aria-label="Delete entry">✕</button>
-                    <button class="edit-btn" type="button">✎</button>
-                    <div>
-                      <h3 class="name">${food.name}</h3>
-                      <div class="calories">${calculateCalories(Number(food.carbs), Number(food.protein), Number(food.fat))} calories</div>
-
-                      <ul class="macros">
-                        <li class="carbs"><div>Carbs</div><div class="value">${food.carbs}g</div></li>
-                        <li class="protein"><div>Protein</div><div class="value">${food.protein}g</div></li>
-                        <li class="fat"><div>Fat</div><div class="value">${food.fat}g</div></li>
-                      </ul>
-                    </div>
-                  </li></div>`
-                );
-            };
+            `
+                <div id="card-div">
+                    <li class="card" data-id="${food.foodId}" data-card-id="${cardId}">
+                        <button class="delete-btn" type="button" aria-label="Delete entry">✕</button>
+                        <button class="edit-btn" type="button">✎</button>
+                        <div>
+                            <h3 class="name">${food.name}</h3>
+                            <div class="calories">${calculateCalories(food.carbs, food.protein, food.fat)} calories</div>
+    
+                            <ul class="macros">
+                                <li class="carbs"><div>Carbs</div><div class="value">${food.carbs}g</div></li>
+                                <li class="protein"><div>Protein</div><div class="value">${food.protein}g</div></li>
+                                <li class="fat"><div>Fat</div><div class="value">${food.fat}g</div></li>
+                            </ul>
+                        </div>
+                    </li>
+                </div>
+            `
+        );
+    };
 
     // 빈 상태 ui
-    const renderEmptyCard = (card) => {
+    const renderEditCard = (card) => {
         const foodId = card.dataset.id
         const cardId = card.dataset.cardId
         const name = card.querySelector('.name').textContent
@@ -95,8 +99,15 @@ export function initApp() {
             fat: fatInput.value
         }
 
+        const errorMessage = validateFood(newFood)
+        if (errorMessage) {
+            Snackbar.show(errorMessage)
+            return
+        }
+        const normalizedFood = normalizeFood(newFood)
+
         try {
-            storage.addFood(newFood)
+            storage.addFood(normalizedFood)
             Snackbar.show('저장 성공')
             form.reset()
             init()
@@ -127,7 +138,7 @@ export function initApp() {
             const card = editButton.closest('.card')
             if (!card) return
 
-            renderEmptyCard(card)
+            renderEditCard(card)
             return
         }
 
@@ -145,18 +156,49 @@ export function initApp() {
                 fat: card.querySelector('.fat-input').value,
             }
 
-            storage.updateFoods(updatedFood)
+            const errorMessage = validateFood(updatedFood)
+            if (errorMessage) {
+                Snackbar.show(errorMessage)
+                return
+            }
+            const normalizedFood = normalizeFood(updatedFood)
+
+            storage.updateFoods(normalizedFood)
             init()
         }
     })
 
     // TODO 유효성 검사
+    const validateFood = ({ name, carbs, protein, fat }) => {
+        if (!name || !name.trim()) return '음식 이름을 입력해주세요.'
+        if (carbs === '' || protein === '' || fat === '') return '탄수화물, 단백질, 지방 값을 모두 입력해주세요.'
+
+        if ([carbs, protein, fat].some(value => Number.isNaN(Number(value)))) {
+            return '탄수화물, 단백질, 지방은 숫자여야 합니다.'
+        }
+
+        if ([carbs, protein, fat].some(value => Number(value) < 0)) {
+            return '탄수화물, 단백질, 지방은 0 이상이어야 합니다.'
+        }
+
+        return null
+    }
+
+    const normalizeFood = (food) => ({
+        ...food,
+        name: food.name.trim(),
+        carbs: Number(food.carbs),
+        protein: Number(food.protein),
+        fat: Number(food.fat),
+    })
 
     const init = () => {
         foodList.innerHTML = ''
         nutritionData.reset()
 
         storagedData = storage.getAll()
+
+        console.log('storagedData확인:: ',storagedData)
 
         storagedData.forEach((food, index) => {
             nutritionData.addEntry(food.carbs, food.protein, food.fat)
