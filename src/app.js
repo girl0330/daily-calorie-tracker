@@ -41,7 +41,7 @@ export function initApp() {
             };
 
     // 빈 상태 ui
-    const renderEmptyCard = (card) => {
+    const renderEditCard = (card) => {
         const foodId = card.dataset.id
         const cardId = card.dataset.cardId
         const name = card.querySelector('.name').textContent
@@ -127,7 +127,7 @@ export function initApp() {
             const card = editButton.closest('.card')
             if (!card) return
 
-            renderEmptyCard(card)
+            renderEditCard(card)
             return
         }
 
