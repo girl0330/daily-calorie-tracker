@@ -13,6 +13,7 @@
 # Version History
 
 ## V1 - Vanilla JS MVP
+[자세한 설명 보기](https://github.com/girl0330/daily-calorie-tracker/blob/develop/docs/v1.md)
 
 ### 설명
 Vanilla JavaScript 기반으로 구현한 MVP 버전
