@@ -3,7 +3,7 @@ import {NavLink} from "react-router-dom";
 export default function Nav() {
     return (
         <>
-            <aside className="w-60 shrink-0 p-5 ">
+            <aside className="w-75 shrink-0 p-5 ">
                 <div className="h-20 flex items-center justify-center text-3xl font-bold text-(--primary-1)">Daily Tracker</div>
 
                 <div className='border my-4' />
