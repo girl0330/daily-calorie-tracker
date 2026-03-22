@@ -13,7 +13,7 @@ function App() {
         <Nav />
 
         {/* Main */}
-        <main className="flex-1 p-5 bg-[#f5f5f5]">
+        <main className="flex-1 p-5">
           <Routes>
             <Route path='/' element={<DailyPage />} />
             <Route path='/monthly' element={<MonthlyPage />} />
