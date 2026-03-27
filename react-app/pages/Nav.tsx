@@ -1,9 +1,10 @@
+import React from "react";
 import { NavLink } from 'react-router-dom';
 
 export default function Nav() {
   return (
     <>
-      <aside className="w-56 shrink-0 bg-(--bg-section) p-5">
+      <aside className="w-70 shrink-0 bg-(--bg-section) p-5">
         <div className="flex h-20 items-center justify-center text-3xl font-bold text-(--primary-3)">
           Daily Tracker
         </div>
