@@ -5,8 +5,52 @@ export default function DailyTracker() {
     <>
       <section className="flex flex-col gap-4">
         {/* 상단 주간 바 */}
-        <section className="h-20 rounded-md bg-(--bg-section) p-4">
-          일 월 화 수 목 금 토
+        <section className="rounded-md border border-(--neutral-4) bg-(--bg-section) h-20 px-4">
+          <div className="grid grid-cols-7 h-full">
+            
+            {/* 일 (오늘 + 데이터 있음) */}
+            <div className="flex flex-col items-center justify-center gap-2 border-b-2 border-(--primary-1)">
+              <span className="text-sm text-(--text-primary)">일</span>
+              <span className="h-2.5 w-2.5 rounded-full border border-(--text-primary) bg-(--primary-1)" />
+            </div>
+
+            {/* 월 */}
+            <div className="flex flex-col items-center justify-center gap-2">
+              <span className="text-sm text-(--text-primary)">월</span>
+              <span className="h-2.5 w-2.5 rounded-full border border-(--text-primary)" />
+            </div>
+
+            {/* 화 */}
+            <div className="flex flex-col items-center justify-center gap-2">
+              <span className="text-sm text-(--text-primary)">화</span>
+              <span className="h-2.5 w-2.5 rounded-full border border-(--text-primary)" />
+            </div>
+
+            {/* 수 */}
+            <div className="flex flex-col items-center justify-center gap-2">
+              <span className="text-sm text-(--text-primary)">수</span>
+              <span className="h-2.5 w-2.5 rounded-full border border-(--text-primary)" />
+            </div>
+
+            {/* 목 */}
+            <div className="flex flex-col items-center justify-center gap-2">
+              <span className="text-sm text-(--text-primary)">목</span>
+              <span className="h-2.5 w-2.5 rounded-full border border-(--text-primary)" />
+            </div>
+
+            {/* 금 */}
+            <div className="flex flex-col items-center justify-center gap-2">
+              <span className="text-sm text-(--text-primary)">금</span>
+              <span className="h-2.5 w-2.5 rounded-full border border-(--text-primary)" />
+            </div>
+
+            {/* 토 */}
+            <div className="flex flex-col items-center justify-center gap-2">
+              <span className="text-sm text-(--text-primary)">토</span>
+              <span className="h-2.5 w-2.5 rounded-full border border-(--text-primary)" />
+            </div>
+
+          </div>
         </section>
 
         <section className="grid grid-cols-2 gap-4">
@@ -23,7 +67,7 @@ export default function DailyTracker() {
                 <div className="rounded-md flex-1 flex flex-col">
                   <form className="flex-1 flex flex-col justify-between">
                     <div className="mx-auto max-w-2xl w-full flex-1 flex flex-col justify-center">
-                      <div className="grid grid-cols-8 gap-x-4 gap-y-3 items-center">
+                      <div className="grid grid-cols-8 gap-x-3 gap-y-10 items-center">
                         {/* 식사 시간 */}
                         <label className="col-span-1 text-right">식사 시간</label>
                         <div className="col-span-7 flex gap-4">
@@ -146,10 +190,21 @@ export default function DailyTracker() {
                       </div>
                     </div>
                   </div>
-                  {/* 칼로리 */}
-                  <div className="mt-4 flex items-center justify-between border-t border-(--neutral-4) pt-3">
-                    <p className="text-sm text-(--text-muted)">총 칼로리</p>
-                    <p className="text-lg font-bold text-(--chart-calorie)">840 kcal</p>
+                  {/* 칼로리 summary */}
+                  <div className="mt-4 border-t border-(--neutral-4) pt-3 flex justify-center items-center">
+                    {/* 총 칼로리 + 영양소 요약을 가운데에 나란히 배치 */}
+                    <div className="flex items-center gap-6">
+                      <p className="text-2xl font-bold text-(--chart-calorie)">
+                        840 <span className="text-base font-medium">kcal</span>
+                      </p>
+                      <div className="text-sm text-(--text-secondary)">
+                        <span>탄수화물 120g</span>
+                        <span className="mx-2 text-(--text-muted)">/</span>
+                        <span>단백질 80g</span>
+                        <span className="mx-2 text-(--text-muted)">/</span>
+                        <span>지방 40g</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -158,7 +213,7 @@ export default function DailyTracker() {
         </section>
 
         {/* 카드 리스트 */}
-        <section className="rounded-md border border-(--neutral-4) bg-white">
+        <section className="rounded-md border border-(--neutral-4) bg-(--bg-section)">
           <div className="grid h-[520px] grid-cols-3 divide-x divide-(--neutral-4)">
             {/* 아침 */}
             <div className="flex min-h-0 flex-col">
@@ -195,50 +250,32 @@ export default function DailyTracker() {
                         <p className="mt-1 text-sm text-(--text-muted) text-center">450 칼로리</p>
                       </div>
                       {/* 버튼 영역 (오른쪽 정렬) */}
-                      <div className="flex flex-col gap-2 justify-end">
+                      <div className="flex flex-col justify-end">
+                        {/* 체크 */}
                         <button
                           type="button"
-                          className="h-8 w-8 rounded-full border border-(--primary-2)"
-                        />
+                          className="h-8 w-8 rounded-full flex items-center justify-center transition-colors hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-(--primary-3)"
+                        >
+                          <img src="/check.svg" alt="확인" className="h-3 w-3" />
+                        </button>
                         <button
                           type="button"
-                          className="h-8 w-8 rounded-full border border-(--primary-2)"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-                      <div className="rounded-md bg-(--neutral-5) px-2 py-2">
-                        <p className="text-sm text-(--text-muted)">carbs</p>
-                        <p className="font-semibold text-(--text-primary)">100 g</p>
-                      </div>
-                      <div className="rounded-md bg-(--neutral-5) px-2 py-2">
-                        <p className="text-sm text-(--text-muted)">protein</p>
-                        <p className="font-semibold text-(--text-primary)">30 g</p>
-                      </div>
-                      <div className="rounded-md bg-(--neutral-5) px-2 py-2">
-                        <p className="text-sm text-(--text-muted)">fat</p>
-                        <p className="font-semibold text-(--text-primary)">250 g</p>
-                      </div>
-                    </div>
-                  </article>
-                  <article className="rounded-md border border-(--neutral-4) bg-(--white) p-4 shadow-sm">
-                    <div className="flex flex-row items-center justify-between gap-3">
-                      {/* 텍스트 영역 (가운데 정렬 )*/}
-                      <div className="flex flex-col items-center justify-center flex-1">
-                        <h3 className="text-2xl font-bold text-(--text-primary) text-center">전주 비빔밥</h3>
-                        <p className="mt-1 text-sm text-(--text-muted) text-center">450 칼로리</p>
-                      </div>
-                      {/* 버튼 영역 (오른쪽 정렬) */}
-                      <div className="flex flex-col gap-2 justify-end">
+                          className="h-8 w-8 rounded-full flex items-center justify-center transition-colors hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-300"
+                        >
+                          <img src="/cross.svg" alt="삭제" className="h-3 w-3" />
+                        </button>
                         <button
                           type="button"
-                          className="h-8 w-8 rounded-full border border-(--primary-2)"
-                        />
+                          className="h-8 w-8 rounded-full flex items-center justify-center transition-colors hover:bg-(--neutral-5) focus:outline-none focus:ring-2 focus:ring-(--primary-3)"
+                        >
+                          <img src="/pencil.svg" alt="수정" className="h-3 w-3" />
+                        </button>
                         <button
                           type="button"
-                          className="h-8 w-8 rounded-full border border-(--primary-2)"
-                        />
+                          className="h-8 w-8 rounded-full flex items-center justify-center transition-colors hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-300"
+                        >
+                          <img src="/trash.svg" alt="삭제" className="h-3.5 w-3.5" />
+                        </button>
                       </div>
                     </div>
 
