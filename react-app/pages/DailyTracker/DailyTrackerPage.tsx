@@ -1,57 +1,12 @@
-import React from "react";
+import WeeklyDayBar from '../DailyTracker/WeeklyDayBar'
 
-export default function DailyTracker() {
+
+export default function DailyTrackerPage() {
   return (
     <>
       <section className="flex flex-col gap-4">
         {/* 상단 주간 바 */}
-        <section className="rounded-md border border-(--neutral-4) bg-(--bg-section) h-20 px-4">
-          <div className="grid grid-cols-7 h-full">
-            
-            {/* 일 (오늘 + 데이터 있음) */}
-            <div className="flex flex-col items-center justify-center gap-2 border-b-2 border-(--primary-1)">
-              <span className="text-sm text-(--text-primary)">일</span>
-              <span className="h-2.5 w-2.5 rounded-full border border-(--text-primary) bg-(--primary-1)" />
-            </div>
-
-            {/* 월 */}
-            <div className="flex flex-col items-center justify-center gap-2">
-              <span className="text-sm text-(--text-primary)">월</span>
-              <span className="h-2.5 w-2.5 rounded-full border border-(--text-primary)" />
-            </div>
-
-            {/* 화 */}
-            <div className="flex flex-col items-center justify-center gap-2">
-              <span className="text-sm text-(--text-primary)">화</span>
-              <span className="h-2.5 w-2.5 rounded-full border border-(--text-primary)" />
-            </div>
-
-            {/* 수 */}
-            <div className="flex flex-col items-center justify-center gap-2">
-              <span className="text-sm text-(--text-primary)">수</span>
-              <span className="h-2.5 w-2.5 rounded-full border border-(--text-primary)" />
-            </div>
-
-            {/* 목 */}
-            <div className="flex flex-col items-center justify-center gap-2">
-              <span className="text-sm text-(--text-primary)">목</span>
-              <span className="h-2.5 w-2.5 rounded-full border border-(--text-primary)" />
-            </div>
-
-            {/* 금 */}
-            <div className="flex flex-col items-center justify-center gap-2">
-              <span className="text-sm text-(--text-primary)">금</span>
-              <span className="h-2.5 w-2.5 rounded-full border border-(--text-primary)" />
-            </div>
-
-            {/* 토 */}
-            <div className="flex flex-col items-center justify-center gap-2">
-              <span className="text-sm text-(--text-primary)">토</span>
-              <span className="h-2.5 w-2.5 rounded-full border border-(--text-primary)" />
-            </div>
-
-          </div>
-        </section>
+        <WeeklyDayBar />
 
         <section className="grid grid-cols-2 gap-4">
           {/* 입력 + 영양 상태 */}

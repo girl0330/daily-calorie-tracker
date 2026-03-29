@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css'
 import Nav from "../pages/Nav.tsx";
-import DailyPage from '../pages/DailyTracker.tsx'
-import MonthlyPage from '../pages/MonthlyTracker.tsx'
+import DailyPage from '../pages/DailyTracker/DailyTrackerPage.tsx'
+import MonthlyPage from '../pages/MonthlyTracker/MonthlyTrackerPage.tsx'
 
 function App() {
   return(
