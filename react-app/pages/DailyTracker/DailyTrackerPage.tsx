@@ -1,6 +1,5 @@
 import WeeklyDayBar from '../DailyTracker/WeeklyDayBar'
 
-
 export default function DailyTrackerPage() {
   return (
     <>
