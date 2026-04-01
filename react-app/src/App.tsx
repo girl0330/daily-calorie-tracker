@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css'
-import Nav from "../pages/Nav.tsx";
-import DailyPage from '../pages/DailyTracker/DailyTrackerPage.tsx'
-import MonthlyPage from '../pages/MonthlyTracker/MonthlyTrackerPage.tsx'
+import Nav from "./pages/Nav";
+import MonthlyTrackerPage from "./pages/MonthlyTracker/MonthlyTrackerPage";
+import DailyTrackerPage from "./pages/DailyTracker/DailyTrackerPage";
 
 function App() {
   return(
@@ -15,8 +15,8 @@ function App() {
         {/* Main */}
         <main className="flex-1 p-5">
           <Routes>
-            <Route path='/' element={<DailyPage />} />
-            <Route path='/monthly' element={<MonthlyPage />} />
+            <Route path='/' element={<DailyTrackerPage />} />
+            <Route path='/monthly' element={<MonthlyTrackerPage />} />
           </Routes>
         </main>
 

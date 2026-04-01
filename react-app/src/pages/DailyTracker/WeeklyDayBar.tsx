@@ -1,12 +1,11 @@
-import React from 'react'
 
-type DayItem = { 
-  key: string; 
-  label: string; 
-  dayNumber: number;
-  isToday: boolean;
-  hasData: boolean;
-}
+// type DayItem = { 
+//   key: string; 
+//   label: string; 
+//   dayNumber: number;
+//   isToday: boolean;
+//   hasData: boolean;
+// }
 
 const WeeklyDayBar = () => {
   const today = new Date();

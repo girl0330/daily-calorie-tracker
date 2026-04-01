@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import WeeklyDayBar from '../DailyTracker/WeeklyDayBar'
-import type { MealType, FoodItem } from '../../src/types/types'
+import { useState } from "react";
+import type { FoodItem, MealType } from "../../types/types";
+import WeeklyDayBar from "./WeeklyDayBar";
 
 // 입력창 상태용 타입입
 type FoodForm = {
