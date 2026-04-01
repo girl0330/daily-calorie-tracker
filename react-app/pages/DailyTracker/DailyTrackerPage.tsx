@@ -1,6 +1,100 @@
+import React, { useState } from 'react'
 import WeeklyDayBar from '../DailyTracker/WeeklyDayBar'
+import type { MealType, FoodItem } from '../../src/types/types'
+
+// 입력창 상태용 타입입
+type FoodForm = {
+  mealType: MealType;
+  foodName: string;
+  carbs: string;
+  protein: string;
+  fat: string;
+};
+
+// 서버에 전송할 음식 데이터 타입
+type CreateFoodRequest = {
+  userId: 'test-user'
+  mealType: MealType
+  foodName: string
+  carbs: number
+  protein: number
+  fat: number
+}
+
+const initialForm: FoodForm = {
+  mealType: 'breakfast',
+  foodName: '',
+  carbs: '',
+  protein: '',
+  fat: '',
+}
 
 export default function DailyTrackerPage() {
+  const [form, setForm] = useState<FoodForm>(initialForm)
+  
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const {name, value, type} = e.target
+
+    if (type === 'radio') {
+      setForm((prev) => ({
+        ...prev,
+        mealType: value as MealType,
+      }))
+      return 
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  const validateFood = ({ foodName, carbs, protein, fat }: FoodForm): string | null => {
+    if (!foodName || !foodName.trim()) return '음식 이름을 입력해주세요.'
+
+    if (carbs === '' || protein === '' || fat === '') return '탄수화물, 단백질, 지방 값을 모두 입력해주세요.'
+
+    if ([carbs, protein, fat].some(value => Number.isNaN(Number(value)))) {
+        return '탄수화물, 단백질, 지방은 숫자여야 합니다.'
+    }
+
+    if ([carbs, protein, fat].some(value => Number(value) < 0)) {
+        return '탄수화물, 단백질, 지방은 0 이상이어야 합니다.'
+    }
+
+    return null
+  }
+  
+  const toLocalFoodItem = (payload: CreateFoodRequest): FoodItem => ({
+    id: Date.now(),
+    createdAt: new Date().toISOString(),
+    ...payload,
+  })
+  
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const error = validateFood(form)
+    
+    if (error) {
+        alert(error)
+        return
+      }
+
+      const request: CreateFoodRequest = {
+        userId: 'test-user',
+        mealType: form.mealType,
+        foodName: form.foodName.trim(),
+        carbs: Number(form.carbs),
+        protein: Number(form.protein),
+        fat: Number(form.fat),
+      }
+
+      const newFoodItem = toLocalFoodItem(request)
+
+      console.log(newFoodItem)
+  }
+  
   return (
     <>
       <section className="flex flex-col gap-4">
@@ -19,22 +113,22 @@ export default function DailyTrackerPage() {
               </div>
               <div className="flex-1 flex flex-col justify-between">
                 <div className="rounded-md flex-1 flex flex-col">
-                  <form className="flex-1 flex flex-col justify-between">
+                  <form className="flex-1 flex flex-col justify-between" onSubmit={handleSubmit}>
                     <div className="mx-auto max-w-2xl w-full flex-1 flex flex-col justify-center">
                       <div className="grid grid-cols-8 gap-x-3 gap-y-10 items-center">
                         {/* 식사 시간 */}
                         <label className="col-span-1 text-right">식사 시간</label>
                         <div className="col-span-7 flex gap-4">
                           <label className="flex items-center gap-1 cursor-pointer">
-                            <input type="radio" name="mealType" value="breakfast" className="accent-(--primary-1)" />
+                            <input type="radio" name="mealType" value="breakfast" checked={form.mealType === 'breakfast'} onChange={handleFormChange} className="accent-(--primary-1)" />
                             <span>아침</span>
                           </label>
                           <label className="flex items-center gap-1 cursor-pointer">
-                            <input type="radio" name="mealType" value="lunch" className="accent-(--primary-1)" />
+                            <input type="radio" name="mealType" value="lunch" checked={form.mealType === 'lunch'} onChange={handleFormChange} className="accent-(--primary-1)" />
                             <span>점심</span>
                           </label>
                           <label className="flex items-center gap-1 cursor-pointer">
-                            <input type="radio" name="mealType" value="dinner" className="accent-(--primary-1)" />
+                            <input type="radio" name="mealType" value="dinner" checked={form.mealType === 'dinner'} onChange={handleFormChange} className="accent-(--primary-1)" />
                             <span>저녁</span>
                           </label>
                         </div>
@@ -45,31 +139,61 @@ export default function DailyTrackerPage() {
                         </label>
                         <input
                           id="food-name"
+                          name='foodName'
+                          value={form.foodName}
+                          onChange={handleFormChange}
+                          placeholder='음식을 입력해주세요'
                           className="col-span-3 h-10 w-full border border-(--neutral-3) rounded-md px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
                         />
-                        <label htmlFor="food-carbs" className="col-span-1 text-right">
-                          탄수화물
-                        </label>
-                        <input
-                          id="food-carbs"
-                          className="col-span-3 h-10 w-full border border-(--neutral-3) rounded-md px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
-                        />
-
+                          <label htmlFor="food-carbs" className="col-span-1 text-right">
+                            탄수화물
+                          </label>
+                          <div className='col-span-3 relative'>
+                            <input
+                              id="food-carbs"
+                              name='carbs'
+                              value={form.carbs}
+                              onChange={handleFormChange}
+                              placeholder='0'
+                              className="h-10 w-full border border-(--neutral-3) rounded-md px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
+                            />
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2">
+                              g
+                            </span>
+                          </div>
                         {/* 단백질 */}
                         <label htmlFor="food-protein" className="col-span-1 text-right">
                           단백질
                         </label>
-                        <input
-                          id="food-protein"
-                          className="col-span-3 h-10 w-full border border-(--neutral-3) rounded-md px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
-                        />
+                        <div className='col-span-3 relative'>
+                          <input
+                            id="food-protein"
+                            name='protein'
+                            value={form.protein}
+                            onChange={handleFormChange}
+                            placeholder='0'
+                            className="h-10 w-full border border-(--neutral-3) rounded-md px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2">
+                              g
+                            </span>
+                        </div>
                         <label htmlFor="food-fat" className="col-span-1 text-right">
                           지방
                         </label>
-                        <input
-                          id="food-fat"
-                          className="col-span-3 h-10 w-full border border-(--neutral-3) rounded-md px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
-                        />
+                        <div className='col-span-3 relative'>
+                          <input
+                            id="food-fat"
+                            name='fat'
+                            value={form.fat}
+                            onChange={handleFormChange}
+                            placeholder='0'
+                            className="h-10 w-full border border-(--neutral-3) rounded-md px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2">
+                              g
+                            </span>
+                        </div>
                       </div>
                     </div>
                     <div className="flex justify-center mt-6">

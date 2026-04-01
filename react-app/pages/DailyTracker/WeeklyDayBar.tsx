@@ -1,5 +1,4 @@
 import React from 'react'
-const weekKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
 type DayItem = { 
   key: string; 
@@ -45,7 +44,7 @@ const WeeklyDayBar = () => {
                 >
                   <span className="text-sm text-(--text-primary)">
                     {day.label} 
-                    <span className="ml-1 text-sm font-semibold text-[var(--text-primary)]">
+                    <span className="ml-1 text-sm text-[var(--text-primary)]">
                       ( {day.date} )    
                     </span>
                   </span>
