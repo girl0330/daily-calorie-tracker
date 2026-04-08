@@ -13,3 +13,5 @@ export type FoodItem = {
     createdAt: string
 }
    
+// 사용자 ID
+export type UserId = string

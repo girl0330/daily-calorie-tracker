@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { FoodItem, MealType } from "../../types/types";
+import type { FoodItem, MealType, UserId } from "../../types/types";
 import WeeklyDayBar from "./WeeklyDayBar";
 
 // 입력창 상태용 타입입
@@ -13,7 +13,7 @@ type FoodForm = {
 
 // 서버에 전송할 음식 데이터 타입
 type CreateFoodRequest = {
-  userId: 'test-user'
+  userId: UserId
   mealType: MealType
   foodName: string
   carbs: number
@@ -29,7 +29,7 @@ const initialForm: FoodForm = {
   fat: '',
 }
 
-export default function DailyTrackerPage() {
+export default function DailyTrackerPage( { userId }: { userId: UserId } ) {
   const [form, setForm] = useState<FoodForm>(initialForm)
   
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,18 +38,18 @@ export default function DailyTrackerPage() {
     if (type === 'radio') {
       setForm((prev) => ({
         ...prev,
-        mealType: value as MealType,
+        [name as keyof FoodForm]: value as MealType,
       }))
       return 
     }
 
     setForm((prev) => ({
       ...prev,
-      [name]: value,
+      [name as keyof FoodForm]: value,
     }))
   }
 
-  const validateFood = ({ foodName, carbs, protein, fat }: FoodForm): string | null => {
+  const validateFoodForm = ({ foodName, carbs, protein, fat }: FoodForm): string | null => {
     if (!foodName || !foodName.trim()) return '음식 이름을 입력해주세요.'
 
     if (carbs === '' || protein === '' || fat === '') return '탄수화물, 단백질, 지방 값을 모두 입력해주세요.'
@@ -74,25 +74,27 @@ export default function DailyTrackerPage() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const error = validateFood(form)
+    const error = validateFoodForm(form)
     
     if (error) {
         alert(error)
         return
       }
 
-      const request: CreateFoodRequest = {
-        userId: 'test-user',
-        mealType: form.mealType,
-        foodName: form.foodName.trim(),
-        carbs: Number(form.carbs),
-        protein: Number(form.protein),
-        fat: Number(form.fat),
-      }
+    const request: CreateFoodRequest = {
+      userId: userId,
+      mealType: form.mealType,
+      foodName: form.foodName.trim(),
+      carbs: Number(form.carbs),
+      protein: Number(form.protein),
+      fat: Number(form.fat),
+    }
 
-      const newFoodItem = toLocalFoodItem(request)
+    const newFoodItem = toLocalFoodItem(request)
 
-      console.log(newFoodItem)
+    console.log(newFoodItem)
+
+    setForm(initialForm)
   }
   
   return (
