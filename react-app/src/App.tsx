@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css'
 import Nav from "./pages/Nav";
-import MonthlyTrackerPage from "./pages/MonthlyTracker/MonthlyTrackerPage";
-import DailyTrackerPage from "./pages/DailyTracker/DailyTrackerPage";
 import type { UserId } from "./types/types";
+import DailyTrackerPage from "./pages/daily-tracker/DailyTrackerPage";
+import MonthlyTrackerPage from "./pages/monthly-tracker/MonthlyTrackerPage";
 
 const USER_ID: UserId = "test-user"
 
