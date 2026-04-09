@@ -13,13 +13,10 @@ export default function DailyTrackerPage({ userId }: { userId: UserId }) {
 
         <section className="grid grid-cols-2 gap-4">
           {/* 입력 + 영양 상태 */}
-          <div className="flex h-full flex-col">
-            <FoodInputForm userId={userId} />
-          </div>
+          <FoodInputForm userId={userId} />
+
           {/* 영양소 그래프 */}
-          <div className="flex h-full flex-col">
-            <NutritionChart />
-          </div>
+          <NutritionChart />
         </section>
 
         {/* 카드 리스트 */}
@@ -31,9 +28,7 @@ export default function DailyTrackerPage({ userId }: { userId: UserId }) {
             {/* 점심 */}
             <div className="flex min-h-0 flex-col">
               <div className="shrink-0 border-b border-(--neutral-4) px-4 py-3 text-center">
-                <h2 className="text-2xl font-bold text-(--text-primary)">
-                  점심
-                </h2>
+                <h2 className="text-2xl font-bold text-(--text-primary)">점심</h2>
               </div>
 
               <div className="shrink-0 border-b border-(--neutral-4) px-4 py-3">
@@ -51,9 +46,7 @@ export default function DailyTrackerPage({ userId }: { userId: UserId }) {
                   </span>
 
                   <span className="order-4 text-(--neutral-3)">|</span>
-                  <span className="order-5 font-semibold text-(--primary-1)">
-                    총 650 kcal
-                  </span>
+                  <span className="order-5 font-semibold text-(--primary-1)">총 650 kcal</span>
                 </div>
               </div>
 
@@ -62,44 +55,28 @@ export default function DailyTrackerPage({ userId }: { userId: UserId }) {
                   <article className="rounded-md border border-(--neutral-4) bg-(--white) p-4 shadow-sm">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <h3 className="text-2xl font-bold text-(--text-primary)">
-                          싸이버거
-                        </h3>
-                        <p className="mt-1 text-sm text-(--text-muted)">
-                          450 칼로리
-                        </p>
+                        <h3 className="text-2xl font-bold text-(--text-primary)">싸이버거</h3>
+                        <p className="mt-1 text-sm text-(--text-muted)">450 칼로리</p>
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <button
-                          type="button"
-                          className="h-8 w-8 rounded-full border border-(--primary-2)"
-                        />
-                        <button
-                          type="button"
-                          className="h-8 w-8 rounded-full border border-(--primary-2)"
-                        />
+                        <button type="button" className="h-8 w-8 rounded-full border border-(--primary-2)" />
+                        <button type="button" className="h-8 w-8 rounded-full border border-(--primary-2)" />
                       </div>
                     </div>
 
                     <div className="mt-4 grid grid-cols-3 gap-2 text-center">
                       <div className="rounded-md bg-(--neutral-5) px-2 py-2">
                         <p className="text-sm text-(--text-muted)">carbs</p>
-                        <p className="font-semibold text-(--text-primary)">
-                          100 g
-                        </p>
+                        <p className="font-semibold text-(--text-primary)">100 g</p>
                       </div>
                       <div className="rounded-md bg-(--neutral-5) px-2 py-2">
                         <p className="text-sm text-(--text-muted)">protein</p>
-                        <p className="font-semibold text-(--text-primary)">
-                          30 g
-                        </p>
+                        <p className="font-semibold text-(--text-primary)">30 g</p>
                       </div>
                       <div className="rounded-md bg-(--neutral-5) px-2 py-2">
                         <p className="text-sm text-(--text-muted)">fat</p>
-                        <p className="font-semibold text-(--text-primary)">
-                          250 g
-                        </p>
+                        <p className="font-semibold text-(--text-primary)">250 g</p>
                       </div>
                     </div>
                   </article>
@@ -110,9 +87,7 @@ export default function DailyTrackerPage({ userId }: { userId: UserId }) {
             {/* 저녁 */}
             <div className="flex min-h-0 flex-col">
               <div className="shrink-0 border-b border-(--neutral-4) px-4 py-3 text-center">
-                <h2 className="text-2xl font-bold text-(--text-primary)">
-                  저녁
-                </h2>
+                <h2 className="text-2xl font-bold text-(--text-primary)">저녁</h2>
               </div>
 
               <div className="shrink-0 border-b border-(--neutral-4) px-4 py-3">
@@ -130,9 +105,7 @@ export default function DailyTrackerPage({ userId }: { userId: UserId }) {
                   </span>
 
                   <span className="order-4 text-(--neutral-3)">|</span>
-                  <span className="order-5 font-semibold text-(--primary-1)">
-                    총 650 kcal
-                  </span>
+                  <span className="order-5 font-semibold text-(--primary-1)">총 650 kcal</span>
                 </div>
               </div>
 
@@ -141,44 +114,28 @@ export default function DailyTrackerPage({ userId }: { userId: UserId }) {
                   <article className="rounded-md border border-(--neutral-4) bg-(--white) p-4 shadow-sm">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <h3 className="text-xl font-bold text-(--text-primary)">
-                          싸이버거
-                        </h3>
-                        <p className="mt-1 text-sm text-(--text-muted)">
-                          450 칼로리
-                        </p>
+                        <h3 className="text-xl font-bold text-(--text-primary)">싸이버거</h3>
+                        <p className="mt-1 text-sm text-(--text-muted)">450 칼로리</p>
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <button
-                          type="button"
-                          className="h-8 w-8 rounded-full border border-(--primary-2)"
-                        />
-                        <button
-                          type="button"
-                          className="h-8 w-8 rounded-full border border-(--primary-2)"
-                        />
+                        <button type="button" className="h-8 w-8 rounded-full border border-(--primary-2)" />
+                        <button type="button" className="h-8 w-8 rounded-full border border-(--primary-2)" />
                       </div>
                     </div>
 
                     <div className="mt-4 grid grid-cols-3 gap-2 text-center">
                       <div className="rounded-md bg-(--neutral-5) px-2 py-2">
                         <p className="text-sm text-(--text-muted)">carbs</p>
-                        <p className="font-semibold text-(--text-primary)">
-                          100 g
-                        </p>
+                        <p className="font-semibold text-(--text-primary)">100 g</p>
                       </div>
                       <div className="rounded-md bg-(--neutral-5) px-2 py-2">
                         <p className="text-sm text-(--text-muted)">protein</p>
-                        <p className="font-semibold text-(--text-primary)">
-                          30 g
-                        </p>
+                        <p className="font-semibold text-(--text-primary)">30 g</p>
                       </div>
                       <div className="rounded-md bg-(--neutral-5) px-2 py-2">
                         <p className="text-sm text-(--text-muted)">fat</p>
-                        <p className="font-semibold text-(--text-primary)">
-                          250 g
-                        </p>
+                        <p className="font-semibold text-(--text-primary)">250 g</p>
                       </div>
                     </div>
                   </article>
