@@ -1,24 +1,6 @@
 import { useState } from 'react';
-import type { FoodItem, MealType, UserId } from '../../../types/types';
-
-// 입력창 상태용 타입입
-type FoodForm = {
-  mealType: MealType;
-  foodName: string;
-  carbs: string;
-  protein: string;
-  fat: string;
-};
-
-// 서버에 전송할 음식 데이터 타입
-type CreateFoodRequest = {
-  userId: UserId;
-  mealType: MealType;
-  foodName: string;
-  carbs: number;
-  protein: number;
-  fat: number;
-};
+import type { CreateFoodRequest, FoodForm, FoodItem, MealType, UserId } from '../../../types/types';
+import { addFood } from '../../../service/FoodService';
 
 const initialForm: FoodForm = {
   mealType: 'breakfast',
@@ -92,6 +74,8 @@ const FoodInputForm = ({ userId }: { userId: UserId }) => {
     const newFoodItem = toLocalFoodItem(request);
 
     console.log(newFoodItem);
+
+    addFood(newFoodItem);
 
     setForm(initialForm);
   };
