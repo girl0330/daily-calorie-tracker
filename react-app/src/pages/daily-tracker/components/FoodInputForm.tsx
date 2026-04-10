@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { CreateFoodRequest, FoodForm, FoodItem, MealType, UserId } from '../../../types/types';
-import { addFood } from '../../../service/FoodService';
+import { addFood } from '../../../service/foodService';
 
 const initialForm: FoodForm = {
   mealType: 'breakfast',

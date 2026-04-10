@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { FoodItem, MealType } from '../../types/types';
-import { getFoods } from '../../service/FoodService';
+import { getFoods } from '../../service/foodService';
 
 type FoodCardProps = {
   mealType: MealType;
@@ -49,7 +49,7 @@ export default function FoodCard({ mealType }: FoodCardProps) {
                       onClick={() => setIsEditing(false)}
                       className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-5) focus:outline-none"
                     >
-                      <img src="/cross.svg" alt="딛힘" className="h-3 w-3" />
+                      <img src="/close.svg" alt="딛힘" className="h-4 w-4" />
                     </button>
                   </>
                 ) : (
@@ -65,7 +65,7 @@ export default function FoodCard({ mealType }: FoodCardProps) {
                       type="button"
                       className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-5) focus:outline-none"
                     >
-                      <img src="/trash-alt-delete-bin.svg" alt="삭제" className="h-4 w-4" />
+                      <img src="/trash-bin.svg" alt="삭제" className="h-4 w-4" />
                     </button>
                   </>
                 )}
