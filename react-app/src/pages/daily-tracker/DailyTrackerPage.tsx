@@ -1,10 +1,22 @@
-import type { UserId } from '../../types/types';
+import type { FoodItem, UserId } from '../../types/types';
 import WeeklyDayBar from './components/WeeklyDayBar';
-import FoodCard from '../../components/meal-board/FoodCard';
 import FoodInputForm from './components/FoodInputForm';
 import NutritionChart from '../../components/charts/NutritionChart';
+import { useEffect, useState } from 'react';
+import { getFoods } from '../../service/foodService';
+import { CardBoard } from '../../components/meal-board/CardBoard';
 
 export default function DailyTrackerPage({ userId }: { userId: UserId }) {
+  const [foods, setFoods] = useState<FoodItem[]>([]);
+
+  useEffect(() => {
+    const storedFoods = getFoods();
+
+    console.log('데일리 페이지의 저장된 음식 리스트 확인 :::', storedFoods);
+    setFoods(storedFoods);
+  }, []);
+
+  console.log('foods :::', foods);
   return (
     <>
       <section className="flex flex-col gap-4">
@@ -20,91 +32,7 @@ export default function DailyTrackerPage({ userId }: { userId: UserId }) {
         </section>
 
         {/* 카드 리스트 */}
-        <section className="rounded-md border border-(--neutral-4) bg-(--bg-section)">
-          <div className="grid h-full grid-cols-3 divide-x divide-(--neutral-4)">
-            {/* 아침 */}
-            <div className="flex min-h-0 flex-col">
-              <div className="shrink-0 border-b border-(--neutral-4) px-4 py-3 text-center">
-                <h2 className="text-2xl font-bold text-(--text-primary)">아침</h2>
-              </div>
-
-              <div className="shrink-0 border-b border-(--neutral-4) px-4 py-3">
-                <div className="flex items-center justify-center gap-2 text-sm text-(--text-secondary)">
-                  <span className="text-(--text-muted)">
-                    carbs <span className="text-(--text-primary)">100</span> g
-                  </span>
-
-                  <span className="text-(--text-muted)">
-                    protein <span className="text-(--text-primary)">30</span> g
-                  </span>
-
-                  <span className="text-(--text-muted)">
-                    fat <span className="text-(--text-primary)">250</span> g
-                  </span>
-
-                  <span className="order-4 text-(--neutral-3)">|</span>
-                  <span className="order-5 font-semibold text-(--primary-1)">총 650 kcal</span>
-                </div>
-              </div>
-              <FoodCard mealType="breakfast" />
-            </div>
-
-            {/* 점심 */}
-            <div className="flex min-h-0 flex-col">
-              <div className="shrink-0 border-b border-(--neutral-4) px-4 py-3 text-center">
-                <h2 className="text-2xl font-bold text-(--text-primary)">점심</h2>
-              </div>
-
-              <div className="shrink-0 border-b border-(--neutral-4) px-4 py-3">
-                <div className="flex items-center justify-center gap-2 text-sm text-(--text-secondary)">
-                  <span className="text-(--text-muted)">
-                    carbs <span className="text-(--text-primary)">100</span> g
-                  </span>
-
-                  <span className="text-(--text-muted)">
-                    protein <span className="text-(--text-primary)">30</span> g
-                  </span>
-
-                  <span className="text-(--text-muted)">
-                    fat <span className="text-(--text-primary)">250</span> g
-                  </span>
-
-                  <span className="order-4 text-(--neutral-3)">|</span>
-                  <span className="order-5 font-semibold text-(--primary-1)">총 650 kcal</span>
-                </div>
-              </div>
-              <FoodCard mealType="lunch" />
-            </div>
-
-            {/* 저녁 */}
-            <div className="flex min-h-0 flex-col">
-              <div className="shrink-0 border-b border-(--neutral-4) px-4 py-3 text-center">
-                <h2 className="text-2xl font-bold text-(--text-primary)">저녁</h2>
-              </div>
-
-              <div className="shrink-0 border-b border-(--neutral-4) px-4 py-3">
-                <div className="flex items-center justify-center gap-2 text-sm text-(--text-secondary)">
-                  <span className="text-(--text-muted)">
-                    carbs <span className="text-(--text-primary)">100</span> g
-                  </span>
-
-                  <span className="text-(--text-muted)">
-                    protein <span className="text-(--text-primary)">30</span> g
-                  </span>
-
-                  <span className="text-(--text-muted)">
-                    fat <span className="text-(--text-primary)">250</span> g
-                  </span>
-
-                  <span className="order-4 text-(--neutral-3)">|</span>
-                  <span className="order-5 font-semibold text-(--primary-1)">총 650 kcal</span>
-                </div>
-              </div>
-
-              <FoodCard mealType="dinner" />
-            </div>
-          </div>
-        </section>
+        <CardBoard foods={foods} />
       </section>
     </>
   );
