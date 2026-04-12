@@ -25,14 +25,14 @@ export default function DailyTrackerPage({ userId }: { userId: UserId }) {
 
         <section className="grid grid-cols-2 gap-4">
           {/* 입력 + 영양 상태 */}
-          <FoodInputForm userId={userId} />
+          <FoodInputForm userId={userId} setFoods={setFoods} />
 
           {/* 영양소 그래프 */}
           <NutritionChart />
         </section>
 
         {/* 카드 리스트 */}
-        <CardBoard foods={foods} />
+        <CardBoard foods={foods} setFoods={setFoods} />
       </section>
     </>
   );

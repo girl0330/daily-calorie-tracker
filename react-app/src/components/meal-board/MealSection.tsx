@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from 'react';
 import type { FoodItem, MealType } from '../../types/types';
 import { calories, caloriesByMeal } from '../../utils/calculate';
 import FoodCard from './FoodCard';
@@ -6,8 +7,9 @@ type MealSectionProps = {
   title: string;
   mealType: MealType;
   foods: FoodItem[];
+  setFoods: Dispatch<SetStateAction<FoodItem[]>>;
 };
-export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
+export const MealSection = ({ title, mealType, foods, setFoods }: MealSectionProps) => {
   const mealFoods = foods.filter(food => {
     return food.mealType === mealType;
   });
@@ -16,10 +18,12 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
 
   return (
     <div className="flex min-h-0 flex-col">
+      {/* 헤더 영역 */}
       <div className="shrink-0 border-b border-(--neutral-4) px-4 py-3 text-center">
         <h2 className="text-2xl font-bold text-(--text-primary)">{title}</h2>
       </div>
 
+      {/* 영양소 요약 영역 */}
       <div className="shrink-0 border-b border-(--neutral-4) px-4 py-3">
         <div className="flex items-center justify-center gap-2 text-sm text-(--text-secondary)">
           <span className="text-(--text-muted)">
@@ -40,8 +44,10 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
           </span>
         </div>
       </div>
+
+      {/* 카드 리스트 영역 */}
       {mealFoods.map(food => (
-        <FoodCard key={food.id} food={food} />
+        <FoodCard key={food.id} food={food} setFoods={setFoods} />
       ))}
     </div>
   );

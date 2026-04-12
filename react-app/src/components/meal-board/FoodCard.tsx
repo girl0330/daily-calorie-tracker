@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, type Dispatch, type SetStateAction } from 'react';
 import type { FoodItem } from '../../types/types';
 import { calories } from '../../utils/calculate';
+import { removeFood } from '../../service/foodService';
 
 type FoodCardProps = {
   food: FoodItem;
+  setFoods: Dispatch<SetStateAction<FoodItem[]>>;
 };
 
-export default function FoodCard({ food }: FoodCardProps) {
+export default function FoodCard({ food, setFoods }: FoodCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   // const [foods, setFoods] = useState<FoodItem[]>([]);
 
@@ -23,7 +25,7 @@ export default function FoodCard({ food }: FoodCardProps) {
   // }, [mealType]);
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto p-4">
+    <div className="min-h-0 overflow-y-auto p-4">
       <div className="space-y-4">
         {/* <article className="rounded-md bg-(--white) p-4 shadow-sm">  */}
         <article key={food.id} className="rounded-md border border-(--neutral-4) bg-(--white) p-4 shadow-sm">
@@ -64,6 +66,10 @@ export default function FoodCard({ food }: FoodCardProps) {
                   </button>
                   <button
                     type="button"
+                    onClick={() => {
+                      removeFood(food.id);
+                      setFoods(prev => prev.filter(f => f.id !== food.id));
+                    }}
                     className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-5) focus:outline-none"
                   >
                     <img src="/trash-bin.svg" alt="삭제" className="h-4 w-4" />
