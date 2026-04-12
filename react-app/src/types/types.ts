@@ -23,5 +23,15 @@ export type CreateFoodRequest = {
   fat: number;
 };
 
+// 서버에 전송할 음식 데이터 타입
+export type UpdateFoodRequest = {
+  userId: UserId;
+  mealType: MealType;
+  foodName: string;
+  carbs: number;
+  protein: number;
+  fat: number;
+};
+
 // 사용자 ID
 export type UserId = string;

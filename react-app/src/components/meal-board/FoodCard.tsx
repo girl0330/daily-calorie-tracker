@@ -10,19 +10,6 @@ type FoodCardProps = {
 
 export default function FoodCard({ food, setFoods }: FoodCardProps) {
   const [isEditing, setIsEditing] = useState(false);
-  // const [foods, setFoods] = useState<FoodItem[]>([]);
-
-  // useEffect(() => {
-  //   // console.log(mealType);
-  //   const data = getFoods();
-  //   // console.log('data:::   ' + JSON.stringify(data));
-  //   const breakfastData = data.filter(item => {
-  //     return item.mealType === mealType;
-  //   });
-  //   // console.log('breakfastData:::   ' + JSON.stringify(breakfastData));
-
-  //   setFoods(breakfastData);
-  // }, [mealType]);
 
   return (
     <div className="min-h-0 overflow-y-auto p-4">

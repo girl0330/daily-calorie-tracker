@@ -2,14 +2,16 @@ import type { Dispatch, SetStateAction } from 'react';
 import type { FoodItem, MealType } from '../../types/types';
 import { calories, caloriesByMeal } from '../../utils/calculate';
 import FoodCard from './FoodCard';
+import EditFoodCard from './EditFoodCard';
 
 type MealSectionProps = {
+  userId: string;
   title: string;
   mealType: MealType;
   foods: FoodItem[];
   setFoods: Dispatch<SetStateAction<FoodItem[]>>;
 };
-export const MealSection = ({ title, mealType, foods, setFoods }: MealSectionProps) => {
+export const MealSection = ({ userId, title, mealType, foods, setFoods }: MealSectionProps) => {
   const mealFoods = foods.filter(food => {
     return food.mealType === mealType;
   });
@@ -47,7 +49,7 @@ export const MealSection = ({ title, mealType, foods, setFoods }: MealSectionPro
 
       {/* 카드 리스트 영역 */}
       {mealFoods.map(food => (
-        <FoodCard key={food.id} food={food} setFoods={setFoods} />
+        <EditFoodCard userId={userId} key={food.id} food={food} setFoods={setFoods} mealType={food.mealType} />
       ))}
     </div>
   );

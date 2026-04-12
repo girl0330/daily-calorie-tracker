@@ -32,7 +32,7 @@ export default function DailyTrackerPage({ userId }: { userId: UserId }) {
         </section>
 
         {/* 카드 리스트 */}
-        <CardBoard foods={foods} setFoods={setFoods} />
+        <CardBoard userId={userId} foods={foods} setFoods={setFoods} />
       </section>
     </>
   );
