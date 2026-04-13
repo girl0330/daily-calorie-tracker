@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type { FoodItem, MealType } from '../../types/types';
-import { calories, caloriesByMeal } from '../../utils/calculate';
+import { calories, nutrientsByMeal } from '../../utils/calculate';
 import FoodCard from './FoodCard';
 
 type MealSectionProps = {
@@ -24,12 +24,12 @@ type MealSectionProps = {
 },
 ...{}] */
 
-export const MealSection = ({ userId, title, mealType, foods, setFoods }: MealSectionProps) => {
+export const MealSection = ({ title, mealType, foods, setFoods }: MealSectionProps) => {
   const mealFoods = foods.filter(food => {
     return food.mealType === mealType;
   });
   console.log('mealFoods의 배열 확인 ::: ', mealFoods);
-  const mealNutrition = caloriesByMeal(foods)[mealType];
+  const mealNutrition = nutrientsByMeal(foods)[mealType];
 
   return (
     <div className="flex min-h-0 flex-col">
