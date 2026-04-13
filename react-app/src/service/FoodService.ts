@@ -15,7 +15,7 @@ export const addFood = (newFood: CreateFoodRequest) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(foodsToStore));
 };
 
-export const updateFood = (editFoodItem: FoodItem) => {
+export const updateFood = (editFoodItem: UpdateFoodRequest) => {
   const storedFoods = localStorage.getItem(STORAGE_KEY);
   const foods: FoodItem[] = storedFoods ? JSON.parse(storedFoods) : [];
 
