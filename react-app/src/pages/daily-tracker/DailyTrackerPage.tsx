@@ -6,6 +6,19 @@ import { useEffect, useState } from 'react';
 import { getFoods } from '../../service/foodService';
 import { CardBoard } from '../../components/meal-board/CardBoard';
 
+/* foods 데이터
+[{
+  id: 1775832844345
+  userId: "test-user"
+  foodName: "커피"
+  mealType: "dinner"
+  carbs: 0
+  protein: 5
+  fat: 0
+  createdAt: "2026-04-10T14:54:04.345Z"
+},
+...{}] */
+
 export default function DailyTrackerPage({ userId }: { userId: UserId }) {
   const [foods, setFoods] = useState<FoodItem[]>([]);
 

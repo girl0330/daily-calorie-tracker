@@ -24,6 +24,7 @@ const initialForm: FoodForm = {
   fat: '',
 };
 
+// localStorage로 데이터 관리할때만 임시로 사용용
 const toLocalFoodItem = (payload: CreateFoodRequest): FoodItem => ({
   id: Date.now(),
   createdAt: new Date().toISOString(),

@@ -2,7 +2,6 @@ import type { Dispatch, SetStateAction } from 'react';
 import type { FoodItem, MealType } from '../../types/types';
 import { calories, caloriesByMeal } from '../../utils/calculate';
 import FoodCard from './FoodCard';
-import EditFoodCard from './EditFoodCard';
 
 type MealSectionProps = {
   userId: string;
@@ -11,6 +10,20 @@ type MealSectionProps = {
   foods: FoodItem[];
   setFoods: Dispatch<SetStateAction<FoodItem[]>>;
 };
+
+/* foods 데이터
+[{
+  id: 1775832844345
+  userId: "test-user"
+  foodName: "커피"
+  mealType: "dinner"
+  carbs: 0
+  protein: 5
+  fat: 0
+  createdAt: "2026-04-10T14:54:04.345Z"
+},
+...{}] */
+
 export const MealSection = ({ userId, title, mealType, foods, setFoods }: MealSectionProps) => {
   const mealFoods = foods.filter(food => {
     return food.mealType === mealType;
@@ -49,7 +62,8 @@ export const MealSection = ({ userId, title, mealType, foods, setFoods }: MealSe
 
       {/* 카드 리스트 영역 */}
       {mealFoods.map(food => (
-        <EditFoodCard userId={userId} key={food.id} food={food} setFoods={setFoods} mealType={food.mealType} />
+        <FoodCard key={food.id} food={food} setFoods={setFoods} />
+        // <EditFoodCard userId={userId} key={food.id} food={food} setFoods={setFoods} mealType={food.mealType} />
       ))}
     </div>
   );
