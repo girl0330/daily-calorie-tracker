@@ -33,7 +33,7 @@ export default function DailyTrackerPage({ userId }: { userId: UserId }) {
     <>
       <section className="flex flex-col gap-4">
         {/* 상단 주간 바 */}
-        <WeeklyDayBar />
+        <WeeklyDayBar foods={foods} />
 
         <section className="grid grid-cols-2 gap-4">
           {/* 입력 + 영양 상태 */}

@@ -1,4 +1,4 @@
-import type { CreateFoodRequest, FoodItem, UpdateFoodRequest } from '../types/types';
+import type { FoodItem, UpdateFoodRequest } from '../types/types';
 
 const STORAGE_KEY = 'foods';
 
@@ -7,7 +7,7 @@ export const getFoods = (): FoodItem[] => {
   return storedFoods ? (JSON.parse(storedFoods) as FoodItem[]) : [];
 };
 
-export const addFood = (newFood: CreateFoodRequest) => {
+export const addFood = (newFood: FoodItem) => {
   const storedFoods = localStorage.getItem(STORAGE_KEY);
   const foods: FoodItem[] = storedFoods ? JSON.parse(storedFoods) : [];
   const foodsToStore = [...foods, newFood];

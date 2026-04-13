@@ -13,6 +13,14 @@ export type FoodItem = {
   createdAt: string;
 };
 
+export type DayItem = {
+  key: string;
+  label: string;
+  dayNumber: number;
+  isToday: boolean;
+  hasData: boolean;
+};
+
 // 서버에 전송할 음식 데이터 타입
 export type CreateFoodRequest = {
   userId: UserId;
