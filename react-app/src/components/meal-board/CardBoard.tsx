@@ -9,8 +9,6 @@ type CardBoardProp = {
 };
 
 export const CardBoard = ({ userId, foods, setFoods }: CardBoardProp) => {
-  //   console.log('foods 확인::: ', foods[0].foodName);
-
   return (
     <section className="rounded-md border border-(--neutral-4) bg-(--bg-section)">
       <div className="grid h-full grid-cols-3 divide-x divide-(--neutral-4)">
