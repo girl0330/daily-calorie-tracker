@@ -1,7 +1,21 @@
-import { useState } from 'react';
-import type { CreateFoodRequest, FoodForm, FoodItem, MealType, UserId } from '../../../types/types';
-import { addFood } from '../../../service/FoodService';
+import { useState, type Dispatch, type SetStateAction } from 'react';
+import type { CreateFoodRequest, FoodItem, MealType, UserId } from '../../../types/types';
+import { addFood } from '../../../service/foodService';
 
+type FoodInputFormProp = {
+  userId: string;
+  setFoods: Dispatch<SetStateAction<FoodItem[]>>;
+};
+// 입력창 상태용 타입
+type FoodForm = {
+  mealType: MealType;
+  foodName: string;
+  carbs: string;
+  protein: string;
+  fat: string;
+};
+
+// 초기 폼
 const initialForm: FoodForm = {
   mealType: 'breakfast',
   foodName: '',
@@ -10,9 +24,17 @@ const initialForm: FoodForm = {
   fat: '',
 };
 
-const FoodInputForm = ({ userId }: { userId: UserId }) => {
+// localStorage로 데이터 관리할때만 임시로 사용용
+const toLocalFoodItem = (payload: CreateFoodRequest): FoodItem => ({
+  id: Date.now(),
+  createdAt: new Date().toISOString(),
+  ...payload,
+});
+
+const FoodInputForm = ({ userId, setFoods }: FoodInputFormProp) => {
   const [form, setForm] = useState<FoodForm>(initialForm);
 
+  // 입력 감지
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
 
@@ -30,6 +52,7 @@ const FoodInputForm = ({ userId }: { userId: UserId }) => {
     }));
   };
 
+  // 유효성 검사
   const validateFoodForm = ({ foodName, carbs, protein, fat }: FoodForm): string | null => {
     if (!foodName || !foodName.trim()) return '음식 이름을 입력해주세요.';
 
@@ -45,12 +68,6 @@ const FoodInputForm = ({ userId }: { userId: UserId }) => {
 
     return null;
   };
-
-  const toLocalFoodItem = (payload: CreateFoodRequest): FoodItem => ({
-    id: Date.now(),
-    createdAt: new Date().toISOString(),
-    ...payload,
-  });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -73,9 +90,9 @@ const FoodInputForm = ({ userId }: { userId: UserId }) => {
 
     const newFoodItem = toLocalFoodItem(request);
 
-    console.log(newFoodItem);
-
     addFood(newFoodItem);
+    // 화면 즉시 반영
+    setFoods(prev => [...prev, newFoodItem]);
 
     setForm(initialForm);
   };

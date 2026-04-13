@@ -13,15 +13,6 @@ export type FoodItem = {
   createdAt: string;
 };
 
-// 입력창 상태용 타입입
-export type FoodForm = {
-  mealType: MealType;
-  foodName: string;
-  carbs: string;
-  protein: string;
-  fat: string;
-};
-
 // 서버에 전송할 음식 데이터 타입
 export type CreateFoodRequest = {
   userId: UserId;
@@ -30,6 +21,18 @@ export type CreateFoodRequest = {
   carbs: number;
   protein: number;
   fat: number;
+};
+
+// 서버에 전송할 음식 데이터 타입
+export type UpdateFoodRequest = {
+  id: number;
+  userId: UserId;
+  mealType: MealType;
+  foodName: string;
+  carbs: number;
+  protein: number;
+  fat: number;
+  createdAt: string;
 };
 
 // 사용자 ID

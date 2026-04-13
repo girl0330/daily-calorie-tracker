@@ -1,11 +1,36 @@
-import type { CreateFoodRequest } from '../types/types';
+import type { CreateFoodRequest, FoodItem, UpdateFoodRequest } from '../types/types';
 
 const STORAGE_KEY = 'foods';
 
-export const addFood = (newFood: CreateFoodRequest) => {
-  const storedData = localStorage.getItem(STORAGE_KEY);
-  const foods = storedData ? JSON.parse(storedData) : [];
-  const updatedFoods = [...foods, newFood];
+export const getFoods = (): FoodItem[] => {
+  const storedFoods = localStorage.getItem(STORAGE_KEY);
+  return storedFoods ? (JSON.parse(storedFoods) as FoodItem[]) : [];
+};
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedFoods));
+export const addFood = (newFood: CreateFoodRequest) => {
+  const storedFoods = localStorage.getItem(STORAGE_KEY);
+  const foods: FoodItem[] = storedFoods ? JSON.parse(storedFoods) : [];
+  const foodsToStore = [...foods, newFood];
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(foodsToStore));
+};
+
+export const updateFood = (editFoodItem: FoodItem) => {
+  const storedFoods = localStorage.getItem(STORAGE_KEY);
+  const foods: FoodItem[] = storedFoods ? JSON.parse(storedFoods) : [];
+
+  const updatedFoodsToStore = foods.map(food => {
+    return food.id === editFoodItem.id ? editFoodItem : food;
+  });
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedFoodsToStore));
+};
+
+export const removeFood = (foodId: number) => {
+  console.log('삭제 클릭');
+  const storedFoods = localStorage.getItem(STORAGE_KEY);
+  const foods: FoodItem[] = storedFoods ? JSON.parse(storedFoods) : [];
+
+  const removedFoods = foods.filter(food => food.id !== foodId);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(removedFoods));
 };
