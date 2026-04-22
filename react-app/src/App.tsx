@@ -6,11 +6,13 @@ import MonthlyTrackerPage from './pages/monthly-tracker/MonthlyTrackerPage';
 import SignUp from './pages/user/SignUp';
 import { useState } from 'react';
 import Login from './pages/user/Login';
+import type { User } from '@supabase/supabase-js';
 
 // const USER_ID: UserId = 'test-user';
 
 function App() {
-  const [user, setUser] = useState('');
+  const [user, setUser] = useState<User | null>(null);
+
   return (
     <BrowserRouter>
       <div style={{ display: 'flex', minHeight: '100vh' }}>

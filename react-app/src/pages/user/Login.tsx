@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { login } from '../../service/UserService';
 import { useNavigate } from 'react-router-dom';
-// import { signUp } from '../../service/UserService';
+import type { User } from '@supabase/supabase-js';
 
 type LoginProps = {
-  setUser: React.Dispatch<React.SetStateAction<string>>;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
 };
 
 const Login = ({ setUser }: LoginProps) => {
@@ -12,18 +12,21 @@ const Login = ({ setUser }: LoginProps) => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isPending, setIsPending] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('로그인 클릭', email);
+    try {
+      setIsPending(true);
+      const user = await login(email, password);
+      setUser(user);
 
-    const data = await login(email, password);
-    console.log('로그인 성공:', data);
-
-    const userEmail = data.user?.email ?? '';
-    setUser(userEmail);
-
-    navigate('/');
+      navigate('/login', { replace: true });
+    } catch (error) {
+      alert(error instanceof Error ? error.message : '로그인에 실패했습니다.');
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
@@ -65,9 +68,10 @@ const Login = ({ setUser }: LoginProps) => {
 
           <button
             type="submit"
+            disabled={isPending}
             className="text-l mt-6 h-12 w-full rounded-2xl bg-[#2f80ed] font-semibold text-white shadow-[0_4px_10px_rgba(47,128,237,0.28)] transition hover:bg-[#2975da] active:scale-[0.99]"
           >
-            로그인
+            {isPending ? '로그인 중...' : '로그인'}
           </button>
         </form>
         {/* 구분선 */}
