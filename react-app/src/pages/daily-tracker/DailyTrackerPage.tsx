@@ -1,10 +1,10 @@
 import type { FoodItem, UserId } from '../../types/types';
 import WeeklyDayBar from './components/WeeklyDayBar';
 import FoodInputForm from './components/FoodInputForm';
-import NutritionChart from '../../components/charts/NutritionChart';
 import { useEffect, useState } from 'react';
 import { getFoods } from '../../service/FoodService';
 import { CardBoard } from '../../components/meal-board/CardBoard';
+import { NutritionChart } from '../../components/charts/NutritionChart';
 
 /* foods 데이터
 [{
@@ -29,7 +29,6 @@ export default function DailyTrackerPage({ userId }: { userId: UserId }) {
     setFoods(storedFoods);
   }, []);
 
-  console.log('foods :::', foods);
   return (
     <>
       <section className="flex flex-col gap-4">
@@ -41,7 +40,7 @@ export default function DailyTrackerPage({ userId }: { userId: UserId }) {
           <FoodInputForm userId={userId} setFoods={setFoods} />
 
           {/* 영양소 그래프 */}
-          <NutritionChart />
+          <NutritionChart foods={foods} />
         </section>
 
         {/* 카드 리스트 */}

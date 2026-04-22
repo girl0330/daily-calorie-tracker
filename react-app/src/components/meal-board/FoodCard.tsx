@@ -1,7 +1,7 @@
 import { useState, type Dispatch, type SetStateAction } from 'react';
-import type { FoodItem, UpdateFoodRequest } from '../../types/types';
+import type { FoodItem } from '../../types/types';
 import { calories } from '../../utils/calculate';
-import { removeFood, updateFood } from '../../service/foodService';
+import { removeFood } from '../../service/foodService';
 import EditFoodCard from './EditFoodCard';
 
 type FoodCardProps = {
@@ -9,73 +9,8 @@ type FoodCardProps = {
   setFoods: Dispatch<SetStateAction<FoodItem[]>>;
 };
 
-type EditFoodForm = {
-  foodName: string;
-  carbs: string;
-  protein: string;
-  fat: string;
-};
-
 export default function FoodCard({ food, setFoods }: FoodCardProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [editInputForm, setEditInputForm] = useState<EditFoodForm>({
-    foodName: food.foodName,
-    carbs: String(food.carbs),
-    protein: String(food.protein),
-    fat: String(food.fat),
-  });
-
-  // 입력 감지
-  const handelInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    setEditInputForm(prev => ({
-      ...prev,
-      [name as keyof EditFoodForm]: value,
-    }));
-  };
-
-  // 유효성 검사
-  const validateFoodForm = ({ foodName, carbs, protein, fat }: EditFoodForm): string | null => {
-    if (!foodName || !foodName.trim()) return '음식 이름을 입력해주세요.';
-
-    if (carbs === '' || protein === '' || fat === '') return '탄수화물, 단백질, 지방 값을 모두 입력해주세요.';
-
-    if ([carbs, protein, fat].some(value => Number.isNaN(Number(value)))) {
-      return '탄수화물, 단백질, 지방은 숫자여야 합니다.';
-    }
-
-    if ([carbs, protein, fat].some(value => Number(value) < 0)) {
-      return '탄수화물, 단백질, 지방은 0 이상이어야 합니다.';
-    }
-
-    return null;
-  };
-
-  const handleEditSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    console.log('수정 확인 버튼 클릭됨');
-    const error = validateFoodForm(editInputForm);
-
-    // 토스트 알림으로 교체 예정
-    if (error) {
-      alert(error);
-      return;
-    }
-
-    const editedFoodItem: UpdateFoodRequest = {
-      ...food,
-      foodName: editInputForm.foodName.trim(),
-      carbs: Number(editInputForm.carbs),
-      protein: Number(editInputForm.protein),
-      fat: Number(editInputForm.fat),
-    };
-
-    updateFood(editedFoodItem);
-    // 화면 즉시 반영
-    setFoods(prev => prev.map(item => (item.id === food.id ? editedFoodItem : item)));
-  };
 
   return (
     <div className="min-h-0 overflow-y-auto p-4">
@@ -129,9 +64,6 @@ export default function FoodCard({ food, setFoods }: FoodCardProps) {
             </div>
           </article>
         )}
-        {/* 체크 */}
-
-        {/* 텍스트 영역 (가운데 정렬 )*/}
       </div>
     </div>
   );
