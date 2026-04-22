@@ -2,7 +2,7 @@ import type { FoodItem, UserId } from '../../types/types';
 import WeeklyDayBar from './components/WeeklyDayBar';
 import FoodInputForm from './components/FoodInputForm';
 import { useEffect, useState } from 'react';
-import { getFoods } from '../../service/foodService';
+import { getFoods } from '../../service/FoodService';
 import { CardBoard } from '../../components/meal-board/CardBoard';
 import { NutritionChart } from '../../components/charts/NutritionChart';
 

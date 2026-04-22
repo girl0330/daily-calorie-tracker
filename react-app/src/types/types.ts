@@ -4,7 +4,7 @@ export type MealType = 'breakfast' | 'lunch' | 'dinner';
 // 내부에서 사용할 음식 데이터
 export type FoodItem = {
   id: number;
-  userId: UserId;
+  userId: User;
   mealType: MealType;
   foodName: string;
   carbs: number;
@@ -15,7 +15,7 @@ export type FoodItem = {
 
 // 서버에 전송할 음식 데이터 타입
 export type CreateFoodRequest = {
-  userId: UserId;
+  userId: User;
   mealType: MealType;
   foodName: string;
   carbs: number;
@@ -26,7 +26,7 @@ export type CreateFoodRequest = {
 // 서버에 전송할 음식 데이터 타입
 export type UpdateFoodRequest = {
   id: number;
-  userId: UserId;
+  userId: User;
   mealType: MealType;
   foodName: string;
   carbs: number;
@@ -36,4 +36,6 @@ export type UpdateFoodRequest = {
 };
 
 // 사용자 ID
-export type UserId = string;
+export type User = {
+  email: string;
+};

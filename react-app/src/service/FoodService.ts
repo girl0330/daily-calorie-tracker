@@ -1,4 +1,5 @@
-import type { CreateFoodRequest, FoodItem, UpdateFoodRequest } from '../types/types';
+import { supabase } from '../lib/supabase';
+import type { CreateFoodRequest, FoodItem } from '../types/types';
 
 const STORAGE_KEY = 'foods';
 
@@ -7,12 +8,27 @@ export const getFoods = (): FoodItem[] => {
   return storedFoods ? (JSON.parse(storedFoods) as FoodItem[]) : [];
 };
 
-export const addFood = (newFood: CreateFoodRequest) => {
-  const storedFoods = localStorage.getItem(STORAGE_KEY);
-  const foods: FoodItem[] = storedFoods ? JSON.parse(storedFoods) : [];
-  const foodsToStore = [...foods, newFood];
+// export const addFood = (newFood: CreateFoodRequest) => {
+//   const storedFoods = localStorage.getItem(STORAGE_KEY);
+//   const foods: FoodItem[] = storedFoods ? JSON.parse(storedFoods) : [];
+//   const foodsToStore = [...foods, newFood];
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(foodsToStore));
+//   localStorage.setItem(STORAGE_KEY, JSON.stringify(foodsToStore));
+// };
+
+// export const getFoods = async () => {
+//   const { data } = await supabase.from('foods').select('*');
+//   return data ? data : [];
+// };
+
+export const addFood = async (newFood: CreateFoodRequest) => {
+  const { data, error } = await supabase.from('foods').insert([newFood]).select();
+  if (error) throw error;
+
+  if (data ? data : []) {
+    console.log('데이터 있음');
+  }
+  return data;
 };
 
 export const updateFood = (editFoodItem: FoodItem) => {

@@ -1,6 +1,6 @@
 import { useState, type Dispatch, type SetStateAction } from 'react';
 import type { CreateFoodRequest, FoodItem, MealType, UserId } from '../../../types/types';
-import { addFood } from '../../../service/foodService';
+import { addFood } from '../../../service/FoodService';
 
 type FoodInputFormProp = {
   userId: string;
@@ -90,7 +90,8 @@ const FoodInputForm = ({ userId, setFoods }: FoodInputFormProp) => {
 
     const newFoodItem = toLocalFoodItem(request);
 
-    addFood(newFoodItem);
+    const result = addFood(newFoodItem);
+    console.log('result 확인 ::::::  ', result);
     // 화면 즉시 반영
     setFoods(prev => [...prev, newFoodItem]);
 

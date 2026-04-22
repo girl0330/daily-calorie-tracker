@@ -3,10 +3,8 @@ import { NavLink } from 'react-router-dom';
 export default function Nav() {
   return (
     <>
-      <aside className="w-70 shrink-0 bg-(--bg-section) p-5">
-        <div className="flex h-20 items-center justify-center text-3xl font-bold text-(--primary-3)">
-          Daily Tracker
-        </div>
+      <aside className="flex h-screen w-70 shrink-0 bg-(--bg-section) p-5">
+        <div className="flex h-20 items-center justify-center text-3xl font-bold text-(--primary-3)">Daily Tracker</div>
 
         <div className="my-4 border border-(--primary-1)" />
 
@@ -36,12 +34,7 @@ export default function Nav() {
             Monthly Tracker
           </NavLink>
 
-          {/*<NavLink*/}
-          {/*    to="/monthly"*/}
-          {/*    className="rounded-md px-4 py-3 text-xl font-medium text-(--text-primary) hover:bg-(--primary-5) transition-colors"*/}
-          {/*>*/}
-          {/*    Monthly Tracker*/}
-          {/*</NavLink>*/}
+          <button className="mt-auto">로그아웃</button>
         </nav>
       </aside>
     </>
