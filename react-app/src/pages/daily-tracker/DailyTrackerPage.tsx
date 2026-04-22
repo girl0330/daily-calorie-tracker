@@ -3,7 +3,7 @@ import WeeklyDayBar from './components/WeeklyDayBar';
 import FoodInputForm from './components/FoodInputForm';
 import NutritionChart from '../../components/charts/NutritionChart';
 import { useEffect, useState } from 'react';
-import { getFoods } from '../../service/foodService';
+import { getFoods } from '../../service/FoodService';
 import { CardBoard } from '../../components/meal-board/CardBoard';
 
 /* foods 데이터
