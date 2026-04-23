@@ -29,6 +29,7 @@ export const login = async (email: string, password: string) => {
     throw new Error('로그인 사용자 정보를 가져오지 못했습니다.');
   }
 
+  console.log('로그인 성공', data);
   return data.user;
 };
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { login } from '../../service/UserService';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import type { User } from '@supabase/supabase-js';
 
 type LoginProps = {
@@ -16,6 +16,7 @@ const Login = ({ setUser }: LoginProps) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
       setIsPending(true);
       const user = await login(email, password);
@@ -77,7 +78,9 @@ const Login = ({ setUser }: LoginProps) => {
         {/* 구분선 */}
         <div className="my-12 flex items-center gap-4">
           <div className="h-px flex-1 bg-[#ddd6cf]" />
-          <p className="shrink-0 text-[17px] text-[#8a8178]">SNS Sign up</p>
+          <Link to="/sign-up" className="shrink-0 cursor-pointer text-[17px] text-[#8a8178] hover:text-[#5f574f]">
+            Sign up
+          </Link>
           <div className="h-px flex-1 bg-[#ddd6cf]" />
         </div>
 

@@ -59,7 +59,7 @@ const SignUp = () => {
         {/* 구분선 */}
         <div className="my-12 flex items-center gap-4">
           <div className="h-px flex-1 bg-[#ddd6cf]" />
-          <p className="shrink-0 text-[17px] text-[#8a8178]">SNS Sign up</p>
+          <p className="shrink-0 text-[17px] text-[#8a8178]">Sign up</p>
           <div className="h-px flex-1 bg-[#ddd6cf]" />
         </div>
 
