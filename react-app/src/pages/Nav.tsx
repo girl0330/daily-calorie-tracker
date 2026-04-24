@@ -1,18 +1,17 @@
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
 import { logout } from '../service/UserService';
-import type { User } from '@supabase/supabase-js';
 
-type NavProps = {
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
-  user: User | null;
-};
-
-export default function Nav({ setUser, user }: NavProps) {
+export default function Nav() {
   const navigate = useNavigate();
+
+  const clearUser = useAuthStore(state => state.clearUser);
+  const user = useAuthStore(state => state.user);
 
   const handleLogout = async () => {
     await logout();
-    setUser(null);
+
+    clearUser();
     navigate('/login', { replace: true });
   };
   return (
@@ -23,6 +22,7 @@ export default function Nav({ setUser, user }: NavProps) {
         <div className="my-4 border border-(--primary-1)" />
 
         <nav className="flex flex-col gap-2">
+          <div>로그인한 유저: {user?.email}</div>
           <NavLink
             to="/"
             className={({ isActive }) =>

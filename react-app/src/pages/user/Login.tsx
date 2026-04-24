@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import { login } from '../../service/UserService';
 import { Link, useNavigate } from 'react-router-dom';
-import type { User } from '@supabase/supabase-js';
+import { useAuthStore } from '../../store/authStore';
 
-type LoginProps = {
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
-};
-
-const Login = ({ setUser }: LoginProps) => {
+const Login = () => {
   const navigate = useNavigate();
+
+  const setUser = useAuthStore(state => state.setUser);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,10 +17,10 @@ const Login = ({ setUser }: LoginProps) => {
 
     try {
       setIsPending(true);
-      const user = await login(email, password);
-      setUser(user);
+      const data = await login(email, password);
+      setUser(data.user);
 
-      navigate('/login', { replace: true });
+      navigate('/', { replace: true });
     } catch (error) {
       alert(error instanceof Error ? error.message : '로그인에 실패했습니다.');
     } finally {
