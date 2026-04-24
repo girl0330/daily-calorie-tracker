@@ -1,29 +1,31 @@
 import { useState } from 'react';
 import { login } from '../../service/UserService';
-import { useNavigate } from 'react-router-dom';
-// import { signUp } from '../../service/UserService';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../store/authStore';
 
-type LoginProps = {
-  setUser: React.Dispatch<React.SetStateAction<string>>;
-};
-
-const Login = ({ setUser }: LoginProps) => {
+const Login = () => {
   const navigate = useNavigate();
+
+  const setUser = useAuthStore(state => state.setUser);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isPending, setIsPending] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('로그인 클릭', email);
 
-    const data = await login(email, password);
-    console.log('로그인 성공:', data);
+    try {
+      setIsPending(true);
+      const data = await login(email, password);
+      setUser(data.user);
 
-    const userEmail = data.user?.email ?? '';
-    setUser(userEmail);
-
-    navigate('/');
+      navigate('/', { replace: true });
+    } catch (error) {
+      alert(error instanceof Error ? error.message : '로그인에 실패했습니다.');
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
@@ -65,15 +67,18 @@ const Login = ({ setUser }: LoginProps) => {
 
           <button
             type="submit"
+            disabled={isPending}
             className="text-l mt-6 h-12 w-full rounded-2xl bg-[#2f80ed] font-semibold text-white shadow-[0_4px_10px_rgba(47,128,237,0.28)] transition hover:bg-[#2975da] active:scale-[0.99]"
           >
-            로그인
+            {isPending ? '로그인 중...' : '로그인'}
           </button>
         </form>
         {/* 구분선 */}
         <div className="my-12 flex items-center gap-4">
           <div className="h-px flex-1 bg-[#ddd6cf]" />
-          <p className="shrink-0 text-[17px] text-[#8a8178]">SNS Sign up</p>
+          <Link to="/sign-up" className="shrink-0 cursor-pointer text-[17px] text-[#8a8178] hover:text-[#5f574f]">
+            Sign up
+          </Link>
           <div className="h-px flex-1 bg-[#ddd6cf]" />
         </div>
 

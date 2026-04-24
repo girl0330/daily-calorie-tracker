@@ -1,29 +1,64 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, replace } from 'react-router-dom';
 import './App.css';
 import Nav from './pages/Nav';
 import DailyTrackerPage from './pages/daily-tracker/DailyTrackerPage';
 import MonthlyTrackerPage from './pages/monthly-tracker/MonthlyTrackerPage';
 import SignUp from './pages/user/SignUp';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import Login from './pages/user/Login';
-
-// const USER_ID: UserId = 'test-user';
+import { supabase } from './lib/supabase';
+import { useAuthStore } from './store/authStore';
 
 function App() {
-  const [user, setUser] = useState('');
+  const user = useAuthStore(state => state.user);
+  const isAuthLoading = useAuthStore(state => state.isAuthLoading);
+  const setUser = useAuthStore(state => state.setUser);
+  const setIsAuthLoading = useAuthStore(state => state.setIsAuthLoading);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const initAuth = async () => {
+      const { data } = await supabase.auth.getSession();
+
+      if (!mounted) return;
+
+      setUser(data.session?.user ?? null);
+      setIsAuthLoading(false);
+    };
+
+    initAuth();
+
+    // 로그인 상태가 바뀔 때마다 실행되는는 구독 코드
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setIsAuthLoading(false);
+    });
+
+    return () => {
+      mounted = false;
+      authListener.subscription.unsubscribe();
+    };
+  }, [setUser, setIsAuthLoading]);
+
+  if (isAuthLoading) {
+    return <div>인증 상태 확인 중...</div>;
+  }
+
   return (
     <BrowserRouter>
       <div style={{ display: 'flex', minHeight: '100vh' }}>
-        {/* Navbar */}
         <Nav />
 
-        {/* Main */}
         <main className="flex-1 p-5">
           <Routes>
             <Route path="/sign-up" element={<SignUp />} />
-            <Route path="/login" element={<Login setUser={setUser} />} />
-            <Route path="/" element={<DailyTrackerPage userId={user} />} />
-            <Route path="/monthly" element={<MonthlyTrackerPage />} />
+
+            <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+
+            <Route path="/" element={user ? <DailyTrackerPage userId={user.id} /> : <Navigate to="/login" replace />} />
+
+            <Route path="/monthly" element={user ? <MonthlyTrackerPage /> : <Navigate to="/login" replace />} />
           </Routes>
         </main>
       </div>
