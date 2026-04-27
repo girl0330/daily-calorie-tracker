@@ -56,7 +56,7 @@ function App() {
 
             <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
 
-            <Route path="/" element={user ? <DailyTrackerPage userId={user.id} /> : <Navigate to="/login" replace />} />
+            <Route path="/" element={user ? <DailyTrackerPage /> : <Navigate to="/login" replace />} />
 
             <Route path="/monthly" element={user ? <MonthlyTrackerPage /> : <Navigate to="/login" replace />} />
           </Routes>

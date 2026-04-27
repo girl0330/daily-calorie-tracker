@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import type { CreateFoodRequest, MealType } from '../../../types/types';
+import type { CreateFoodRequest, MealType, UserId } from '../../../types/types';
 import { createFood } from '../../../service/FoodService';
-import { useAuthStore } from '../../../store/authStore';
-import { useNavigate } from 'react-router-dom';
 import { useFoodItemStore } from '../../../store/foodStore';
 
 // 입력창 상태용 타입
@@ -23,11 +21,9 @@ const initialForm: FoodForm = {
   fat: '',
 };
 
-const FoodInputForm = () => {
+const FoodInputForm = ({ userId }: { userId: UserId }) => {
   const [form, setForm] = useState<FoodForm>(initialForm);
-  const navigate = useNavigate();
 
-  const user = useAuthStore(state => state.user);
   const addFood = useFoodItemStore(state => state.addFood);
 
   // 입력 감지
@@ -65,15 +61,9 @@ const FoodInputForm = () => {
     return null;
   };
 
-  // 폼 전송송
+  // 폼 전송
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!user) {
-      alert('로그인이 필요합니다.');
-      navigate('/login');
-      return;
-    }
 
     const error = validateFoodForm(form);
 
@@ -83,7 +73,7 @@ const FoodInputForm = () => {
     }
 
     const requestFood: CreateFoodRequest = {
-      userId: user.id,
+      userId: userId,
       mealType: form.mealType,
       foodName: form.foodName.trim(),
       carbs: Number(form.carbs),
@@ -94,7 +84,7 @@ const FoodInputForm = () => {
     // 데이터 추가
     const addedFood = await createFood(requestFood);
 
-    // store에 추가
+    // FoodStore에 추가
     addFood(addedFood);
 
     setForm(initialForm);

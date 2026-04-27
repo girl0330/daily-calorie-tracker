@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { getFoods } from '../../service/FoodService';
 import { CardBoard } from '../../components/meal-board/CardBoard';
 import { NutritionChart } from '../../components/charts/NutritionChart';
+import { useAuthStore } from '../../store/authStore';
 
 /* foods 데이터
 [{
@@ -19,15 +20,26 @@ import { NutritionChart } from '../../components/charts/NutritionChart';
 },
 ...{}] */
 
-export default function DailyTrackerPage({ userId }: { userId: UserId }) {
+export default function DailyTrackerPage() {
+  const user = useAuthStore(state => state.user);
+
   const [foods, setFoods] = useState<FoodItem[]>([]);
 
   useEffect(() => {
+    if (!user) return;
+
     const storedFoods = getFoods();
 
     console.log('데일리 페이지의 저장된 음식 리스트 확인 :::', storedFoods);
     setFoods(storedFoods);
-  }, []);
+  }, [user]);
+
+  //user.id를 안전하게 사용하기 위한 방어 코드
+  if (!user) {
+    return null;
+  }
+
+  const userId = user.id as UserId;
 
   return (
     <>
@@ -37,7 +49,7 @@ export default function DailyTrackerPage({ userId }: { userId: UserId }) {
 
         <section className="grid grid-cols-2 gap-4">
           {/* 입력 + 영양 상태 */}
-          <FoodInputForm userId={userId} setFoods={setFoods} />
+          <FoodInputForm userId={userId} />
 
           {/* 영양소 그래프 */}
           <NutritionChart foods={foods} />
