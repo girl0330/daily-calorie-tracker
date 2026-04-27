@@ -1,6 +1,8 @@
 import { useState, type Dispatch, type SetStateAction } from 'react';
-import type { CreateFoodRequest, FoodItem, MealType, UserId } from '../../../types/types';
+import type { CreateFoodRequest, FoodItem, MealType } from '../../../types/types';
 import { addFood } from '../../../service/FoodService';
+import { useAuthStore } from '../../../store/authStore';
+import { useNavigate } from 'react-router-dom';
 
 type FoodInputFormProp = {
   userId: string;
@@ -31,8 +33,11 @@ const toLocalFoodItem = (payload: CreateFoodRequest): FoodItem => ({
   ...payload,
 });
 
-const FoodInputForm = ({ userId, setFoods }: FoodInputFormProp) => {
+const FoodInputForm = ({ setFoods }: FoodInputFormProp) => {
   const [form, setForm] = useState<FoodForm>(initialForm);
+
+  const user = useAuthStore(state => state.user);
+  const navigate = useNavigate();
 
   // 입력 감지
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,6 +77,12 @@ const FoodInputForm = ({ userId, setFoods }: FoodInputFormProp) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+
     const error = validateFoodForm(form);
 
     if (error) {
@@ -80,7 +91,7 @@ const FoodInputForm = ({ userId, setFoods }: FoodInputFormProp) => {
     }
 
     const request: CreateFoodRequest = {
-      userId: userId,
+      userId: user.id,
       mealType: form.mealType,
       foodName: form.foodName.trim(),
       carbs: Number(form.carbs),
@@ -88,10 +99,6 @@ const FoodInputForm = ({ userId, setFoods }: FoodInputFormProp) => {
       fat: Number(form.fat),
     };
 
-    const newFoodItem = toLocalFoodItem(request);
-
-    const result = addFood(newFoodItem);
-    console.log('result 확인 ::::::  ', result);
     // 화면 즉시 반영
     setFoods(prev => [...prev, newFoodItem]);
 

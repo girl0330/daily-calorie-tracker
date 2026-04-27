@@ -1,10 +1,12 @@
+export type UserId = string;
+
 // TODO: 이후 Food 입력/렌더링에서 사용할 도메인 타입
 export type MealType = 'breakfast' | 'lunch' | 'dinner';
 
 // 내부에서 사용할 음식 데이터
 export type FoodItem = {
   id: number;
-  userId: User;
+  userId: UserId;
   mealType: MealType;
   foodName: string;
   carbs: number;
@@ -15,7 +17,7 @@ export type FoodItem = {
 
 // 서버에 전송할 음식 데이터 타입
 export type CreateFoodRequest = {
-  userId: User;
+  userId: UserId;
   mealType: MealType;
   foodName: string;
   carbs: number;
@@ -26,16 +28,11 @@ export type CreateFoodRequest = {
 // 서버에 전송할 음식 데이터 타입
 export type UpdateFoodRequest = {
   id: number;
-  userId: User;
+  userId: UserId;
   mealType: MealType;
   foodName: string;
   carbs: number;
   protein: number;
   fat: number;
   createdAt: string;
-};
-
-// 사용자 ID
-export type User = {
-  email: string;
 };
