@@ -21,14 +21,36 @@ export const getFoods = (): FoodItem[] => {
 //   return data ? data : [];
 // };
 
-export const addFood = async (newFood: CreateFoodRequest) => {
-  const { data, error } = await supabase.from('foods').insert([newFood]).select();
+export const createFood = async (newFood: CreateFoodRequest): Promise<FoodItem> => {
+  const { data, error } = await supabase
+    .from('foods')
+    .insert({
+      user_id: newFood.userId,
+      meal_type: newFood.mealType,
+      food_name: newFood.foodName,
+      carbs: newFood.carbs,
+      protein: newFood.protein,
+      fat: newFood.fat,
+    })
+    .select()
+    .single();
+
   if (error) throw error;
 
   if (data ? data : []) {
-    console.log('데이터 있음');
+    console.log('데이터 있음 insert 확인::: ', data);
   }
-  return data;
+  return {
+    id: data.id,
+    userId: data.user_id,
+    mealType: data.meal_type,
+    foodName: data.food_name,
+    carbs: data.carbs,
+    protein: data.protein,
+    fat: data.fat,
+    recordDate: data.record_date,
+    createdAt: data.created_at,
+  };
 };
 
 export const updateFood = (editFoodItem: FoodItem) => {
