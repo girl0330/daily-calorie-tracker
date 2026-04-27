@@ -1,13 +1,10 @@
-import { useState, type Dispatch, type SetStateAction } from 'react';
-import type { CreateFoodRequest, FoodItem, MealType } from '../../../types/types';
-import { addFood } from '../../../service/FoodService';
+import { useState } from 'react';
+import type { CreateFoodRequest, MealType } from '../../../types/types';
+import { createFood } from '../../../service/FoodService';
 import { useAuthStore } from '../../../store/authStore';
 import { useNavigate } from 'react-router-dom';
+import { useFoodItemStore } from '../../../store/foodStore';
 
-type FoodInputFormProp = {
-  userId: string;
-  setFoods: Dispatch<SetStateAction<FoodItem[]>>;
-};
 // 입력창 상태용 타입
 type FoodForm = {
   mealType: MealType;
@@ -26,18 +23,12 @@ const initialForm: FoodForm = {
   fat: '',
 };
 
-// localStorage로 데이터 관리할때만 임시로 사용용
-const toLocalFoodItem = (payload: CreateFoodRequest): FoodItem => ({
-  id: Date.now(),
-  createdAt: new Date().toISOString(),
-  ...payload,
-});
-
-const FoodInputForm = ({ setFoods }: FoodInputFormProp) => {
+const FoodInputForm = () => {
   const [form, setForm] = useState<FoodForm>(initialForm);
+  const navigate = useNavigate();
 
   const user = useAuthStore(state => state.user);
-  const navigate = useNavigate();
+  const addFood = useFoodItemStore(state => state.addFood);
 
   // 입력 감지
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,7 +65,8 @@ const FoodInputForm = ({ setFoods }: FoodInputFormProp) => {
     return null;
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // 폼 전송송
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!user) {
@@ -90,7 +82,7 @@ const FoodInputForm = ({ setFoods }: FoodInputFormProp) => {
       return;
     }
 
-    const request: CreateFoodRequest = {
+    const requestFood: CreateFoodRequest = {
       userId: user.id,
       mealType: form.mealType,
       foodName: form.foodName.trim(),
@@ -99,8 +91,11 @@ const FoodInputForm = ({ setFoods }: FoodInputFormProp) => {
       fat: Number(form.fat),
     };
 
-    // 화면 즉시 반영
-    setFoods(prev => [...prev, newFoodItem]);
+    // 데이터 추가
+    const addedFood = await createFood(requestFood);
+
+    // store에 추가
+    addFood(addedFood);
 
     setForm(initialForm);
   };

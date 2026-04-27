@@ -21,7 +21,7 @@ export const getFoods = (): FoodItem[] => {
 //   return data ? data : [];
 // };
 
-export const addFood = async (newFood: CreateFoodRequest): Promise<FoodItem> => {
+export const createFood = async (newFood: CreateFoodRequest): Promise<FoodItem> => {
   const { data, error } = await supabase
     .from('foods')
     .insert({
