@@ -1,11 +1,11 @@
 import { useState, type Dispatch, type SetStateAction } from 'react';
 import type { FoodItem, UpdateFoodRequest } from '../../types/types';
 import { calories } from '../../utils/calculate';
-import { updateFood } from '../../service/foodService';
+import { useFoodItemStore } from '../../store/foodStore';
+import { updateFood as updateFoodApi } from '../../service/FoodService';
 
 type EditFoodCardProps = {
   food: FoodItem;
-  setFoods: Dispatch<SetStateAction<FoodItem[]>>;
   setIsEditing: Dispatch<SetStateAction<boolean>>;
 };
 
@@ -16,7 +16,8 @@ type EditFoodForm = {
   fat: string;
 };
 
-export default function EditFoodCard({ food, setFoods, setIsEditing }: EditFoodCardProps) {
+export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) {
+  const updateFood = useFoodItemStore(state => state.updateFood);
   const [editInputForm, setEditInputForm] = useState<EditFoodForm>({
     foodName: food.foodName,
     carbs: String(food.carbs),
@@ -63,7 +64,7 @@ export default function EditFoodCard({ food, setFoods, setIsEditing }: EditFoodC
     return null;
   };
 
-  const handleEditSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleEditSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     console.log('수정 확인 버튼 클릭됨');
@@ -83,9 +84,11 @@ export default function EditFoodCard({ food, setFoods, setIsEditing }: EditFoodC
       fat: Number(editInputForm.fat),
     };
 
-    updateFood(editedFoodItem);
+    const updatedFoodList = await updateFoodApi(editedFoodItem);
     // 화면 즉시 반영
-    setFoods(prev => prev.map(item => (item.id === food.id ? editedFoodItem : item)));
+    // setFoods(prev => prev.map(item => (item.id === food.id ? editedFoodItem : item)));
+    updateFood(updatedFoodList);
+
     setIsEditing(false);
   };
 
