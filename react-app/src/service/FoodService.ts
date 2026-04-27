@@ -48,6 +48,7 @@ export const createFood = async (newFood: CreateFoodRequest): Promise<FoodItem> 
     carbs: data.carbs,
     protein: data.protein,
     fat: data.fat,
+    recordDate: data.record_date,
     createdAt: data.created_at,
   };
 };

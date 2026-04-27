@@ -12,7 +12,8 @@ export type FoodItem = {
   carbs: number;
   protein: number;
   fat: number;
-  createdAt: string;
+  createdAt: string; // 데이터를 실제로 등록한 시간
+  recordDate: string; // 사용자가 선택한 음식 기록 날짜
 };
 
 // 서버에 전송할 음식 데이터 타입
