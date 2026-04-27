@@ -1,26 +1,54 @@
 import { supabase } from '../lib/supabase';
-import type { CreateFoodRequest, FoodItem } from '../types/types';
+import type { CreateFoodRequest, FoodItem, MealType, UpdateFoodRequest, UserId } from '../types/types';
 
 const STORAGE_KEY = 'foods';
 
-export const getFoods = (): FoodItem[] => {
-  const storedFoods = localStorage.getItem(STORAGE_KEY);
-  return storedFoods ? (JSON.parse(storedFoods) as FoodItem[]) : [];
+// DB → 프론트로 받은 원본 데이터
+type FoodRow = {
+  id: number;
+  user_id: UserId;
+  meal_type: MealType;
+  food_name: string;
+  carbs: number;
+  protein: number;
+  fat: number;
+  record_date: string;
+  created_at: string;
 };
 
-// export const addFood = (newFood: CreateFoodRequest) => {
-//   const storedFoods = localStorage.getItem(STORAGE_KEY);
-//   const foods: FoodItem[] = storedFoods ? JSON.parse(storedFoods) : [];
-//   const foodsToStore = [...foods, newFood];
+// 데이터 mapping 함수수
+const toFoodItem = (row: FoodRow): FoodItem => {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    mealType: row.meal_type,
+    foodName: row.food_name,
+    carbs: row.carbs,
+    protein: row.protein,
+    fat: row.fat,
+    recordDate: row.record_date,
+    createdAt: row.created_at,
+  };
+};
 
-//   localStorage.setItem(STORAGE_KEY, JSON.stringify(foodsToStore));
-// };
+// Type FoodItem - React 화면에서 사용할 데이터
+export const getFoods = async (userId: UserId): Promise<FoodItem[]> => {
+  const { data, error } = await supabase
+    .from('foods')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false }); //오래된 순
 
-// export const getFoods = async () => {
-//   const { data } = await supabase.from('foods').select('*');
-//   return data ? data : [];
-// };
+  if (error) throw error;
 
+  if (!data) {
+    return [];
+  }
+
+  return (data as FoodRow[]).map(toFoodItem);
+};
+
+// 프론트 → DB로 보낼 데이터
 export const createFood = async (newFood: CreateFoodRequest): Promise<FoodItem> => {
   const { data, error } = await supabase
     .from('foods')
@@ -37,32 +65,39 @@ export const createFood = async (newFood: CreateFoodRequest): Promise<FoodItem> 
 
   if (error) throw error;
 
-  if (data ? data : []) {
-    console.log('데이터 있음 insert 확인::: ', data);
+  if (!data) {
+    throw new Error('음식 등록 후 데이터를 가져오지 못했습니다.');
   }
-  return {
-    id: data.id,
-    userId: data.user_id,
-    mealType: data.meal_type,
-    foodName: data.food_name,
-    carbs: data.carbs,
-    protein: data.protein,
-    fat: data.fat,
-    recordDate: data.record_date,
-    createdAt: data.created_at,
-  };
+  return toFoodItem(data as FoodRow);
 };
 
-export const updateFood = (editFoodItem: FoodItem) => {
-  const storedFoods = localStorage.getItem(STORAGE_KEY);
-  const foods: FoodItem[] = storedFoods ? JSON.parse(storedFoods) : [];
+export const updateFood = async (editFood: UpdateFoodRequest): Promise<FoodItem> => {
+  const { data, error } = await supabase
+    .from('foods')
+    .update({
+      meal_type: editFood.mealType,
+      food_name: editFood.foodName,
+      carbs: editFood.carbs,
+      protein: editFood.protein,
+      fat: editFood.fat,
+    })
+    .eq('id', editFood.id)
+    .eq('user_id', editFood.userId)
+    .select()
+    .single();
 
-  const updatedFoodsToStore = foods.map(food => {
-    return food.id === editFoodItem.id ? editFoodItem : food;
-  });
+  if (error) throw error;
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedFoodsToStore));
+  if (!data) {
+    throw new Error('음식 수정 후 데이터를 가져오지 못했습니다.');
+  }
+  return toFoodItem(data as FoodRow);
 };
+// const updatedFoodsToStore = foods.map(food => {
+//   return food.id === editFoodItem.id ? editFoodItem : food;
+// });
+
+// localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedFoodsToStore));
 
 export const removeFood = (foodId: number) => {
   console.log('삭제 클릭');

@@ -6,32 +6,28 @@ import { getFoods } from '../../service/FoodService';
 import { CardBoard } from '../../components/meal-board/CardBoard';
 import { NutritionChart } from '../../components/charts/NutritionChart';
 import { useAuthStore } from '../../store/authStore';
-
-/* foods 데이터
-[{
-  id: 1775832844345
-  userId: "test-user"
-  foodName: "커피"
-  mealType: "dinner"
-  carbs: 0
-  protein: 5
-  fat: 0
-  createdAt: "2026-04-10T14:54:04.345Z"
-},
-...{}] */
+import { useFoodItemStore } from '../../store/foodStore';
 
 export default function DailyTrackerPage() {
   const user = useAuthStore(state => state.user);
-
-  const [foods, setFoods] = useState<FoodItem[]>([]);
+  const setFoods = useFoodItemStore(state => state.setFoods);
+  const foods = useFoodItemStore(state => state.foods);
 
   useEffect(() => {
     if (!user) return;
 
-    const storedFoods = getFoods();
+    const fetchFoods = async () => {
+      try {
+        const foodList = await getFoods(user.id);
 
-    console.log('데일리 페이지의 저장된 음식 리스트 확인 :::', storedFoods);
-    setFoods(storedFoods);
+        console.log('페이지 렌더링되기전 가져온 값 확인 :::', foodList);
+        setFoods(foodList);
+      } catch (error) {
+        console.error('음식 목록 조회 중 에러 발생: ', error);
+      }
+    };
+
+    fetchFoods();
   }, [user]);
 
   //user.id를 안전하게 사용하기 위한 방어 코드
@@ -56,7 +52,7 @@ export default function DailyTrackerPage() {
         </section>
 
         {/* 카드 리스트 */}
-        <CardBoard userId={userId} foods={foods} setFoods={setFoods} />
+        <CardBoard />
       </section>
     </>
   );

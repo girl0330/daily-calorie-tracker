@@ -1,23 +1,22 @@
-import { useState, type Dispatch, type SetStateAction } from 'react';
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import type { FoodItem } from '../../types/types';
 import { calories } from '../../utils/calculate';
-import { removeFood } from '../../service/foodService';
+// import { removeFood } from '../../service/foodService';
 import EditFoodCard from './EditFoodCard';
 
-type FoodCardProps = {
-  food: FoodItem;
-  setFoods: Dispatch<SetStateAction<FoodItem[]>>;
-};
-
-export default function FoodCard({ food, setFoods }: FoodCardProps) {
+export default function FoodCard({ food }: { food: FoodItem }) {
   const [isEditing, setIsEditing] = useState(false);
+
+  // useEffect(() => {
+
+  // }, [food])
 
   return (
     <div className="min-h-0 overflow-y-auto p-4">
       <div className="space-y-4">
         {/* <article className="rounded-md bg-(--white) p-4 shadow-sm">  */}
         {isEditing ? (
-          <EditFoodCard food={food} setFoods={setFoods} setIsEditing={setIsEditing} />
+          <EditFoodCard food={food} setIsEditing={setIsEditing} />
         ) : (
           <article key={food.id} className="rounded-md border border-(--neutral-4) bg-(--white) p-4 shadow-sm">
             <div className="flex flex-row items-center justify-between gap-3">
@@ -38,10 +37,10 @@ export default function FoodCard({ food, setFoods }: FoodCardProps) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    removeFood(food.id);
-                    setFoods(prev => prev.filter(f => f.id !== food.id));
-                  }}
+                  // onClick={() => {
+                  //   removeFood(food.id);
+                  //   setFoods(prev => prev.filter(f => f.id !== food.id));
+                  // }}
                   className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-5) focus:outline-none"
                 >
                   <img src="/trash-bin.svg" alt="삭제" className="h-4 w-4" />
