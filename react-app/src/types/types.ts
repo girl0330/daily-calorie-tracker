@@ -1,3 +1,5 @@
+export type UserId = string;
+
 // TODO: 이후 Food 입력/렌더링에서 사용할 도메인 타입
 export type MealType = 'breakfast' | 'lunch' | 'dinner';
 
@@ -10,7 +12,8 @@ export type FoodItem = {
   carbs: number;
   protein: number;
   fat: number;
-  createdAt: string;
+  createdAt: string; // 데이터를 실제로 등록한 시간
+  recordDate: string; // 사용자가 선택한 음식 기록 날짜
 };
 
 export type DayItem = {
@@ -42,6 +45,3 @@ export type UpdateFoodRequest = {
   fat: number;
   createdAt: string;
 };
-
-// 사용자 ID
-export type UserId = string;

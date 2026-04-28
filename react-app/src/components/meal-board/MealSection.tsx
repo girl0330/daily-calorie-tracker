@@ -1,35 +1,24 @@
-import type { Dispatch, SetStateAction } from 'react';
-import type { FoodItem, MealType } from '../../types/types';
+import type { MealType } from '../../types/types';
 import { calories, nutrientsByMeal } from '../../utils/calculate';
 import FoodCard from './FoodCard';
+import { useFoodItemStore } from '../../store/foodStore';
+import { isSameDay } from 'date-fns';
 
 type MealSectionProps = {
-  userId: string;
   title: string;
   mealType: MealType;
-  foods: FoodItem[];
-  setFoods: Dispatch<SetStateAction<FoodItem[]>>;
 };
 
-/* foods 데이터
-[{
-  id: 1775832844345
-  userId: "test-user"
-  foodName: "커피"
-  mealType: "dinner"
-  carbs: 0
-  protein: 5
-  fat: 0
-  createdAt: "2026-04-10T14:54:04.345Z"
-},
-...{}] */
+export const MealSection = ({ title, mealType }: MealSectionProps) => {
+  const foods = useFoodItemStore(state => state.foods);
 
-export const MealSection = ({ title, mealType, foods, setFoods }: MealSectionProps) => {
-  const mealFoods = foods.filter(food => {
-    return food.mealType === mealType;
+  const todayFoods = foods.filter(food => {
+    return food.mealType === mealType && isSameDay(new Date(food.createdAt), new Date());
   });
-  console.log('mealFoods의 배열 확인 ::: ', mealFoods);
-  const mealNutrition = nutrientsByMeal(foods)[mealType];
+
+  console.log('오늘 등록한 음식::::', todayFoods);
+
+  const mealNutrition = nutrientsByMeal(todayFoods)[mealType];
 
   return (
     <div className="flex min-h-0 flex-col">
@@ -61,8 +50,8 @@ export const MealSection = ({ title, mealType, foods, setFoods }: MealSectionPro
       </div>
 
       {/* 카드 리스트 영역 */}
-      {mealFoods.map(food => (
-        <FoodCard key={food.id} food={food} setFoods={setFoods} />
+      {todayFoods.map(food => (
+        <FoodCard key={food.id} food={food} />
         // <EditFoodCard userId={userId} key={food.id} food={food} setFoods={setFoods} mealType={food.mealType} />
       ))}
     </div>

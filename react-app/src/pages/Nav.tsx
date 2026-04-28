@@ -1,16 +1,28 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
+import { logout } from '../service/UserService';
 
 export default function Nav() {
+  const navigate = useNavigate();
+
+  const clearUser = useAuthStore(state => state.clearUser);
+  const user = useAuthStore(state => state.user);
+
+  const handleLogout = async () => {
+    await logout();
+
+    clearUser();
+    navigate('/login', { replace: true });
+  };
   return (
     <>
-      <aside className="w-70 shrink-0 bg-(--bg-section) p-5">
-        <div className="flex h-20 items-center justify-center text-3xl font-bold text-(--primary-3)">
-          Daily Tracker
-        </div>
+      <aside className="flex w-70 shrink-0 flex-col bg-(--bg-section) p-5">
+        <div className="flex h-20 items-center justify-center text-3xl font-bold text-(--primary-3)">Daily Tracker</div>
 
         <div className="my-4 border border-(--primary-1)" />
 
         <nav className="flex flex-col gap-2">
+          <div>로그인한 유저: {user?.email}</div>
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -35,14 +47,10 @@ export default function Nav() {
           >
             Monthly Tracker
           </NavLink>
-
-          {/*<NavLink*/}
-          {/*    to="/monthly"*/}
-          {/*    className="rounded-md px-4 py-3 text-xl font-medium text-(--text-primary) hover:bg-(--primary-5) transition-colors"*/}
-          {/*>*/}
-          {/*    Monthly Tracker*/}
-          {/*</NavLink>*/}
         </nav>
+        <button className="mt-auto cursor-pointer" onClick={handleLogout}>
+          로그아웃
+        </button>
       </aside>
     </>
   );
