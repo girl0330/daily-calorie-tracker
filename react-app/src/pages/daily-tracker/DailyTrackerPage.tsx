@@ -20,8 +20,8 @@ export default function DailyTrackerPage() {
       try {
         const foodList = await getFoods(user.id);
 
-        console.log('페이지 렌더링되기전 가져온 값 확인 :::', foodList);
-        setFoods(foodList);
+        // console.log('페이지 렌더링되기전 가져온 값 확인 :::', foodList);
+        setFoods(foodList); // 전역으로 저장됨됨
       } catch (error) {
         console.error('음식 목록 조회 중 에러 발생: ', error);
       }

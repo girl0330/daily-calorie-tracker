@@ -1,4 +1,4 @@
-import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import { useState } from 'react';
 import type { FoodItem } from '../../types/types';
 import { calories } from '../../utils/calculate';
 // import { removeFood } from '../../service/foodService';

@@ -2,6 +2,7 @@ import { calories, totalNutrients } from '../../utils/calculate';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import type { FoodItem } from '../../types/types';
+import useTodayFoods from '../../hooks/useTodayFoods';
 
 type NutritionChartProps = {
   foods: FoodItem[];
@@ -18,7 +19,9 @@ const chartColors = {
 };
 
 export const NutritionChart = ({ foods }: NutritionChartProps) => {
-  const nutrition = totalNutrients(foods);
+  const todayFoodsNutrition = useTodayFoods(foods);
+
+  const nutrition = totalNutrients(todayFoodsNutrition);
   console.log('nutrition은:::???', nutrition);
 
   const options = {

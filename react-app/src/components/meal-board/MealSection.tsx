@@ -2,7 +2,7 @@ import type { MealType } from '../../types/types';
 import { calories, nutrientsByMeal } from '../../utils/calculate';
 import FoodCard from './FoodCard';
 import { useFoodItemStore } from '../../store/foodStore';
-import { isSameDay } from 'date-fns';
+import useTodayFoods from '../../hooks/useTodayFoods';
 
 type MealSectionProps = {
   title: string;
@@ -12,12 +12,9 @@ type MealSectionProps = {
 export const MealSection = ({ title, mealType }: MealSectionProps) => {
   const foods = useFoodItemStore(state => state.foods);
 
-  const todayFoods = foods.filter(food => {
-    return food.mealType === mealType && isSameDay(new Date(food.createdAt), new Date());
-  });
-
-  console.log('오늘 등록한 음식::::', todayFoods);
-
+  // 음식 필터 함수
+  const todayFoods = useTodayFoods(foods, mealType);
+  // 음식 칼로리 계산 함수수
   const mealNutrition = nutrientsByMeal(todayFoods)[mealType];
 
   return (
@@ -52,7 +49,6 @@ export const MealSection = ({ title, mealType }: MealSectionProps) => {
       {/* 카드 리스트 영역 */}
       {todayFoods.map(food => (
         <FoodCard key={food.id} food={food} />
-        // <EditFoodCard userId={userId} key={food.id} food={food} setFoods={setFoods} mealType={food.mealType} />
       ))}
     </div>
   );
