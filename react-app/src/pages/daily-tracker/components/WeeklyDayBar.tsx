@@ -1,5 +1,3 @@
-import { startOfWeek, addDays, isToday, isSameDay, format } from 'date-fns';
-import { ko } from 'date-fns/locale';
 import type { FoodItem } from '../../../types/types';
 
 type WeeklyDayBarProps = {
@@ -7,19 +5,36 @@ type WeeklyDayBarProps = {
 };
 
 const WeeklyDayBar = ({ foods }: WeeklyDayBarProps) => {
-  const today = new Date();
+  const today = new Date(); //오늘 날짜 정보
+  const todayDay = today.getDay(); //0(일) ~ 6(토)
 
-  const start = startOfWeek(today, { weekStartsOn: 0 }); // 0: 일요일 시작
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - todayDay); //일요일 날짜를 구하는 코드
+
+  const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
+  const weekKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
   const days = Array.from({ length: 7 }, (_, i) => {
-    const date = addDays(start, i);
+    const date = new Date(startOfWeek);
+    date.setDate(startOfWeek.getDate() + i);
 
     return {
-      key: format(date, 'eee', { locale: ko }).toLowerCase(), // mon, tue...
-      label: format(date, 'E', { locale: ko }), // 월, 화...
-      date: format(date, 'd', { locale: ko }), // 날짜
-      isToday: isToday(date),
-      hasData: foods.some(f => isSameDay(new Date(f.createdAt), date)),
+      key: weekKeys[i],
+      label: weekDays[i],
+      date: date.getDate(),
+      isToday:
+        date.getFullYear() === today.getFullYear() &&
+        date.getMonth() === today.getMonth() &&
+        date.getDate() === today.getDate(),
+      hasData: foods.some(food => {
+        const createdDate = new Date(food.createdAt);
+
+        return (
+          createdDate.getFullYear() === date.getFullYear() &&
+          createdDate.getMonth() === date.getMonth() &&
+          createdDate.getDate() === date.getDate()
+        );
+      }),
     };
   });
 
@@ -29,7 +44,7 @@ const WeeklyDayBar = ({ foods }: WeeklyDayBarProps) => {
         {days.map((day, i) => {
           return (
             <div
-              key={day.key[i]}
+              key={day.key}
               className={`flex flex-col items-center justify-center gap-2 ${day.isToday ? 'border-b-2 border-(--primary-1)' : ''}`}
             >
               <span className="text-sm text-(--text-primary)">
