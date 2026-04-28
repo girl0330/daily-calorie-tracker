@@ -1,7 +1,7 @@
-import type { FoodItem, UserId } from '../../types/types';
+import type { UserId } from '../../types/types';
 import WeeklyDayBar from './components/WeeklyDayBar';
 import FoodInputForm from './components/FoodInputForm';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { getFoods } from '../../service/FoodService';
 import { CardBoard } from '../../components/meal-board/CardBoard';
 import { NutritionChart } from '../../components/charts/NutritionChart';
@@ -41,7 +41,7 @@ export default function DailyTrackerPage() {
     <>
       <section className="flex flex-col gap-4">
         {/* 상단 주간 바 */}
-        <WeeklyDayBar />
+        <WeeklyDayBar foods={foods} />
 
         <section className="grid grid-cols-2 gap-4">
           {/* 입력 + 영양 상태 */}
