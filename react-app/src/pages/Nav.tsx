@@ -1,15 +1,15 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { logout } from '../service/UserService';
+import { logout as logoutApi } from '../service/UserService';
 
 export default function Nav() {
   const navigate = useNavigate();
 
   const clearUser = useAuthStore(state => state.clearUser);
-  const user = useAuthStore(state => state.user);
+  const userFromStore = useAuthStore(state => state.user);
 
   const handleLogout = async () => {
-    await logout();
+    await logoutApi();
 
     clearUser();
     navigate('/login', { replace: true });
@@ -22,7 +22,7 @@ export default function Nav() {
         <div className="my-4 border border-(--primary-1)" />
 
         <nav className="flex flex-col gap-2">
-          <div>로그인한 유저: {user?.email}</div>
+          <div>로그인한 유저: {userFromStore?.email}</div>
           <NavLink
             to="/"
             className={({ isActive }) =>
