@@ -99,11 +99,11 @@ export const updateFood = async (editFood: UpdateFoodRequest): Promise<FoodItem>
 
 // localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedFoodsToStore));
 
-export const removeFood = (foodId: number) => {
-  console.log('삭제 클릭');
-  const storedFoods = localStorage.getItem(STORAGE_KEY);
-  const foods: FoodItem[] = storedFoods ? JSON.parse(storedFoods) : [];
+export const removeFood = async (foodId: number): Promise<void> => {
+  const { error } = await supabase.from('foods').delete().eq('id', foodId);
 
-  const removedFoods = foods.filter(food => food.id !== foodId);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(removedFoods));
+  if (error) {
+    console.error('음식 삭제 실패:', error.message);
+    throw error;
+  }
 };
