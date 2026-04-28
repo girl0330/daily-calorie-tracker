@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { signUp } from '../../service/UserService';
+import { signUp as signUpApi } from '../../service/UserService';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -9,7 +9,7 @@ const SignUp = () => {
     e.preventDefault();
     console.log('로그인 클릭', email);
 
-    signUp(email, password);
+    signUpApi(email, password);
   };
 
   return (

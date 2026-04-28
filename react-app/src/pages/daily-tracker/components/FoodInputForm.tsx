@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { CreateFoodRequest, MealType, UserId } from '../../../types/types';
-import { createFood } from '../../../service/FoodService';
+import { createFood as createFoodApi } from '../../../service/FoodService';
 import { useFoodItemStore } from '../../../store/foodStore';
 
 // 입력창 상태용 타입
@@ -24,7 +24,7 @@ const initialForm: FoodForm = {
 const FoodInputForm = ({ userId }: { userId: UserId }) => {
   const [form, setForm] = useState<FoodForm>(initialForm);
 
-  const addFood = useFoodItemStore(state => state.addFood);
+  const addFoodFromStore = useFoodItemStore(state => state.addFood);
 
   // 입력 감지
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,10 +82,10 @@ const FoodInputForm = ({ userId }: { userId: UserId }) => {
     };
 
     // 데이터 추가
-    const addedFood = await createFood(requestFood);
+    const addedFood = await createFoodApi(requestFood);
 
     // FoodStore에 추가
-    addFood(addedFood);
+    addFoodFromStore(addedFood);
 
     setForm(initialForm);
   };

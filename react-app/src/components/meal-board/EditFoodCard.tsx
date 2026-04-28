@@ -17,7 +17,7 @@ type EditFoodForm = {
 };
 
 export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) {
-  const updateFood = useFoodItemStore(state => state.updateFood);
+  const updateFoodFromStore = useFoodItemStore(state => state.updateFood);
   const [editInputForm, setEditInputForm] = useState<EditFoodForm>({
     foodName: food.foodName,
     carbs: String(food.carbs),
@@ -87,7 +87,7 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
     const updatedFoodList = await updateFoodApi(editedFoodItem);
     // 화면 즉시 반영
     // setFoods(prev => prev.map(item => (item.id === food.id ? editedFoodItem : item)));
-    updateFood(updatedFoodList);
+    updateFoodFromStore(updatedFoodList);
 
     setIsEditing(false);
   };

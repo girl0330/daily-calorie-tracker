@@ -10,8 +10,8 @@ import { supabase } from './lib/supabase';
 import { useAuthStore } from './store/authStore';
 
 function App() {
-  const user = useAuthStore(state => state.user);
-  const isAuthLoading = useAuthStore(state => state.isAuthLoading);
+  const userFromStore = useAuthStore(state => state.user);
+  const isAuthLoadingFromStore = useAuthStore(state => state.isAuthLoading);
   const setUser = useAuthStore(state => state.setUser);
   const setIsAuthLoading = useAuthStore(state => state.setIsAuthLoading);
 
@@ -41,7 +41,7 @@ function App() {
     };
   }, [setUser, setIsAuthLoading]);
 
-  if (isAuthLoading) {
+  if (isAuthLoadingFromStore) {
     return <div>인증 상태 확인 중...</div>;
   }
 
@@ -54,11 +54,14 @@ function App() {
           <Routes>
             <Route path="/sign-up" element={<SignUp />} />
 
-            <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+            <Route path="/login" element={userFromStore ? <Navigate to="/" replace /> : <Login />} />
 
-            <Route path="/" element={user ? <DailyTrackerPage /> : <Navigate to="/login" replace />} />
+            <Route path="/" element={userFromStore ? <DailyTrackerPage /> : <Navigate to="/login" replace />} />
 
-            <Route path="/monthly" element={user ? <MonthlyTrackerPage /> : <Navigate to="/login" replace />} />
+            <Route
+              path="/monthly"
+              element={userFromStore ? <MonthlyTrackerPage /> : <Navigate to="/login" replace />}
+            />
           </Routes>
         </main>
       </div>

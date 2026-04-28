@@ -10,10 +10,10 @@ type MealSectionProps = {
 };
 
 export const MealSection = ({ title, mealType }: MealSectionProps) => {
-  const foods = useFoodItemStore(state => state.foods);
+  const foodsFromStore = useFoodItemStore(state => state.foods);
 
   // 음식 필터 함수
-  const todayFoods = useTodayFoods(foods, mealType);
+  const todayFoods = useTodayFoods(foodsFromStore, mealType);
   // 음식 칼로리 계산 함수수
   const mealNutrition = nutrientsByMeal(todayFoods)[mealType];
 

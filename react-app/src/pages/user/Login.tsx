@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { login } from '../../service/UserService';
+import { login as loginApi } from '../../service/UserService';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 
@@ -17,7 +17,7 @@ const Login = () => {
 
     try {
       setIsPending(true);
-      const data = await login(email, password);
+      const data = await loginApi(email, password);
       setUser(data.user);
 
       navigate('/', { replace: true });

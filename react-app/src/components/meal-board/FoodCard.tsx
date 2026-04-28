@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { FoodItem } from '../../types/types';
 import { calories } from '../../utils/calculate';
-// import { removeFood } from '../../service/foodService';
 import EditFoodCard from './EditFoodCard';
 import { removeFood as removeFoodApi } from '../../service/FoodService';
 import { useFoodItemStore } from '../../store/foodStore';
