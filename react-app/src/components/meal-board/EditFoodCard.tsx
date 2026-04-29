@@ -3,6 +3,7 @@ import type { FoodItem, UpdateFoodRequest } from '../../types/types';
 import { calories } from '../../utils/calculate';
 import { useFoodItemStore } from '../../store/foodStore';
 import { updateFood as updateFoodApi } from '../../service/FoodService';
+import { useUpdateFood } from '../../hooks/useFoodMutations';
 
 type EditFoodCardProps = {
   food: FoodItem;
@@ -17,7 +18,10 @@ type EditFoodForm = {
 };
 
 export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) {
-  const updateFoodFromStore = useFoodItemStore(state => state.updateFood);
+  // const updateFoodFromStore = useFoodItemStore(state => state.updateFood);
+
+  const { mutate: updateFood, isPending } = useUpdateFood(food.userId);
+
   const [editInputForm, setEditInputForm] = useState<EditFoodForm>({
     foodName: food.foodName,
     carbs: String(food.carbs),
@@ -84,12 +88,18 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
       fat: Number(editInputForm.fat),
     };
 
-    const updatedFoodList = await updateFoodApi(editedFoodItem);
-    // 화면 즉시 반영
-    // setFoods(prev => prev.map(item => (item.id === food.id ? editedFoodItem : item)));
-    updateFoodFromStore(updatedFoodList);
+    updateFood(editedFoodItem, {
+      // 수정 성공 후 수정 모드 종료
+      onSuccess: () => {
+        setIsEditing(false);
+      },
 
-    setIsEditing(false);
+      // 수정 실패 시 수정 모드는 유지
+      onError: error => {
+        console.error('음식 수정 실패:', error);
+        alert('음식 수정에 실패했습니다.');
+      },
+    });
   };
 
   return (
