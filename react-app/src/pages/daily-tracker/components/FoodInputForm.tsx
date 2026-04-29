@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { CreateFoodRequest, MealType, UserId } from '../../../types/types';
-import { createFood as createFoodApi } from '../../../service/FoodService';
-import { useFoodItemStore } from '../../../store/foodStore';
+import { useCreateFood } from '../../../hooks/useFoodMutations';
 
 // 입력창 상태용 타입
 type FoodForm = {
@@ -24,7 +23,7 @@ const initialForm: FoodForm = {
 const FoodInputForm = ({ userId }: { userId: UserId }) => {
   const [form, setForm] = useState<FoodForm>(initialForm);
 
-  const addFoodFromStore = useFoodItemStore(state => state.addFood);
+  const createFoodMutation = useCreateFood(userId);
 
   // 입력 감지
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +71,7 @@ const FoodInputForm = ({ userId }: { userId: UserId }) => {
       return;
     }
 
-    const requestFood: CreateFoodRequest = {
+    const newFood: CreateFoodRequest = {
       userId: userId,
       mealType: form.mealType,
       foodName: form.foodName.trim(),
@@ -82,12 +81,14 @@ const FoodInputForm = ({ userId }: { userId: UserId }) => {
     };
 
     // 데이터 추가
-    const addedFood = await createFoodApi(requestFood);
+    try {
+      await createFoodMutation.mutateAsync(newFood);
 
-    // FoodStore에 추가
-    addFoodFromStore(addedFood);
-
-    setForm(initialForm);
+      setForm(initialForm);
+    } catch (error) {
+      console.error('음식 추가 실패:', error);
+      alert('음식 추가에 실패했습니다.');
+    }
   };
 
   return (

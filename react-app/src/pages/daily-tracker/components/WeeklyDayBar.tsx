@@ -1,10 +1,6 @@
 import type { FoodItem } from '../../../types/types';
 
-type WeeklyDayBarProps = {
-  foods: FoodItem[];
-};
-
-const WeeklyDayBar = ({ foods }: WeeklyDayBarProps) => {
+const WeeklyDayBar = ({ foods }: { foods: FoodItem[] }) => {
   const today = new Date(); //오늘 날짜 정보
   const todayDay = today.getDay(); //0(일) ~ 6(토)
 
