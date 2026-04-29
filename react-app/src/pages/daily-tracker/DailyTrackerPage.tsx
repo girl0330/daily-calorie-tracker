@@ -9,7 +9,7 @@ import { useFoods } from '../../hooks/userFoods';
 export default function DailyTrackerPage() {
   const userFromStore = useAuthStore(state => state.user);
 
-  const { data: Foods = [], isLoading, isError, error } = useFoods(userFromStore?.id);
+  const { data: foods = [], isLoading, isError, error } = useFoods(userFromStore?.id);
 
   //user.id를 안전하게 사용하기 위한 방어 코드
   if (!userFromStore) {
@@ -32,18 +32,18 @@ export default function DailyTrackerPage() {
     <>
       <section className="flex flex-col gap-4">
         {/* 상단 주간 바 */}
-        <WeeklyDayBar foods={Foods} />
+        <WeeklyDayBar foods={foods} />
 
         <section className="grid grid-cols-2 gap-4">
           {/* 입력 + 영양 상태 */}
           <FoodInputForm userId={userId} />
 
           {/* 영양소 그래프 */}
-          <NutritionChart foods={Foods} />
+          <NutritionChart foods={foods} />
         </section>
 
         {/* 카드 리스트 */}
-        <CardBoard />
+        <CardBoard foods={foods} />
       </section>
     </>
   );

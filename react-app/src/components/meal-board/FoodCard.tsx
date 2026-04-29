@@ -2,25 +2,17 @@ import { useState } from 'react';
 import type { FoodItem } from '../../types/types';
 import { calories } from '../../utils/calculate';
 import EditFoodCard from './EditFoodCard';
-import { removeFood as removeFoodApi } from '../../service/FoodService';
-import { useFoodItemStore } from '../../store/foodStore';
+import { useRemoveFood } from '../../hooks/useFoodMutations';
 
 export default function FoodCard({ food }: { food: FoodItem }) {
   const [isEditing, setIsEditing] = useState(false);
-  const removeFoodFromStore = useFoodItemStore(state => state.removeFood);
+
+  // 삭제 mutation
+  const { mutate: removeFood, isPending } = useRemoveFood(food.userId);
 
   // 삭제 버튼 클릭 시 실행되는 함수
   const handleDeleteFood = async () => {
-    try {
-      // 1. Supabase DB에서 먼저 삭제
-      await removeFoodApi(food.id);
-
-      // 2. DB 삭제가 성공했을 때만 Zustand 상태에서도 삭제
-      removeFoodFromStore(food.id);
-    } catch (error) {
-      // DB 삭제 실패 시 화면에서는 삭제하지 않음
-      console.error('음식 삭제 실패:', error);
-    }
+    removeFood(food.id);
   };
 
   return (
@@ -50,6 +42,7 @@ export default function FoodCard({ food }: { food: FoodItem }) {
                 <button
                   type="button"
                   onClick={handleDeleteFood}
+                  disabled={isPending}
                   className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-5) focus:outline-none"
                 >
                   <img src="/trash-bin.svg" alt="삭제" className="h-4 w-4" />

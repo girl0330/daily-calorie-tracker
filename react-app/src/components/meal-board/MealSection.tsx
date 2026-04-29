@@ -1,19 +1,19 @@
-import type { MealType } from '../../types/types';
+import type { FoodItem, MealType } from '../../types/types';
 import { calories, nutrientsByMeal } from '../../utils/calculate';
 import FoodCard from './FoodCard';
-import { useFoodItemStore } from '../../store/foodStore';
 import useTodayFoods from '../../hooks/useTodayFoods';
 
 type MealSectionProps = {
   title: string;
   mealType: MealType;
+  foods: FoodItem[];
 };
 
-export const MealSection = ({ title, mealType }: MealSectionProps) => {
-  const foodsFromStore = useFoodItemStore(state => state.foods);
+export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
+  // const foodsFromStore = useFoodItemStore(state => state.foods);
 
   // 음식 필터 함수
-  const todayFoods = useTodayFoods(foodsFromStore, mealType);
+  const todayFoods = useTodayFoods(foods, mealType);
   // 음식 칼로리 계산 함수수
   const mealNutrition = nutrientsByMeal(todayFoods)[mealType];
 
