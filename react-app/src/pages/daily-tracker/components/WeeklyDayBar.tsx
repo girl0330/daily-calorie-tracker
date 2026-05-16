@@ -37,7 +37,7 @@ const WeeklyDayBar = ({ foods }: { foods: FoodItem[] }) => {
   return (
     <section className="h-20 rounded-md border border-(--neutral-4) bg-(--bg-section) px-4">
       <div className="grid h-full grid-cols-7">
-        {days.map((day, i) => {
+        {days.map(day => {
           return (
             <div
               key={day.key}

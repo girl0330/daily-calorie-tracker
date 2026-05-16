@@ -2,7 +2,6 @@ import { BarElement, CategoryScale, Chart as ChartJS, LinearScale, Tooltip, type
 import { Bar } from 'react-chartjs-2';
 import type { FoodItem } from '../../types/types';
 import { calories, totalNutrients } from '../../utils/calculate';
-import useTodayFoods from '../../hooks/useTodayFoods';
 import SectionLayout from '../common/SectionLayout';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
@@ -42,7 +41,7 @@ const chartColors = {
 
 const NutritionSummary = ({ nutrition, totalCalories }: NutritionSummaryProps) => {
   return (
-    <div className="flex flex-col justify-center rounded-2xl bg-(--neutral-5) px-5 py-4">
+    <div className="flex h-full flex-col justify-center rounded-2xl bg-(--neutral-5) px-5 py-4">
       <div className="flex items-end gap-1">
         <span className="pb-1 text-sm font-semibold text-(--text-muted)">총</span>
         <strong className="text-3xl font-black tracking-[-0.04em] text-(--text-primary)">{totalCalories}</strong>
@@ -123,53 +122,33 @@ const NutritionBarChart = ({ nutrition }: NutritionBarChartProps) => {
   };
 
   return (
-    <div className="min-h-[180px]">
+    <div className="min-h-[180px] flex-1">
       <Bar options={options} data={data} />
     </div>
   );
 };
 
 export const NutritionChart = ({ foods, className = '', variant = 'full' }: NutritionChartProps) => {
-  // 오늘 섭취한 음식만 필터링
-  const todayFoods = useTodayFoods(foods);
-
-  // 오늘 섭취한 음식들의 영양소 합계
-  const nutrition = totalNutrients(todayFoods);
-
-  // 오늘 총 칼로리 계산
+  // 날짜 필터링은 페이지에서 끝내고, 차트는 전달받은 foods만 요약한다.
+  const nutrition = totalNutrients(foods);
   const totalCalories = calories(nutrition.carbs, nutrition.protein, nutrition.fat);
-
-  const sectionClassName = ['rounded-[24px] border border-(--neutral-4) bg-(--bg-section) p-5 shadow-sm', className]
-    .filter(Boolean)
-    .join(' ');
-
   const isSummaryOnly = variant === 'summary';
 
   return (
-    <section className={sectionClassName}>
-      <SectionLayout
-        title="영양소 그래프"
-        description={
-          isSummaryOnly ? '오늘 섭취한 칼로리와 영양소를 확인해 보세요' : '오늘 영양소를 그래프로 확인해 보세요'
-        }
-      >
-        {/* Summary + Chart */}
-        <div className="grid grid-cols-1 gap-4 rounded-md p-4 md:grid-cols-[240px_1fr]">
-          {isSummaryOnly ? (
-            <div className="rounded-md p-4">
-              <NutritionSummary nutrition={nutrition} totalCalories={totalCalories} />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-4 rounded-md p-4 md:grid-cols-[240px_1fr]">
-              <NutritionSummary nutrition={nutrition} totalCalories={totalCalories} />
-              <NutritionBarChart nutrition={nutrition} />
-            </div>
-          )}
-          {/* Calorie summary */}
-
-          {/* Chart */}
+    <SectionLayout
+      title="영양소 그래프"
+      description={isSummaryOnly ? '섭취한 칼로리와 영양소를 확인해 보세요' : '영양소를 그래프로 확인해 보세요'}
+      className={className}
+      contentClassName="flex-1"
+    >
+      {isSummaryOnly ? (
+        <NutritionSummary nutrition={nutrition} totalCalories={totalCalories} />
+      ) : (
+        <div className="grid h-full min-h-0 grid-cols-1 gap-4 rounded-md md:grid-cols-[240px_1fr]">
+          <NutritionSummary nutrition={nutrition} totalCalories={totalCalories} />
+          <NutritionBarChart nutrition={nutrition} />
         </div>
-      </SectionLayout>
-    </section>
+      )}
+    </SectionLayout>
   );
 };

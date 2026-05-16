@@ -5,11 +5,15 @@ import { CardBoard } from '../../components/meal-board/CardBoard';
 import { NutritionChart } from '../../components/charts/NutritionChart';
 import { useAuthStore } from '../../store/authStore';
 import { useFoods } from '../../hooks/userFoods';
+import useTodayFoods from '../../hooks/useTodayFoods';
 
 export default function DailyTrackerPage() {
   const userFromStore = useAuthStore(state => state.user);
 
   const { data: foods = [], isLoading, isError, error } = useFoods(userFromStore?.id);
+
+  // 날짜 기준 데이터는 페이지에서 한 번만 계산해서 하위 컴포넌트로 내려준다.
+  const todayFoods = useTodayFoods(foods);
 
   // 로그인 유저가 없으면 페이지를 렌더링하지 않음
   if (!userFromStore) {
@@ -37,12 +41,12 @@ export default function DailyTrackerPage() {
       <div className="grid shrink-0 grid-cols-1 gap-4 xl:grid-cols-2">
         <FoodInputForm userId={userId} />
 
-        <NutritionChart foods={foods} variant="full" />
+        <NutritionChart foods={todayFoods} variant="full" />
       </div>
 
       {/* 하단 메인 영역: 식사별 카드 보드 */}
       <div className="min-h-0 flex-1">
-        <CardBoard foods={foods} className="h-full" />
+        <CardBoard foods={todayFoods} className="h-full" />
       </div>
     </div>
   );
