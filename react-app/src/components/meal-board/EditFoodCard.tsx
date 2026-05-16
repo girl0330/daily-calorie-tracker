@@ -2,34 +2,28 @@ import { useState, type Dispatch, type SetStateAction } from 'react';
 import type { FoodItem, UpdateFoodRequest } from '../../types/types';
 import { calories } from '../../utils/calculate';
 import { useUpdateFood } from '../../hooks/useFoodMutations';
+import {
+  getPreviewNutrients,
+  parseFoodForm,
+  toFoodFormValues,
+  validateFoodForm,
+  type FoodFormValues,
+} from '../../utils/foodForm';
 
 type EditFoodCardProps = {
   food: FoodItem;
   setIsEditing: Dispatch<SetStateAction<boolean>>;
 };
 
-type EditFoodForm = {
-  foodName: string;
-  carbs: string;
-  protein: string;
-  fat: string;
-};
+type EditFoodForm = FoodFormValues;
 
 export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) {
   const { mutate: updateFood, isPending } = useUpdateFood(food.userId);
 
-  const [editInputForm, setEditInputForm] = useState<EditFoodForm>({
-    foodName: food.foodName,
-    carbs: String(food.carbs),
-    protein: String(food.protein),
-    fat: String(food.fat),
-  });
+  const [editInputForm, setEditInputForm] = useState<EditFoodForm>(() => toFoodFormValues(food));
 
-  const previewCalories = calories(
-    Number(editInputForm.carbs) || 0,
-    Number(editInputForm.protein) || 0,
-    Number(editInputForm.fat) || 0
-  );
+  const previewNutrients = getPreviewNutrients(editInputForm);
+  const previewCalories = calories(previewNutrients.carbs, previewNutrients.protein, previewNutrients.fat);
 
   // 입력 감지
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,30 +37,8 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
 
   // 수정 카드 닫기
   const handleClose = () => {
-    setEditInputForm({
-      foodName: food.foodName,
-      carbs: String(food.carbs),
-      protein: String(food.protein),
-      fat: String(food.fat),
-    });
+    setEditInputForm(toFoodFormValues(food));
     setIsEditing(false);
-  };
-
-  // 유효성 검사
-  const validateFoodForm = ({ foodName, carbs, protein, fat }: EditFoodForm): string | null => {
-    if (!foodName || !foodName.trim()) return '음식 이름을 입력해주세요.';
-
-    if (carbs === '' || protein === '' || fat === '') return '탄수화물, 단백질, 지방 값을 모두 입력해주세요.';
-
-    if ([carbs, protein, fat].some(value => Number.isNaN(Number(value)))) {
-      return '탄수화물, 단백질, 지방은 숫자여야 합니다.';
-    }
-
-    if ([carbs, protein, fat].some(value => Number(value) < 0)) {
-      return '탄수화물, 단백질, 지방은 0 이상이어야 합니다.';
-    }
-
-    return null;
   };
 
   const handleEditSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -80,12 +52,11 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
       return;
     }
 
+    const parsedForm = parseFoodForm(editInputForm);
+
     const editedFoodItem: UpdateFoodRequest = {
       ...food,
-      foodName: editInputForm.foodName.trim(),
-      carbs: Number(editInputForm.carbs),
-      protein: Number(editInputForm.protein),
-      fat: Number(editInputForm.fat),
+      ...parsedForm,
     };
 
     updateFood(editedFoodItem, {

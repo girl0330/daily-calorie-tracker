@@ -1,16 +1,13 @@
 import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import type { CreateFoodRequest, MealType, UserId } from '../../../types/types';
+import { parseFoodForm, validateFoodForm, type FoodFormValues } from '../../../utils/foodForm';
 import { useCreateFood } from '../../../hooks/useFoodMutations';
 import SectionLayout from '../../../components/common/SectionLayout';
 
 // 입력창 상태용 타입
-type FoodForm = {
+type FoodForm = FoodFormValues & {
   mealType: MealType;
-  foodName: string;
-  carbs: string;
-  protein: string;
-  fat: string;
 };
 
 type FoodInputFormProps = {
@@ -48,27 +45,6 @@ const FoodInputForm = ({ userId, className = '' }: FoodInputFormProps) => {
     }));
   };
 
-  // 유효성 검사
-  const validateFoodForm = ({ foodName, carbs, protein, fat }: FoodForm): string | null => {
-    if (!foodName.trim()) {
-      return '음식 이름을 입력해주세요.';
-    }
-
-    if (carbs === '' || protein === '' || fat === '') {
-      return '탄수화물, 단백질, 지방 값을 모두 입력해주세요.';
-    }
-
-    if ([carbs, protein, fat].some(value => Number.isNaN(Number(value)))) {
-      return '탄수화물, 단백질, 지방은 숫자여야 합니다.';
-    }
-
-    if ([carbs, protein, fat].some(value => Number(value) < 0)) {
-      return '탄수화물, 단백질, 지방은 0 이상이어야 합니다.';
-    }
-
-    return null;
-  };
-
   // 폼 전송
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -80,13 +56,12 @@ const FoodInputForm = ({ userId, className = '' }: FoodInputFormProps) => {
       return;
     }
 
+    const parsedForm = parseFoodForm(form);
+
     const newFood: CreateFoodRequest = {
       userId,
       mealType: form.mealType,
-      foodName: form.foodName.trim(),
-      carbs: Number(form.carbs),
-      protein: Number(form.protein),
-      fat: Number(form.fat),
+      ...parsedForm,
     };
 
     try {
