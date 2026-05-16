@@ -4,7 +4,12 @@ import { calories } from '../../utils/calculate';
 import EditFoodCard from './EditFoodCard';
 import { useRemoveFood } from '../../hooks/useFoodMutations';
 
-export default function FoodCard({ food }: { food: FoodItem }) {
+type FoodCardProps = {
+  food: FoodItem;
+  compact?: boolean;
+};
+
+export default function FoodCard({ food, compact = false }: FoodCardProps) {
   const [isEditing, setIsEditing] = useState(false);
 
   // 삭제 mutation
@@ -25,11 +30,13 @@ export default function FoodCard({ food }: { food: FoodItem }) {
   }
 
   return (
-    <article className="rounded-md border border-(--neutral-4) bg-(--white) p-4 shadow-sm">
+    <article className={`rounded-md border border-(--neutral-4) bg-(--white) shadow-sm ${compact ? 'p-3' : 'p-4'}`}>
       <div className="flex flex-row items-center justify-between gap-3">
         <div className="flex flex-1 flex-col items-center justify-center">
-          <h3 className="text-center text-2xl font-bold text-(--text-primary)">{food.foodName}</h3>
-          <p className="mt-1 text-center text-sm text-(--text-muted)">
+          <h3 className={`text-center font-bold text-(--text-primary) ${compact ? 'text-base' : 'text-2xl'}`}>
+            {food.foodName}
+          </h3>
+          <p className={`mt-1 text-center text-(--text-muted) ${compact ? 'text-xs' : 'text-sm'}`}>
             {calories(food.carbs, food.protein, food.fat)} 칼로리
           </p>
         </div>
@@ -55,18 +62,18 @@ export default function FoodCard({ food }: { food: FoodItem }) {
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+      <div className={`grid grid-cols-3 gap-2 text-center ${compact ? 'mt-3' : 'mt-4'}`}>
         <div className="rounded-md bg-(--neutral-5) px-2 py-2">
-          <p className="text-sm text-(--text-muted)">carbs</p>
-          <p className="font-semibold text-(--text-primary)">{food.carbs} g</p>
+          <p className={`text-(--text-muted) ${compact ? 'text-xs' : 'text-sm'}`}>탄</p>
+          <p className={`font-semibold text-(--text-primary) ${compact ? 'text-sm' : ''}`}>{food.carbs}g</p>
         </div>
         <div className="rounded-md bg-(--neutral-5) px-2 py-2">
-          <p className="text-sm text-(--text-muted)">protein</p>
-          <p className="font-semibold text-(--text-primary)">{food.protein} g</p>
+          <p className={`text-(--text-muted) ${compact ? 'text-xs' : 'text-sm'}`}>단</p>
+          <p className={`font-semibold text-(--text-primary) ${compact ? 'text-sm' : ''}`}>{food.protein}g</p>
         </div>
         <div className="rounded-md bg-(--neutral-5) px-2 py-2">
-          <p className="text-sm text-(--text-muted)">fat</p>
-          <p className="font-semibold text-(--text-primary)">{food.fat} g</p>
+          <p className={`text-(--text-muted) ${compact ? 'text-xs' : 'text-sm'}`}>지</p>
+          <p className={`font-semibold text-(--text-primary) ${compact ? 'text-sm' : ''}`}>{food.fat}g</p>
         </div>
       </div>
     </article>

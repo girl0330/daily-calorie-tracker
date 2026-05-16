@@ -46,7 +46,7 @@ export default function DailyTrackerPage() {
 
       {/* 하단 메인 영역: 식사별 카드 보드 */}
       <div className="min-h-0 flex-1">
-        <CardBoard foods={todayFoods} className="h-full" />
+        <CardBoard foods={todayFoods} variant="daily" className="h-full" />
       </div>
     </div>
   );
