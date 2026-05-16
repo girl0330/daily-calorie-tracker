@@ -11,12 +11,12 @@ export default function DailyTrackerPage() {
 
   const { data: foods = [], isLoading, isError, error } = useFoods(userFromStore?.id);
 
-  //user.id를 안전하게 사용하기 위한 방어 코드
+  // 로그인 유저가 없으면 페이지를 렌더링하지 않음
   if (!userFromStore) {
     return null;
   }
 
-  // 최초 음식 데이터를 가져오는 중인 상태
+  // 음식 데이터 조회 중 상태
   if (isLoading) {
     return <div>음식 데이터를 불러오는 중입니다.</div>;
   }
@@ -29,22 +29,21 @@ export default function DailyTrackerPage() {
   const userId = userFromStore.id as UserId;
 
   return (
-    <>
-      <section className="flex flex-col gap-4">
-        {/* 상단 주간 바 */}
-        <WeeklyDayBar foods={foods} />
+    <div className="flex h-full min-h-0 flex-col gap-4">
+      {/* 주간 날짜 영역 */}
+      <WeeklyDayBar foods={foods} />
 
-        <section className="grid grid-cols-2 gap-4">
-          {/* 입력 + 영양 상태 */}
-          <FoodInputForm userId={userId} />
+      {/* 상단 보조 영역: 음식 추가 + 영양소 차트 */}
+      <div className="grid shrink-0 grid-cols-1 gap-4 xl:grid-cols-2">
+        <FoodInputForm userId={userId} />
 
-          {/* 영양소 그래프 */}
-          <NutritionChart foods={foods} />
-        </section>
+        <NutritionChart foods={foods} variant="full" />
+      </div>
 
-        {/* 카드 리스트 */}
-        <CardBoard foods={foods} />
-      </section>
-    </>
+      {/* 하단 메인 영역: 식사별 카드 보드 */}
+      <div className="min-h-0 flex-1">
+        <CardBoard foods={foods} className="h-full" />
+      </div>
+    </div>
   );
 }
