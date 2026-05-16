@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
 import type { CreateFoodRequest, MealType, UserId } from '../../../types/types';
 import { useCreateFood } from '../../../hooks/useFoodMutations';
 
@@ -11,6 +12,11 @@ type FoodForm = {
   fat: string;
 };
 
+type FoodInputFormProps = {
+  userId: UserId;
+  className?: string;
+};
+
 // 초기 폼
 const initialForm: FoodForm = {
   mealType: 'breakfast',
@@ -20,34 +26,36 @@ const initialForm: FoodForm = {
   fat: '',
 };
 
-const FoodInputForm = ({ userId }: { userId: UserId }) => {
+const mealOptions: { label: string; value: MealType }[] = [
+  { label: '아침', value: 'breakfast' },
+  { label: '점심', value: 'lunch' },
+  { label: '저녁', value: 'dinner' },
+];
+
+const FoodInputForm = ({ userId, className = '' }: FoodInputFormProps) => {
   const [form, setForm] = useState<FoodForm>(initialForm);
 
   const createFoodMutation = useCreateFood(userId);
 
-  // 입력 감지
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type } = e.target;
-
-    if (type === 'radio') {
-      setForm(prev => ({
-        ...prev,
-        [name as keyof FoodForm]: value as MealType,
-      }));
-      return;
-    }
+  // 입력값 변경 시 form state에 반영
+  const handleFormChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
 
     setForm(prev => ({
       ...prev,
-      [name as keyof FoodForm]: value,
+      [name]: value,
     }));
   };
 
   // 유효성 검사
   const validateFoodForm = ({ foodName, carbs, protein, fat }: FoodForm): string | null => {
-    if (!foodName || !foodName.trim()) return '음식 이름을 입력해주세요.';
+    if (!foodName.trim()) {
+      return '음식 이름을 입력해주세요.';
+    }
 
-    if (carbs === '' || protein === '' || fat === '') return '탄수화물, 단백질, 지방 값을 모두 입력해주세요.';
+    if (carbs === '' || protein === '' || fat === '') {
+      return '탄수화물, 단백질, 지방 값을 모두 입력해주세요.';
+    }
 
     if ([carbs, protein, fat].some(value => Number.isNaN(Number(value)))) {
       return '탄수화물, 단백질, 지방은 숫자여야 합니다.';
@@ -61,7 +69,7 @@ const FoodInputForm = ({ userId }: { userId: UserId }) => {
   };
 
   // 폼 전송
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const error = validateFoodForm(form);
@@ -72,7 +80,7 @@ const FoodInputForm = ({ userId }: { userId: UserId }) => {
     }
 
     const newFood: CreateFoodRequest = {
-      userId: userId,
+      userId,
       mealType: form.mealType,
       foodName: form.foodName.trim(),
       carbs: Number(form.carbs),
@@ -80,10 +88,10 @@ const FoodInputForm = ({ userId }: { userId: UserId }) => {
       fat: Number(form.fat),
     };
 
-    // 데이터 추가
     try {
       await createFoodMutation.mutateAsync(newFood);
 
+      // 저장 성공 후 입력값 초기화
       setForm(initialForm);
     } catch (error) {
       console.error('음식 추가 실패:', error);
@@ -91,128 +99,126 @@ const FoodInputForm = ({ userId }: { userId: UserId }) => {
     }
   };
 
-  return (
-    <div className="flex h-full flex-col">
-      <div className="flex h-full flex-col">
-        <div className="flex h-full min-h-80 flex-1 flex-col rounded-md border border-(--neutral-4) bg-(--bg-section) p-4">
-          <div className="mb-5">
-            <h2 className="text-2xl font-bold text-(--text-primary)">음식 추가</h2>
-            <p className="mt-1 text-sm text-(--text-muted)">식사 시간과 영양소를 입력해 오늘 식단을 기록하세요.</p>
-          </div>
-          <div className="flex flex-1 flex-col justify-between">
-            <div className="flex flex-1 flex-col rounded-md">
-              <form className="flex flex-1 flex-col justify-between" onSubmit={handleSubmit}>
-                <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center">
-                  <div className="grid grid-cols-8 items-center gap-x-3 gap-y-10">
-                    {/* 식사 시간 */}
-                    <label className="col-span-1 text-right">식사 시간</label>
-                    <div className="col-span-7 flex gap-4">
-                      <label className="flex cursor-pointer items-center gap-1">
-                        <input
-                          type="radio"
-                          name="mealType"
-                          value="breakfast"
-                          checked={form.mealType === 'breakfast'}
-                          onChange={handleFormChange}
-                          className="accent-(--primary-1)"
-                        />
-                        <span>아침</span>
-                      </label>
-                      <label className="flex cursor-pointer items-center gap-1">
-                        <input
-                          type="radio"
-                          name="mealType"
-                          value="lunch"
-                          checked={form.mealType === 'lunch'}
-                          onChange={handleFormChange}
-                          className="accent-(--primary-1)"
-                        />
-                        <span>점심</span>
-                      </label>
-                      <label className="flex cursor-pointer items-center gap-1">
-                        <input
-                          type="radio"
-                          name="mealType"
-                          value="dinner"
-                          checked={form.mealType === 'dinner'}
-                          onChange={handleFormChange}
-                          className="accent-(--primary-1)"
-                        />
-                        <span>저녁</span>
-                      </label>
-                    </div>
+  const sectionClassName = [
+    'rounded-[24px] border border-(--neutral-4) bg-(--bg-section) px-6 py-5 shadow-sm',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
-                    {/* 음식 이름 */}
-                    <label htmlFor="food-name" className="col-span-1 text-right">
-                      음식 이름
-                    </label>
-                    <input
-                      id="food-name"
-                      name="foodName"
-                      value={form.foodName}
-                      onChange={handleFormChange}
-                      placeholder="음식을 입력해주세요"
-                      className="col-span-3 h-10 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
-                    />
-                    <label htmlFor="food-carbs" className="col-span-1 text-right">
-                      탄수화물
-                    </label>
-                    <div className="relative col-span-3">
-                      <input
-                        id="food-carbs"
-                        name="carbs"
-                        value={form.carbs}
-                        onChange={handleFormChange}
-                        placeholder="0"
-                        className="h-10 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
-                      />
-                      <span className="absolute top-1/2 right-3 -translate-y-1/2">g</span>
-                    </div>
-                    {/* 단백질 */}
-                    <label htmlFor="food-protein" className="col-span-1 text-right">
-                      단백질
-                    </label>
-                    <div className="relative col-span-3">
-                      <input
-                        id="food-protein"
-                        name="protein"
-                        value={form.protein}
-                        onChange={handleFormChange}
-                        placeholder="0"
-                        className="h-10 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
-                      />
-                      <span className="absolute top-1/2 right-3 -translate-y-1/2">g</span>
-                    </div>
-                    <label htmlFor="food-fat" className="col-span-1 text-right">
-                      지방
-                    </label>
-                    <div className="relative col-span-3">
-                      <input
-                        id="food-fat"
-                        name="fat"
-                        value={form.fat}
-                        onChange={handleFormChange}
-                        placeholder="0"
-                        className="h-10 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
-                      />
-                      <span className="absolute top-1/2 right-3 -translate-y-1/2">g</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-6 flex justify-center">
-                  <button
-                    type="submit"
-                    className="h-10 w-full max-w-xs rounded-md bg-(--primary-3) text-white transition hover:bg-(--primary-2)"
-                  >
-                    저장
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+  return (
+    <section className={sectionClassName}>
+      {/* Header */}
+      <div className="mb-5">
+        <h2 className="text-[25px] font-black tracking-[-0.03em] text-(--text-primary)">음식 추가</h2>
+        <p className="mt-1 text-sm text-(--text-muted)">식사 시간과 영양소를 입력해 오늘 식단을 기록하세요.</p>
       </div>
-    </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Meal type radio */}
+        <fieldset>
+          <legend className="mb-2 text-sm font-semibold text-(--text-secondary)">식사 시간</legend>
+
+          <div className="grid grid-cols-3 gap-2">
+            {mealOptions.map(meal => (
+              <label key={meal.value} className="cursor-pointer">
+                <input
+                  type="radio"
+                  name="mealType"
+                  value={meal.value}
+                  checked={form.mealType === meal.value}
+                  onChange={handleFormChange}
+                  className="peer sr-only"
+                />
+
+                <span className="block rounded-md border border-(--neutral-4) px-3 py-2 text-center text-sm font-medium text-(--text-secondary) transition peer-checked:border-(--primary-3) peer-checked:bg-(--primary-1) peer-checked:text-(--primary-5) hover:border-(--primary-3)">
+                  {meal.label}
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        {/* Food name */}
+        <div>
+          <label htmlFor="foodName" className="mb-2 block text-sm font-semibold text-(--text-secondary)">
+            음식 이름
+          </label>
+
+          <input
+            id="foodName"
+            name="foodName"
+            type="text"
+            value={form.foodName}
+            onChange={handleFormChange}
+            placeholder="예: 닭가슴살 샐러드"
+            className="w-full rounded-md border border-(--neutral-4) bg-white px-4 py-2.5 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-muted) focus:border-(--primary-3)"
+          />
+        </div>
+
+        {/* Nutrients + submit button */}
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-[1fr_1fr_1fr_90px] md:items-end">
+          <div>
+            <label htmlFor="carbs" className="mb-2 block text-sm font-semibold text-(--text-secondary)">
+              탄수화물
+            </label>
+
+            <input
+              id="carbs"
+              name="carbs"
+              type="number"
+              min="0"
+              value={form.carbs}
+              onChange={handleFormChange}
+              placeholder="g"
+              className="w-full rounded-md border border-(--neutral-4) bg-white px-3 py-2.5 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-muted) focus:border-(--primary-3)"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="protein" className="mb-2 block text-sm font-semibold text-(--text-secondary)">
+              단백질
+            </label>
+
+            <input
+              id="protein"
+              name="protein"
+              type="number"
+              min="0"
+              value={form.protein}
+              onChange={handleFormChange}
+              placeholder="g"
+              className="w-full rounded-md border border-(--neutral-4) bg-white px-3 py-2.5 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-muted) focus:border-(--primary-3)"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="fat" className="mb-2 block text-sm font-semibold text-(--text-secondary)">
+              지방
+            </label>
+
+            <input
+              id="fat"
+              name="fat"
+              type="number"
+              min="0"
+              value={form.fat}
+              onChange={handleFormChange}
+              placeholder="g"
+              className="w-full rounded-md border border-(--neutral-4) bg-white px-3 py-2.5 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-muted) focus:border-(--primary-3)"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={createFoodMutation.isPending}
+            className="rounded-md bg-(--primary-3) px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-(--primary-4) disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {createFoodMutation.isPending ? '저장 중' : '저장'}
+          </button>
+        </div>
+      </form>
+    </section>
   );
 };
 

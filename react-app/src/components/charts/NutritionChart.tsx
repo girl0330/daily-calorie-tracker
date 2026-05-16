@@ -1,14 +1,15 @@
-import { calories, totalNutrients } from '../../utils/calculate';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { BarElement, CategoryScale, Chart as ChartJS, LinearScale, Tooltip, type ChartOptions } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import type { FoodItem } from '../../types/types';
+import { calories, totalNutrients } from '../../utils/calculate';
 import useTodayFoods from '../../hooks/useTodayFoods';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
 type NutritionChartProps = {
   foods: FoodItem[];
+  className?: string;
 };
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const rootStyles = getComputedStyle(document.documentElement);
 
@@ -18,68 +19,113 @@ const chartColors = {
   fat: rootStyles.getPropertyValue('--chart-fat').trim(),
 };
 
-export const NutritionChart = ({ foods }: NutritionChartProps) => {
-  const todayFoodsNutrition = useTodayFoods(foods);
+export const NutritionChart = ({ foods, className = '' }: NutritionChartProps) => {
+  // 오늘 섭취한 음식만 필터링
+  const todayFoods = useTodayFoods(foods);
 
-  const nutrition = totalNutrients(todayFoodsNutrition);
-  console.log('nutrition은:::???', nutrition);
+  // 오늘 섭취한 음식들의 영양소 합계
+  const nutrition = totalNutrients(todayFoods);
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      title: {
-        display: false,
-        text: 'Chart.js Bar Chart',
-      },
-    },
-  };
+  // 오늘 총 칼로리 계산
+  const totalCalories = calories(nutrition.carbs, nutrition.protein, nutrition.fat);
+
+  const sectionClassName = ['rounded-[24px] border border-(--neutral-4) bg-(--bg-section) p-5 shadow-sm', className]
+    .filter(Boolean)
+    .join(' ');
 
   const data = {
     labels: ['탄수화물', '단백질', '지방'],
     datasets: [
       {
-        label: '영양소(g)',
         data: [nutrition.carbs, nutrition.protein, nutrition.fat],
         backgroundColor: [chartColors.carbs, chartColors.protein, chartColors.fat],
-        barThickness: 100,
+        borderRadius: 999,
+        barThickness: 18,
       },
     ],
   };
 
+  const options: ChartOptions<'bar'> = {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      tooltip: {
+        backgroundColor: 'rgba(34, 34, 34, 0.92)',
+        padding: 10,
+        displayColors: false,
+        callbacks: {
+          label: context => `${context.raw}g`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+        grid: {
+          color: rootStyles.getPropertyValue('--neutral-4').trim(),
+        },
+        ticks: {
+          color: rootStyles.getPropertyValue('--text-muted').trim(),
+        },
+      },
+      y: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: rootStyles.getPropertyValue('--text-secondary').trim(),
+          font: {
+            size: 12,
+            weight: 'bold',
+          },
+        },
+      },
+    },
+  };
+
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex h-full min-h-80 flex-1 flex-col rounded-md border border-(--neutral-4) bg-(--bg-section) p-4">
-        <div className="mb-5">
-          <h2 className="text-2xl font-bold text-(--text-primary)">영양소 그래프</h2>
-          <p className="mt-1 text-sm text-(--text-muted)">오늘 영양소 그래프를 확인해 보세요.</p>
-        </div>
-        <div className="flex flex-1 flex-col justify-between">
-          <div className="flex flex-1 flex-col rounded-md bg-white px-4 pt-5 pb-4">
-            {/* 그래프 */}
-            <Bar options={options} data={data} />
-            {/* 칼로리 summary */}
-            <div className="mt-4 flex items-center justify-center border-t border-(--neutral-4) pt-3">
-              {/* 총 칼로리 + 영양소 요약을 가운데에 나란히 배치 */}
-              <div className="flex items-center gap-6">
-                <p className="text-2xl font-bold text-(--chart-calorie)">
-                  {calories(nutrition.carbs, nutrition.protein, nutrition.fat)}{' '}
-                  <span className="text-base font-medium">kcal</span>
-                </p>
-                <div className="text-sm text-(--text-secondary)">
-                  <span>탄수화물 {nutrition.carbs}g</span>
-                  <span className="mx-2 text-(--text-muted)">/</span>
-                  <span>단백질 {nutrition.protein}g</span>
-                  <span className="mx-2 text-(--text-muted)">/</span>
-                  <span>지방 {nutrition.fat}g</span>
-                </div>
-              </div>
-            </div>
+    <section className={sectionClassName}>
+      {/* Header */}
+      <div className="mb-5">
+        <h2 className="text-xl font-bold text-(--text-primary)">영양소 그래프</h2>
+        <p className="mt-1 text-sm text-(--text-muted)">오늘 영양소 그래프를 확인해 보세요.</p>
+      </div>
+
+      {/* Summary + Chart */}
+      <div className="grid grid-cols-1 gap-4 rounded-md p-4 md:grid-cols-[240px_1fr]">
+        {/* Calorie summary */}
+        <div className="flex flex-col justify-center rounded-2xl bg-(--neutral-5) px-5 py-4">
+          <div className="mt-2 flex items-end gap-1">
+            <span className="pb-1 text-sm font-semibold text-(--text-muted)">총</span>
+            <strong className="text-3xl font-black tracking-[-0.04em] text-(--text-primary)">{totalCalories}</strong>
+            <span className="pb-1 text-sm font-semibold text-(--text-muted)">kcal</span>
+          </div>
+
+          {/* Nutrition chips */}
+          <div className="mt-4 flex flex-col gap-2">
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-(--text-secondary)">
+              <span className="h-2 w-2 rounded-full bg-(--chart-carb)" />
+              탄수화물 {nutrition.carbs}g
+            </span>
+
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-(--text-secondary)">
+              <span className="h-2 w-2 rounded-full bg-(--chart-protein)" />
+              단백질 {nutrition.protein}g
+            </span>
+
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-(--text-secondary)">
+              <span className="h-2 w-2 rounded-full bg-(--chart-fat)" />
+              지방 {nutrition.fat}g
+            </span>
           </div>
         </div>
+
+        {/* Chart */}
+        <div className="min-h-[180px]">
+          <Bar options={options} data={data} />
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
