@@ -37,7 +37,7 @@ export default function DailyTrackerPage() {
       <div className="grid shrink-0 grid-cols-1 gap-4 xl:grid-cols-2">
         <FoodInputForm userId={userId} />
 
-        <NutritionChart foods={foods} />
+        <NutritionChart foods={foods} variant="full" />
       </div>
 
       {/* 하단 메인 영역: 식사별 카드 보드 */}
