@@ -3,6 +3,7 @@ import { Bar } from 'react-chartjs-2';
 import type { FoodItem } from '../../types/types';
 import { calories, totalNutrients } from '../../utils/calculate';
 import useTodayFoods from '../../hooks/useTodayFoods';
+import SectionLayout from '../common/SectionLayout';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
@@ -86,46 +87,42 @@ export const NutritionChart = ({ foods, className = '' }: NutritionChartProps) =
 
   return (
     <section className={sectionClassName}>
-      {/* Header */}
-      <div className="mb-5">
-        <h2 className="text-xl font-bold text-(--text-primary)">영양소 그래프</h2>
-        <p className="mt-1 text-sm text-(--text-muted)">오늘 영양소 그래프를 확인해 보세요.</p>
-      </div>
+      <SectionLayout title="영양소 그래프" description="오늘 영양소를 그래프로 확인해 보세요">
+        {/* Summary + Chart */}
+        <div className="grid grid-cols-1 gap-4 rounded-md p-4 md:grid-cols-[240px_1fr]">
+          {/* Calorie summary */}
+          <div className="flex flex-col justify-center rounded-2xl bg-(--neutral-5) px-5 py-4">
+            <div className="mt-2 flex items-end gap-1">
+              <span className="pb-1 text-sm font-semibold text-(--text-muted)">총</span>
+              <strong className="text-3xl font-black tracking-[-0.04em] text-(--text-primary)">{totalCalories}</strong>
+              <span className="pb-1 text-sm font-semibold text-(--text-muted)">kcal</span>
+            </div>
 
-      {/* Summary + Chart */}
-      <div className="grid grid-cols-1 gap-4 rounded-md p-4 md:grid-cols-[240px_1fr]">
-        {/* Calorie summary */}
-        <div className="flex flex-col justify-center rounded-2xl bg-(--neutral-5) px-5 py-4">
-          <div className="mt-2 flex items-end gap-1">
-            <span className="pb-1 text-sm font-semibold text-(--text-muted)">총</span>
-            <strong className="text-3xl font-black tracking-[-0.04em] text-(--text-primary)">{totalCalories}</strong>
-            <span className="pb-1 text-sm font-semibold text-(--text-muted)">kcal</span>
+            {/* Nutrition chips */}
+            <div className="mt-4 flex flex-col gap-2">
+              <span className="inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-(--text-secondary)">
+                <span className="h-2 w-2 rounded-full bg-(--chart-carb)" />
+                탄수화물 {nutrition.carbs}g
+              </span>
+
+              <span className="inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-(--text-secondary)">
+                <span className="h-2 w-2 rounded-full bg-(--chart-protein)" />
+                단백질 {nutrition.protein}g
+              </span>
+
+              <span className="inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-(--text-secondary)">
+                <span className="h-2 w-2 rounded-full bg-(--chart-fat)" />
+                지방 {nutrition.fat}g
+              </span>
+            </div>
           </div>
 
-          {/* Nutrition chips */}
-          <div className="mt-4 flex flex-col gap-2">
-            <span className="inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-(--text-secondary)">
-              <span className="h-2 w-2 rounded-full bg-(--chart-carb)" />
-              탄수화물 {nutrition.carbs}g
-            </span>
-
-            <span className="inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-(--text-secondary)">
-              <span className="h-2 w-2 rounded-full bg-(--chart-protein)" />
-              단백질 {nutrition.protein}g
-            </span>
-
-            <span className="inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-(--text-secondary)">
-              <span className="h-2 w-2 rounded-full bg-(--chart-fat)" />
-              지방 {nutrition.fat}g
-            </span>
+          {/* Chart */}
+          <div className="min-h-[180px]">
+            <Bar options={options} data={data} />
           </div>
         </div>
-
-        {/* Chart */}
-        <div className="min-h-[180px]">
-          <Bar options={options} data={data} />
-        </div>
-      </div>
+      </SectionLayout>
     </section>
   );
 };
