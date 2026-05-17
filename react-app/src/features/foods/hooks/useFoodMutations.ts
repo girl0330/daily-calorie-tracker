@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { CreateFoodRequest, FoodItem, UpdateFoodRequest, UserId } from '../types/types';
+import type { CreateFoodRequest, FoodItem, UpdateFoodRequest, UserId } from '../../../types/types';
 import {
   createFood as createFoodApi,
   removeFood as removeFoodApi,
   updateFood as updateFoodApi,
-} from '../service/FoodService';
+} from '../services/FoodService';
 
 export const useCreateFood = (userId: UserId) => {
   const queryClient = useQueryClient();

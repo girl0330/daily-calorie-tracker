@@ -1,7 +1,6 @@
-import { supabase } from '../lib/supabase';
-import type { CreateFoodRequest, FoodItem, MealType, UpdateFoodRequest, UserId } from '../types/types';
-
-const STORAGE_KEY = 'foods';
+import { supabase } from '../../../lib/supabase';
+import type { CreateFoodRequest, FoodItem, MealType, UpdateFoodRequest, UserId } from '../../../types/types';
+import { toRecordDate } from '../../../utils/date';
 
 // DB → 프론트로 받은 원본 데이터
 type FoodRow = {
@@ -12,11 +11,11 @@ type FoodRow = {
   carbs: number;
   protein: number;
   fat: number;
-  record_date: string;
+  record_date: string | null;
   created_at: string;
 };
 
-// 데이터 mapping 함수수
+// DB의 snake_case 데이터를 화면에서 쓰는 camelCase 도메인 타입으로 변환한다.
 const toFoodItem = (row: FoodRow): FoodItem => {
   return {
     id: row.id,
@@ -26,7 +25,8 @@ const toFoodItem = (row: FoodRow): FoodItem => {
     carbs: row.carbs,
     protein: row.protein,
     fat: row.fat,
-    recordDate: row.record_date,
+    // 기존 데이터에 record_date가 비어 있으면 등록 시간을 기준으로 한 번만 보정한다.
+    recordDate: row.record_date ?? toRecordDate(new Date(row.created_at)),
     createdAt: row.created_at,
   };
 };
@@ -37,7 +37,8 @@ export const getFoods = async (userId: UserId): Promise<FoodItem[]> => {
     .from('foods')
     .select('*')
     .eq('user_id', userId)
-    .order('created_at', { ascending: false }); //오래된 순
+    .order('record_date', { ascending: false })
+    .order('created_at', { ascending: false }); // 같은 기록 날짜 안에서는 최신 등록순
 
   if (error) throw error;
 
@@ -59,6 +60,7 @@ export const createFood = async (newFood: CreateFoodRequest): Promise<FoodItem> 
       carbs: newFood.carbs,
       protein: newFood.protein,
       fat: newFood.fat,
+      record_date: newFood.recordDate,
     })
     .select()
     .single();
@@ -80,6 +82,7 @@ export const updateFood = async (editFood: UpdateFoodRequest): Promise<FoodItem>
       carbs: editFood.carbs,
       protein: editFood.protein,
       fat: editFood.fat,
+      record_date: editFood.recordDate,
     })
     .eq('id', editFood.id)
     .eq('user_id', editFood.userId)
@@ -93,11 +96,6 @@ export const updateFood = async (editFood: UpdateFoodRequest): Promise<FoodItem>
   }
   return toFoodItem(data as FoodRow);
 };
-// const updatedFoodsToStore = foods.map(food => {
-//   return food.id === editFoodItem.id ? editFoodItem : food;
-// });
-
-// localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedFoodsToStore));
 
 export const removeFood = async (foodId: number): Promise<void> => {
   const { error } = await supabase.from('foods').delete().eq('id', foodId);

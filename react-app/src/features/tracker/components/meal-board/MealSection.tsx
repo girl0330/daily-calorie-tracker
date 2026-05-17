@@ -1,6 +1,6 @@
-import type { FoodItem, MealType } from '../../types/types';
-import { calories, nutrientsByMeal } from '../../utils/calculate';
-import FoodCard from './FoodCard';
+import type { FoodItem, MealType } from '../../../../types/types';
+import { calories, nutrientsByMeal } from '../../../../utils/calculate';
+import FoodCard from '../../../foods/components/FoodCard';
 
 type MealSectionDensity = 'comfortable' | 'compact';
 

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { getFoods } from '../service/FoodService';
-import type { UserId } from '../types/types';
+import { getFoods } from '../services/FoodService';
+import type { UserId } from '../../../types/types';
 
 export const useFoods = (userId?: UserId) => {
   return useQuery({

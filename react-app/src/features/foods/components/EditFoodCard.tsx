@@ -1,14 +1,14 @@
 import { useState, type Dispatch, type SetStateAction } from 'react';
-import type { FoodItem, UpdateFoodRequest } from '../../types/types';
-import { calories } from '../../utils/calculate';
-import { useUpdateFood } from '../../hooks/useFoodMutations';
+import type { FoodItem, UpdateFoodRequest } from '../../../types/types';
+import { calories } from '../../../utils/calculate';
+import { useUpdateFood } from '../hooks/useFoodMutations';
 import {
   getPreviewNutrients,
   parseFoodForm,
   toFoodFormValues,
   validateFoodForm,
   type FoodFormValues,
-} from '../../utils/foodForm';
+} from '../utils/foodForm';
 
 type EditFoodCardProps = {
   food: FoodItem;

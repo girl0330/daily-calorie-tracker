@@ -1,7 +1,7 @@
-import { NutritionChart } from '../../components/charts/NutritionChart';
+import { NutritionChart } from '../../features/tracker/components/nutrition/NutritionChart';
 import SectionLayout from '../../components/common/SectionLayout';
-import { CardBoard } from '../../components/meal-board/CardBoard';
-import { useFoods } from '../../hooks/userFoods';
+import { CardBoard } from '../../features/tracker/components/meal-board/CardBoard';
+import { useFoods } from '../../features/foods/hooks/useFoods';
 import { useAuthStore } from '../../store/authStore';
 
 export default function MonthlyTrackerPage() {

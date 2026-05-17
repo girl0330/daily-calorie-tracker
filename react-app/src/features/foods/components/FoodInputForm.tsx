@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import type { CreateFoodRequest, MealType, UserId } from '../../../types/types';
-import { parseFoodForm, validateFoodForm, type FoodFormValues } from '../../../utils/foodForm';
-import { useCreateFood } from '../../../hooks/useFoodMutations';
+import { parseFoodForm, validateFoodForm, type FoodFormValues } from '../utils/foodForm';
+import { useCreateFood } from '../hooks/useFoodMutations';
 import SectionLayout from '../../../components/common/SectionLayout';
 
 // 입력창 상태용 타입
@@ -12,6 +12,7 @@ type FoodForm = FoodFormValues & {
 
 type FoodInputFormProps = {
   userId: UserId;
+  recordDate: string;
   className?: string;
 };
 
@@ -30,7 +31,7 @@ const mealOptions: { label: string; value: MealType }[] = [
   { label: '저녁', value: 'dinner' },
 ];
 
-const FoodInputForm = ({ userId, className = '' }: FoodInputFormProps) => {
+const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProps) => {
   const [form, setForm] = useState<FoodForm>(initialForm);
 
   const createFoodMutation = useCreateFood(userId);
@@ -61,6 +62,7 @@ const FoodInputForm = ({ userId, className = '' }: FoodInputFormProps) => {
     const newFood: CreateFoodRequest = {
       userId,
       mealType: form.mealType,
+      recordDate,
       ...parsedForm,
     };
 
@@ -76,11 +78,7 @@ const FoodInputForm = ({ userId, className = '' }: FoodInputFormProps) => {
   };
 
   return (
-    <SectionLayout
-      title="음식 추가"
-      description="식사 시간과 영양소를 입력해 오늘 식단을 기록하세요."
-      className={className}
-    >
+    <SectionLayout title="음식 추가" description={`${recordDate} 식단에 추가됩니다.`} className={className}>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Meal type radio */}
         <fieldset>

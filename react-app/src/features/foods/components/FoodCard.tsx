@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import type { FoodItem } from '../../types/types';
-import { calories } from '../../utils/calculate';
+import type { FoodItem } from '../../../types/types';
+import { calories } from '../../../utils/calculate';
 import EditFoodCard from './EditFoodCard';
-import { useRemoveFood } from '../../hooks/useFoodMutations';
+import { useRemoveFood } from '../hooks/useFoodMutations';
 
 type FoodCardProps = {
   food: FoodItem;

@@ -1,6 +1,6 @@
-import type { FoodItem } from '../../types/types';
-import { calories, totalNutrients } from '../../utils/calculate';
-import SectionLayout from '../common/SectionLayout';
+import type { FoodItem } from '../../../../types/types';
+import { calories, totalNutrients } from '../../../../utils/calculate';
+import SectionLayout from '../../../../components/common/SectionLayout';
 import { NutritionBarChart } from './NutritionBarChart';
 import { NutritionSummary } from './NutritionSummary';
 

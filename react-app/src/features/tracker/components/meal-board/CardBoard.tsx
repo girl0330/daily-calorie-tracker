@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import type { FoodItem } from '../../types/types';
-import SectionLayout from '../common/SectionLayout';
+import type { FoodItem } from '../../../../types/types';
+import SectionLayout from '../../../../components/common/SectionLayout';
 import { MealSection } from './MealSection';
 
 type CardBoardVariant = 'daily' | 'compact' | 'expandable';
