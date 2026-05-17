@@ -55,7 +55,10 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
     const parsedForm = parseFoodForm(editInputForm);
 
     const editedFoodItem: UpdateFoodRequest = {
-      ...food,
+      id: food.id,
+      userId: food.userId,
+      mealType: food.mealType,
+      recordDate: food.recordDate,
       ...parsedForm,
     };
 
