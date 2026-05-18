@@ -68,29 +68,29 @@ export const MonthlyCalendarSection = ({
 }: MonthlyCalendarSectionProps) => {
   const todayRecordDate = toRecordDate();
   const selectedRecordDate = toRecordDate(selectedDate);
-  const currentMonthKey = getMonthKey(currentMonth);
+  // const currentMonthKey = getMonthKey(currentMonth);
 
   const monthDates = getMonthGridDates(currentMonth);
-  const monthFoods = foods.filter(food => food.recordDate.startsWith(currentMonthKey));
-  const monthNutrition = totalNutrients(monthFoods);
-  const monthTotalCalories = calories(monthNutrition.carbs, monthNutrition.protein, monthNutrition.fat);
-  const recordedDayCount = new Set(monthFoods.map(food => food.recordDate)).size;
+  // const monthFoods = foods.filter(food => food.recordDate.startsWith(currentMonthKey));
+  // const monthNutrition = totalNutrients(monthFoods);
+  // const monthTotalCalories = calories(monthNutrition.carbs, monthNutrition.protein, monthNutrition.fat);
+  // const recordedDayCount = new Set(monthFoods.map(food => food.recordDate)).size;
 
-  const selectedWeekStart = getStartOfWeek(selectedDate);
-  const selectedWeekDates = Array.from({ length: 7 }, (_, index) => {
-    const date = new Date(selectedWeekStart);
-    date.setDate(selectedWeekStart.getDate() + index);
+  // const selectedWeekStart = getStartOfWeek(selectedDate);
+  // const selectedWeekDates = Array.from({ length: 7 }, (_, index) => {
+  //   const date = new Date(selectedWeekStart);
+  //   date.setDate(selectedWeekStart.getDate() + index);
 
-    return date;
-  });
-  const selectedWeekRecordDates = new Set(selectedWeekDates.map(date => toRecordDate(date)));
-  const selectedWeekFoods = foods.filter(food => selectedWeekRecordDates.has(food.recordDate));
-  const selectedWeekNutrition = totalNutrients(selectedWeekFoods);
-  const selectedWeekCalories = calories(
-    selectedWeekNutrition.carbs,
-    selectedWeekNutrition.protein,
-    selectedWeekNutrition.fat
-  );
+  //   return date;
+  // });
+  // const selectedWeekRecordDates = new Set(selectedWeekDates.map(date => toRecordDate(date)));
+  // const selectedWeekFoods = foods.filter(food => selectedWeekRecordDates.has(food.recordDate));
+  // const selectedWeekNutrition = totalNutrients(selectedWeekFoods);
+  // const selectedWeekCalories = calories(
+  //   selectedWeekNutrition.carbs,
+  //   selectedWeekNutrition.protein,
+  //   selectedWeekNutrition.fat
+  // );
 
   const handlePrevMonth = () => {
     onMonthChange(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
@@ -147,7 +147,7 @@ export const MonthlyCalendarSection = ({
         </div>
       }
     >
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_280px]">
+      <div>
         <div className="min-h-0 rounded-[20px] border border-(--neutral-4) bg-white/70 p-4">
           <div className="mb-3 grid grid-cols-7 text-center text-sm font-semibold text-(--text-muted)">
             {WEEK_LABELS.map(label => (
@@ -167,7 +167,7 @@ export const MonthlyCalendarSection = ({
               const isSelected = recordDate === selectedRecordDate;
 
               const dayButtonClassName = [
-                'flex min-h-[108px] flex-col rounded-2xl border bg-(--bg-card) p-3 text-left transition',
+                'flex h-32 flex-col rounded-2xl border bg-(--bg-card) p-3 text-left transition',
                 'hover:border-(--primary-3) hover:bg-(--neutral-5)',
                 isCurrentMonth ? 'border-(--neutral-4)' : 'border-(--neutral-4) opacity-45',
                 isSelected ? 'border-(--primary-3) ring-2 ring-(--primary-5)' : '',
@@ -195,16 +195,23 @@ export const MonthlyCalendarSection = ({
 
                   {hasData ? (
                     <>
-                      <span className="mt-3 text-xs font-semibold text-(--primary-1)">{dayCalories} kcal</span>
+                      <span className="my-1 text-xs font-semibold text-(--primary-1)">{dayCalories} kcal</span>
 
-                      <div className="mt-auto flex items-center gap-1.5">
+                      <div className="mt-auto space-y-1">
                         {nutrientBadges.map(({ key, label, colorClassName }) => (
-                          <span
-                            key={key}
-                            aria-label={`${label} ${dayNutrition[key]}g`}
-                            title={`${label} ${dayNutrition[key]}g`}
-                            className={['h-2.5 w-2.5 rounded-full', colorClassName].join(' ')}
-                          />
+                          <div key={key} className="flex items-center gap-1.5 text-[11px] text-(--text-secondary)">
+                            {/* 영양소를 구분하는 색상 뱃지 */}
+                            <span
+                              aria-label={`${label} ${dayNutrition[key]}g`}
+                              title={`${label} ${dayNutrition[key]}g`}
+                              className={['h-2.5 w-2.5 shrink-0 rounded-full', colorClassName].join(' ')}
+                            />
+
+                            {/* 색상 뱃지와 일치하는 영양소 텍스트 */}
+                            <p>
+                              {label} <span className="font-semibold text-(--text-primary)">{dayNutrition[key]}</span>g
+                            </p>
+                          </div>
                         ))}
                       </div>
                     </>
@@ -217,6 +224,7 @@ export const MonthlyCalendarSection = ({
           </div>
         </div>
 
+        {/* 요약에 들어갈 내용 생각 안남
         <aside className="flex flex-col gap-3 rounded-[20px] border border-(--neutral-4) bg-(--neutral-5) p-4">
           <div>
             <p className="text-sm font-semibold text-(--text-muted)">월간 요약</p>
@@ -225,7 +233,6 @@ export const MonthlyCalendarSection = ({
               <span className="ml-1 text-sm font-semibold text-(--text-muted)">kcal</span>
             </strong>
           </div>
-
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div className="rounded-2xl bg-(--bg-card) px-3 py-3">
               <p className="text-(--text-muted)">기록일</p>
@@ -248,55 +255,7 @@ export const MonthlyCalendarSection = ({
               지방 <strong className="text-(--text-primary)">{monthNutrition.fat}</strong>g
             </p>
           </div>
-        </aside>
-      </div>
-
-      <div className="mt-4 rounded-[20px] border border-(--neutral-4) bg-(--neutral-5) p-4">
-        <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
-          <div>
-            <h3 className="text-lg font-bold text-(--text-primary)">선택 주간 요약</h3>
-            <p className="mt-1 text-sm text-(--text-muted)">
-              {formatDateLabel(selectedWeekDates[0])} ~ {formatDateLabel(selectedWeekDates[6])}
-            </p>
-          </div>
-
-          <p className="text-sm font-semibold text-(--primary-1)">총 {selectedWeekCalories} kcal</p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-7">
-          {selectedWeekDates.map(date => {
-            const recordDate = toRecordDate(date);
-            const dayFoods = foods.filter(food => food.recordDate === recordDate);
-            const dayNutrition = totalNutrients(dayFoods);
-            const dayCalories = calories(dayNutrition.carbs, dayNutrition.protein, dayNutrition.fat);
-            const isSelected = recordDate === selectedRecordDate;
-
-            return (
-              <button
-                key={recordDate}
-                type="button"
-                onClick={() => onDateSelect(date)}
-                aria-pressed={isSelected}
-                className={[
-                  'rounded-2xl border bg-(--bg-card) px-3 py-3 text-left transition hover:border-(--primary-3)',
-                  isSelected ? 'border-(--primary-3)' : 'border-(--neutral-4)',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-              >
-                <p className="text-xs font-semibold text-(--text-muted)">
-                  {WEEK_LABELS[date.getDay()]} · {date.getDate()}일
-                </p>
-                <p className="mt-1 text-sm font-bold text-(--text-primary)">{dayCalories} kcal</p>
-                <div className="mt-2 space-y-0.5 text-[11px] text-(--text-secondary)">
-                  <p>탄수화물 {dayNutrition.carbs}g</p>
-                  <p>단백질 {dayNutrition.protein}g</p>
-                  <p>지방 {dayNutrition.fat}g</p>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+        </aside> */}
       </div>
     </SectionLayout>
   );

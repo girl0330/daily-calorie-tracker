@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useFoods } from '../../features/foods';
-import { CardBoard, MonthlyCalendarSection, NutritionChart, useTodayFoods } from '../../features/tracker';
+import { MonthlyCalendarSection, useTodayFoods } from '../../features/tracker';
 import { useAuthStore } from '../../store/authStore';
 import { toRecordDate } from '../../utils/date';
 
@@ -31,11 +31,11 @@ export default function MonthlyTrackerPage() {
   return (
     <div className="flex min-h-0 flex-col gap-4">
       {/* 선택 날짜 요약 영역 */}
-      <div className="grid shrink-0 grid-cols-1 gap-4 xl:grid-cols-[320px_1fr]">
+      {/* <div className="grid shrink-0 grid-cols-1 gap-4 xl:grid-cols-[320px_1fr]">
         <NutritionChart foods={selectedDateFoods} variant="summary" />
 
         <CardBoard foods={selectedDateFoods} variant="compact" className="h-[280px]" />
-      </div>
+      </div> */}
 
       {/* 월간 캘린더 + 선택 주간 요약 */}
       <MonthlyCalendarSection
