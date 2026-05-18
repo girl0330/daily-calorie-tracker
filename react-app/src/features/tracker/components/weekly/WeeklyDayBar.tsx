@@ -43,7 +43,7 @@ const WeeklyDayBar = ({ foods, selectedDate, onDateSelect }: WeeklyDayBarProps) 
             'flex h-full w-full flex-col items-center justify-center gap-2 transition',
             'hover:bg-(--neutral-5)',
             day.isToday ? 'border-b-2 border-(--primary-1)' : '',
-            day.isSelected ? 'bg-(--primary-1)' : '',
+            day.isSelected ? 'bg-(--neutral-5)' : '',
           ]
             .filter(Boolean)
             .join(' ');
