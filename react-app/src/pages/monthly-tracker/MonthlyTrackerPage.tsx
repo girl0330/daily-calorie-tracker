@@ -1,35 +1,54 @@
-import { NutritionChart } from '../../features/tracker/components/nutrition/NutritionChart';
-import SectionLayout from '../../components/common/SectionLayout';
-import { CardBoard } from '../../features/tracker/components/meal-board/CardBoard';
-import { useFoods } from '../../features/foods/hooks/useFoods';
+import { useState } from 'react';
+import { useFoods } from '../../features/foods';
+import { CardBoard, MonthlyCalendarSection, NutritionChart, useTodayFoods } from '../../features/tracker';
 import { useAuthStore } from '../../store/authStore';
+import { toRecordDate } from '../../utils/date';
 
 export default function MonthlyTrackerPage() {
   const userFromStore = useAuthStore(state => state.user);
-  const { data: foods = [], isLoading, isError, error } = useFoods(userFromStore?.id);
-  return (
-    <div className="flex h-full min-h-0 flex-col gap-4">
-      {/* 상단 보조 영역: 음식 추가 + 영양소 차트 */}
-      <div className="grid shrink-0 grid-cols-1 gap-4 xl:grid-cols-2">
-        <CardBoard foods={foods} className="h-full" />
+  const [currentMonth, setCurrentMonth] = useState(() => new Date());
+  const [selectedDate, setSelectedDate] = useState(() => new Date());
 
-        <NutritionChart foods={foods} variant="full" />
+  const { data: foods = [], isLoading, isError, error } = useFoods(userFromStore?.id);
+
+  // 월간 페이지의 기준 날짜는 selectedDate 하나로 통일한다.
+  // 차트, 카드보드, 주간 요약이 모두 같은 날짜 데이터를 바라보게 된다.
+  const selectedDateFoods = useTodayFoods(foods, undefined, selectedDate);
+  const selectedRecordDate = toRecordDate(selectedDate);
+
+  if (!userFromStore) {
+    return null;
+  }
+
+  if (isLoading) {
+    return <div>음식 데이터를 불러오는 중입니다.</div>;
+  }
+
+  if (isError) {
+    return <div>음식 데이터를 불러오지 못했습니다: {error.message}</div>;
+  }
+
+  return (
+    <div className="flex min-h-0 flex-col gap-4">
+      {/* 선택 날짜 요약 영역 */}
+      <div className="grid shrink-0 grid-cols-1 gap-4 xl:grid-cols-[320px_1fr]">
+        <NutritionChart foods={selectedDateFoods} variant="summary" />
+
+        <CardBoard foods={selectedDateFoods} variant="compact" className="h-[280px]" />
       </div>
 
-      {/* 하단 메인 영역: 식사별 카드 보드 */}
-      <div className="min-h-0 flex-1">달력</div>
+      {/* 월간 캘린더 + 선택 주간 요약 */}
+      <MonthlyCalendarSection
+        foods={foods}
+        currentMonth={currentMonth}
+        selectedDate={selectedDate}
+        onMonthChange={setCurrentMonth}
+        onDateSelect={setSelectedDate}
+      />
+
+      <p className="text-center text-sm text-(--text-muted)">
+        현재 선택된 기록 날짜: <span className="font-semibold text-(--text-secondary)">{selectedRecordDate}</span>
+      </p>
     </div>
   );
 }
-
-// <div className="flex h-full min-h-0 flex-col gap-4">
-//   {/* 상단 보조 영역: 음식 추가 + 영양소 차트 */}
-//   <div className="grid shrink-0 grid-cols-1 gap-4 xl:grid-cols-2">
-//     <CardBoard foods={foods} className="h-full" collapsible={true} />
-
-//     <NutritionChart foods={foods} variant="summary" />
-//   </div>
-
-//   {/* 하단 메인 영역: 식사별 카드 보드 */}
-//   <div className="flex border border-(--neutral-4) bg-(--bg-section)">달력</div>
-// </div>
