@@ -3,6 +3,8 @@ import { calories, totalNutrients } from '../../../../utils/calculate';
 import { toRecordDate } from '../../../../utils/date';
 import SectionLayout from '../../../../components/common/SectionLayout';
 
+//코드 정리: 월간 날짜 목록을 만들고, 날짜별 음식 기록을 계산해서, 클릭 가능한 달력 형태로 보여준다.
+
 const WEEK_LABELS = ['일', '월', '화', '수', '목', '금', '토'];
 
 const nutrientBadges = [
@@ -52,11 +54,7 @@ const getMonthGridDates = (currentMonth: Date) => {
   });
 };
 
-const getMonthKey = (date: Date) => toRecordDate(date).slice(0, 7);
-
 const formatMonthLabel = (date: Date) => `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
-
-const formatDateLabel = (date: Date) => `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
 
 export const MonthlyCalendarSection = ({
   foods,
@@ -68,29 +66,8 @@ export const MonthlyCalendarSection = ({
 }: MonthlyCalendarSectionProps) => {
   const todayRecordDate = toRecordDate();
   const selectedRecordDate = toRecordDate(selectedDate);
-  // const currentMonthKey = getMonthKey(currentMonth);
 
   const monthDates = getMonthGridDates(currentMonth);
-  // const monthFoods = foods.filter(food => food.recordDate.startsWith(currentMonthKey));
-  // const monthNutrition = totalNutrients(monthFoods);
-  // const monthTotalCalories = calories(monthNutrition.carbs, monthNutrition.protein, monthNutrition.fat);
-  // const recordedDayCount = new Set(monthFoods.map(food => food.recordDate)).size;
-
-  // const selectedWeekStart = getStartOfWeek(selectedDate);
-  // const selectedWeekDates = Array.from({ length: 7 }, (_, index) => {
-  //   const date = new Date(selectedWeekStart);
-  //   date.setDate(selectedWeekStart.getDate() + index);
-
-  //   return date;
-  // });
-  // const selectedWeekRecordDates = new Set(selectedWeekDates.map(date => toRecordDate(date)));
-  // const selectedWeekFoods = foods.filter(food => selectedWeekRecordDates.has(food.recordDate));
-  // const selectedWeekNutrition = totalNutrients(selectedWeekFoods);
-  // const selectedWeekCalories = calories(
-  //   selectedWeekNutrition.carbs,
-  //   selectedWeekNutrition.protein,
-  //   selectedWeekNutrition.fat
-  // );
 
   const handlePrevMonth = () => {
     onMonthChange(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
@@ -103,14 +80,14 @@ export const MonthlyCalendarSection = ({
   const handleTodayClick = () => {
     const today = new Date();
 
-    onMonthChange(today);
+    onMonthChange(new Date(today.getFullYear(), today.getMonth(), 1));
     onDateSelect(today);
   };
 
   return (
     <SectionLayout
       title="월간 캘린더"
-      description="날짜를 선택하면 위 영역의 요약과 음식 카드가 함께 바뀝니다."
+      description="날짜를 선택하면 팝업으로 음식 카드의 상세 내용을 확인할 수 있습니다."
       className={className}
       contentClassName="flex min-h-0 flex-1 flex-col"
       headerAction={
@@ -129,7 +106,7 @@ export const MonthlyCalendarSection = ({
             aria-label="이전 달"
             className="flex h-8 w-8 items-center justify-center rounded-md border border-(--neutral-4) text-(--text-secondary) transition hover:bg-(--neutral-5)"
           >
-            ‹
+            <img src="/chevron-left-arrow.svg" alt="" className="h-4 w-4" />
           </button>
 
           <strong className="min-w-[104px] text-center text-base text-(--text-primary)">
@@ -142,14 +119,14 @@ export const MonthlyCalendarSection = ({
             aria-label="다음 달"
             className="flex h-8 w-8 items-center justify-center rounded-md border border-(--neutral-4) text-(--text-secondary) transition hover:bg-(--neutral-5)"
           >
-            ›
+            <img src="/chevron-right-arrow.svg" alt="" className="h-4 w-4" />
           </button>
         </div>
       }
     >
       <div>
         <div className="min-h-0 rounded-[20px] border border-(--neutral-4) bg-white/70 p-4">
-          <div className="mb-3 grid grid-cols-7 text-center text-sm font-semibold text-(--text-muted)">
+          <div className="mb-3 grid grid-cols-7 text-center text-sm font-semibold text-(--text-primary)">
             {WEEK_LABELS.map(label => (
               <span key={label}>{label}</span>
             ))}
@@ -158,11 +135,12 @@ export const MonthlyCalendarSection = ({
           <div className="grid grid-cols-7 gap-2">
             {monthDates.map(date => {
               const recordDate = toRecordDate(date);
-              const dayFoods = foods.filter(food => food.recordDate === recordDate);
+              const dayFoods = foods.filter(food => food.recordDate === recordDate); // 그 날짜의 음식만 걸러냄
               const dayNutrition = totalNutrients(dayFoods);
               const dayCalories = calories(dayNutrition.carbs, dayNutrition.protein, dayNutrition.fat);
-              const hasData = dayFoods.length > 0;
-              const isCurrentMonth = date.getMonth() === currentMonth.getMonth();
+              const hasData = dayFoods.length > 0; // 해당 날짜에 음식 기록이 있는지 확인
+              const isCurrentMonth =
+                date.getFullYear() === currentMonth.getFullYear() && date.getMonth() === currentMonth.getMonth();
               const isToday = recordDate === todayRecordDate;
               const isSelected = recordDate === selectedRecordDate;
 
@@ -195,7 +173,7 @@ export const MonthlyCalendarSection = ({
 
                   {hasData ? (
                     <>
-                      <span className="my-1 text-xs font-semibold text-(--primary-1)">{dayCalories} kcal</span>
+                      <span className="mb-1 text-sm font-semibold text-(--primary-1)">{dayCalories} kcal</span>
 
                       <div className="mt-auto space-y-1">
                         {nutrientBadges.map(({ key, label, colorClassName }) => (
@@ -204,7 +182,7 @@ export const MonthlyCalendarSection = ({
                             <span
                               aria-label={`${label} ${dayNutrition[key]}g`}
                               title={`${label} ${dayNutrition[key]}g`}
-                              className={['h-2.5 w-2.5 shrink-0 rounded-full', colorClassName].join(' ')}
+                              className={['h-2 w-2 shrink-0 rounded-full', colorClassName].join(' ')}
                             />
 
                             {/* 색상 뱃지와 일치하는 영양소 텍스트 */}
@@ -216,46 +194,13 @@ export const MonthlyCalendarSection = ({
                       </div>
                     </>
                   ) : (
-                    <span className="mt-auto text-[11px] text-(--text-muted)">기록 없음</span>
+                    <span className="my-1 text-xs text-(--text-muted)">기록 없음</span>
                   )}
                 </button>
               );
             })}
           </div>
         </div>
-
-        {/* 요약에 들어갈 내용 생각 안남
-        <aside className="flex flex-col gap-3 rounded-[20px] border border-(--neutral-4) bg-(--neutral-5) p-4">
-          <div>
-            <p className="text-sm font-semibold text-(--text-muted)">월간 요약</p>
-            <strong className="mt-1 block text-3xl font-black tracking-[-0.04em] text-(--text-primary)">
-              {monthTotalCalories}
-              <span className="ml-1 text-sm font-semibold text-(--text-muted)">kcal</span>
-            </strong>
-          </div>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="rounded-2xl bg-(--bg-card) px-3 py-3">
-              <p className="text-(--text-muted)">기록일</p>
-              <strong className="text-(--text-primary)">{recordedDayCount}일</strong>
-            </div>
-            <div className="rounded-2xl bg-(--bg-card) px-3 py-3">
-              <p className="text-(--text-muted)">음식 수</p>
-              <strong className="text-(--text-primary)">{monthFoods.length}개</strong>
-            </div>
-          </div>
-
-          <div className="rounded-2xl bg-(--bg-card) px-3 py-3 text-sm text-(--text-secondary)">
-            <p>
-              탄수화물 <strong className="text-(--text-primary)">{monthNutrition.carbs}</strong>g
-            </p>
-            <p>
-              단백질 <strong className="text-(--text-primary)">{monthNutrition.protein}</strong>g
-            </p>
-            <p>
-              지방 <strong className="text-(--text-primary)">{monthNutrition.fat}</strong>g
-            </p>
-          </div>
-        </aside> */}
       </div>
     </SectionLayout>
   );
