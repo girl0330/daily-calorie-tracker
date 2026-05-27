@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, replace } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import Nav from './pages/Nav';
 import DailyTrackerPage from './pages/daily-tracker/DailyTrackerPage';

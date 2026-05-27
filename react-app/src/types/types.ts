@@ -32,9 +32,10 @@ export type CreateFoodRequest = {
   carbs: number;
   protein: number;
   fat: number;
+  recordDate: string; // 음식이 기록될 날짜
 };
 
-// 서버에 전송할 음식 데이터 타입
+// 서버에 전송할 음식 수정 데이터 타입
 export type UpdateFoodRequest = {
   id: number;
   userId: UserId;
@@ -43,5 +44,11 @@ export type UpdateFoodRequest = {
   carbs: number;
   protein: number;
   fat: number;
-  createdAt: string;
+  recordDate: string; // 음식이 기록된 날짜
+};
+
+// 서버에 전송할 음식 삭제 데이터 타입
+export type DeleteFoodRequest = {
+  id: number;
+  userId: UserId;
 };
