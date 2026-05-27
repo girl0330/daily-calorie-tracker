@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import type { UserId } from '../../types/types';
 import WeeklyDayBar from '../../features/tracker/components/weekly/WeeklyDayBar';
 import FoodInputForm from '../../features/foods/components/FoodInputForm';
@@ -10,15 +11,16 @@ import useTodayFoods from '../../features/tracker/hooks/useTodayFoods';
 import { toRecordDate } from '../../utils/date';
 
 export default function DailyTrackerPage() {
+  const [searchParams] = useSearchParams();
   const userFromStore = useAuthStore(state => state.user);
   const [selectedDate, setSelectedDate] = useState(() => new Date());
+
+  const selectedRecordDate = searchParams.get('date') ?? toRecordDate(new Date());
 
   const { data: foods = [], isLoading, isError, error } = useFoods(userFromStore?.id);
 
   // 날짜 기준 데이터는 페이지에서 한 번만 계산해서 하위 컴포넌트로 내려준다.
-  // createdAt이 아니라 사용자가 선택한 recordDate 기준으로 필터링한다.
-  const selectedDateFoods = useTodayFoods(foods, undefined, selectedDate);
-  const selectedRecordDate = toRecordDate(selectedDate);
+  const selectedDateFoods = useTodayFoods(foods, undefined, selectedRecordDate);
 
   // 로그인 유저가 없으면 페이지를 렌더링하지 않음
   if (!userFromStore) {

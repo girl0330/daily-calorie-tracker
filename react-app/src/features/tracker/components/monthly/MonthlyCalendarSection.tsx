@@ -2,6 +2,7 @@ import type { FoodItem } from '../../../../types/types';
 import { calories, totalNutrients } from '../../../../utils/calculate';
 import { toRecordDate } from '../../../../utils/date';
 import SectionLayout from '../../../../components/common/SectionLayout';
+import { useNavigate } from 'react-router-dom';
 
 //코드 정리: 월간 날짜 목록을 만들고, 날짜별 음식 기록을 계산해서, 클릭 가능한 달력 형태로 보여준다.
 
@@ -64,6 +65,8 @@ export const MonthlyCalendarSection = ({
   onDateSelect,
   className = '',
 }: MonthlyCalendarSectionProps) => {
+  const navigate = useNavigate();
+
   const todayRecordDate = toRecordDate();
   const selectedRecordDate = toRecordDate(selectedDate);
 
@@ -82,6 +85,15 @@ export const MonthlyCalendarSection = ({
 
     onMonthChange(new Date(today.getFullYear(), today.getMonth(), 1));
     onDateSelect(today);
+  };
+
+  const handleDateClick = (date: Date) => {
+    // Date 객체를 food.recordDate와 같은 YYYY-MM-DD 형식으로 변환한다.
+    const recordDate = toRecordDate(date);
+    console.log(`${recordDate}를 클릭함함`);
+
+    // 선택한 날짜를 DailyTrackerPage에 query string으로 전달한다.
+    navigate(`/?date=${recordDate}`);
   };
 
   return (
@@ -158,7 +170,7 @@ export const MonthlyCalendarSection = ({
                 <button
                   key={recordDate}
                   type="button"
-                  onClick={() => onDateSelect(date)}
+                  onClick={() => handleDateClick(date)}
                   aria-pressed={isSelected}
                   className={dayButtonClassName}
                 >

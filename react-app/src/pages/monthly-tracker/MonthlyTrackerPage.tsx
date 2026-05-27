@@ -13,7 +13,7 @@ export default function MonthlyTrackerPage() {
 
   // 월간 페이지의 기준 날짜는 selectedDate 하나로 통일한다.
   // 차트, 카드보드, 주간 요약이 모두 같은 날짜 데이터를 바라보게 된다.
-  const selectedDateFoods = useTodayFoods(foods, undefined, selectedDate);
+  // const selectedDateFoods = useTodayFoods(foods, undefined, selectedDate);
   const selectedRecordDate = toRecordDate(selectedDate);
 
   if (!userFromStore) {
