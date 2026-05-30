@@ -13,6 +13,7 @@ import { toRecordDate } from '../../utils/date';
 export default function DailyTrackerPage() {
   const [searchParams] = useSearchParams();
   const userFromStore = useAuthStore(state => state.user);
+
   const [selectedDate, setSelectedDate] = useState(() => new Date());
 
   const selectedRecordDate = searchParams.get('date') ?? toRecordDate(new Date());
@@ -20,7 +21,8 @@ export default function DailyTrackerPage() {
   const { data: foods = [], isLoading, isError, error } = useFoods(userFromStore?.id);
 
   // 날짜 기준 데이터는 페이지에서 한 번만 계산해서 하위 컴포넌트로 내려준다.
-  const selectedDateFoods = useTodayFoods(foods, undefined, selectedRecordDate);
+  // 선택된 날짜로 필터링된 foods
+  const selectedDateFoods = useTodayFoods(foods, selectedRecordDate);
 
   // 로그인 유저가 없으면 페이지를 렌더링하지 않음
   if (!userFromStore) {
