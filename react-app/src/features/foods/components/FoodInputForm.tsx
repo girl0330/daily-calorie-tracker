@@ -52,6 +52,7 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
 
     const error = validateFoodForm(form);
 
+    //TODO: alert UI 교체하기
     if (error) {
       alert(error);
       return;
