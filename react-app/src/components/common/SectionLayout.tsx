@@ -15,6 +15,7 @@ type SectionLayoutProps = {
 const SectionLayout = ({
   title,
   description,
+  children,
   className = '',
   contentClassName = '',
   headerAction,
@@ -41,7 +42,7 @@ const SectionLayout = ({
           {headerAction && <div className="flex shrink-0 items-center gap-2">{headerAction}</div>}
         </div>
       </div>
-      <div className={`${contentClassName}`} />
+      <div className={`${contentClassName}`}>{children}</div>
     </section>
   );
 };
