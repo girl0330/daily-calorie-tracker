@@ -97,7 +97,7 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
                   className="peer sr-only"
                 />
 
-                <span className="block rounded-md border border-(--neutral-4) px-3 py-2 text-center text-sm font-medium text-(--text-secondary) transition peer-checked:border-(--primary-3) peer-checked:bg-(--neutral-4) peer-checked:text-(--text-primary) hover:border-(--primary-1)">
+                <span className="block rounded-md border border-(--neutral-4) px-3 py-2 text-center text-sm font-medium text-(--text-secondary) transition peer-checked:border-(--primary-3) peer-checked:bg-(--primary-3) peer-checked:font-bold peer-checked:text-(--text-primary) hover:border-(--primary-1)">
                   {meal.label}
                 </span>
               </label>
