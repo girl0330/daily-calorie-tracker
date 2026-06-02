@@ -1,5 +1,6 @@
 import type { FoodItem, MealType } from '../../../../types/types';
 import { calories, nutrientsByMeal } from '../../../../utils/calculate';
+import FoodCard from '../../../foods/components/FoodCard';
 
 type MealSectionDensity = 'comfortable' | 'compact';
 
@@ -45,7 +46,11 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
 
       {/* 카드 리스트 영역: 스크롤은 카드가 아니라 리스트가 담당한다. */}
       <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
-        <p className="py-6 text-center text-sm text-(--text-muted)">등록된 음식이 없습니다.</p>
+        {mealFoods.length > 0 ? (
+          mealFoods.map(food => <FoodCard key={food.id} food={food} />)
+        ) : (
+          <p className="py-6 text-center text-sm text-(--text-muted)">등록된 음식이 없습니다.</p>
+        )}
       </div>
     </div>
   );
