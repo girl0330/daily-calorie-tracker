@@ -42,8 +42,18 @@ const WeeklyDayBar = ({ foods, selectedDate, onDateSelect, className = '' }: Wee
   });
 
   return (
-    <section className={`h-20 rounded-md border border-(--neutral-4) bg-(--bg-section) px-4 ${className}`}>
-      <div className="grid h-full grid-cols-7">
+    <section
+      className={`flex h-20 items-center justify-between overflow-hidden rounded-md border border-(--neutral-4) bg-(--bg-section) ${className}`}
+    >
+      <button
+        type="button"
+        onClick={() => {}}
+        aria-label="이전 달"
+        className="flex h-full items-center justify-center text-(--text-secondary) transition hover:bg-(--neutral-5)"
+      >
+        <img src="/chevron-left-arrow.svg" alt="" className="h-4 w-4" />
+      </button>
+      <div className="grid h-full flex-1 grid-cols-7">
         {days.map(day => {
           const dayClassName = [
             'flex h-full w-full flex-col items-center justify-center gap-2 transition',
@@ -74,6 +84,14 @@ const WeeklyDayBar = ({ foods, selectedDate, onDateSelect, className = '' }: Wee
           );
         })}
       </div>
+      <button
+        type="button"
+        onClick={() => {}}
+        aria-label="다음 달"
+        className="flex h-4 h-full w-4 items-center justify-center text-(--text-secondary) transition hover:bg-(--neutral-5)"
+      >
+        <img src="/chevron-right-arrow.svg" alt="" className="h-4 w-4" />
+      </button>
     </section>
   );
 };
