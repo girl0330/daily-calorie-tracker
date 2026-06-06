@@ -7,7 +7,7 @@ import type {
   UpdateFoodRequest,
   UserId,
 } from '../../../types/types';
-import { toRecordDate } from '../../../utils/date';
+import { toRecordDate as formatRecordDate } from '../../../utils/date';
 
 // 화면에서 실제로 사용하는 컬럼만 조회한다.
 // DB 컬럼이 늘어나도 프론트 도메인 타입이 불필요하게 영향을 받지 않도록 한다.
@@ -38,7 +38,7 @@ const toFoodItem = (row: FoodRow): FoodItem => {
     protein: row.protein,
     fat: row.fat,
     // 기존 데이터에 record_date가 비어 있으면 등록 시간을 기준으로 한 번만 보정한다.
-    recordDate: row.record_date ?? toRecordDate(new Date(row.created_at)),
+    recordDate: row.record_date ?? formatRecordDate(new Date(row.created_at)),
     createdAt: row.created_at,
   };
 };

@@ -8,13 +8,7 @@ import { NutritionChart } from '../../features/tracker/components/nutrition/Nutr
 import { useAuthStore } from '../../store/authStore';
 import { useFoods } from '../../features/foods/hooks/useFoods';
 import useTodayFoods from '../../features/tracker/hooks/useTodayFoods';
-import { toRecordDate } from '../../utils/date';
-
-const parseRecordDate = (recordDate: string) => {
-  const [year, month, day] = recordDate.split('-').map(Number);
-
-  return new Date(year, month - 1, day);
-};
+import { toRecordDate as formatRecordDate, parseRecordDate } from '../../utils/date';
 
 export default function DailyTrackerPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -22,11 +16,12 @@ export default function DailyTrackerPage() {
 
   const dateFromUrl = searchParams.get('date');
 
-  const [selectedDate, setSelectedDate] = useState(() => parseRecordDate(dateFromUrl ?? toRecordDate(new Date())));
+  const [selectedDate, setSelectedDate] = useState(() => parseRecordDate(dateFromUrl ?? formatRecordDate(new Date())));
 
   // URL의 date가 바뀌면 selectedDate state도 같이 변경한다.
   useEffect(() => {
     if (!dateFromUrl) {
+      setSelectedDate(new Date());
       return;
     }
 
@@ -35,7 +30,7 @@ export default function DailyTrackerPage() {
     setSelectedDate(parseRecordDate(dateFromUrl));
   }, [dateFromUrl]);
 
-  const selectedRecordDate = toRecordDate(selectedDate);
+  const selectedRecordDate = formatRecordDate(selectedDate);
 
   const { data: foods = [], isLoading, isError, error } = useFoods(userFromStore?.id);
 
@@ -44,7 +39,7 @@ export default function DailyTrackerPage() {
   const selectedDateFoods = useTodayFoods(foods, selectedRecordDate);
 
   const handleDateSelect = (date: Date) => {
-    const recordDate = toRecordDate(date);
+    const recordDate = formatRecordDate(date);
 
     setSelectedDate(date);
     setSearchParams({ date: recordDate });
@@ -70,7 +65,7 @@ export default function DailyTrackerPage() {
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
       {/* 주간 날짜 영역 */}
-      <WeeklyDayBar foods={foods} selectedDate={selectedDate} onDateSelect={handleDateSelect} />
+      <WeeklyDayBar foods={selectedDateFoods} selectedDate={selectedDate} onDateSelect={handleDateSelect} />
 
       {/* 상단 보조 영역: 음식 추가 + 영양소 차트 */}
       <div className="grid shrink-0 grid-cols-1 gap-4 xl:grid-cols-2">
