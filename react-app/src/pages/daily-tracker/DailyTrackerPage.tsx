@@ -16,12 +16,19 @@ export default function DailyTrackerPage() {
 
   const dateFromUrl = searchParams.get('date');
 
+  const [displayedWeekDate, setDisplayedWeekDate] = useState(() =>
+    parseRecordDate(dateFromUrl ?? formatRecordDate(new Date()))
+  );
   const [selectedDate, setSelectedDate] = useState(() => parseRecordDate(dateFromUrl ?? formatRecordDate(new Date())));
 
   // URL의 date가 바뀌면 selectedDate state도 같이 변경한다.
   useEffect(() => {
     if (!dateFromUrl) {
-      setSelectedDate(new Date());
+      const today = new Date();
+
+      setSelectedDate(today);
+      setDisplayedWeekDate(today);
+
       return;
     }
 
@@ -45,6 +52,8 @@ export default function DailyTrackerPage() {
     setSearchParams({ date: recordDate });
   };
 
+  const handleDisplayedWeekChange = (date: Date) => {};
+
   // 로그인 유저가 없으면 페이지를 렌더링하지 않음
   if (!userFromStore) {
     return null;
@@ -65,7 +74,13 @@ export default function DailyTrackerPage() {
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
       {/* 주간 날짜 영역 */}
-      <WeeklyDayBar foods={selectedDateFoods} selectedDate={selectedDate} onDateSelect={handleDateSelect} />
+      <WeeklyDayBar
+        foods={foods}
+        displayedWeekDate={displayedWeekDate}
+        selectedDate={selectedDate}
+        onWeekChange={setDisplayedWeekDate}
+        onDateSelect={handleDateSelect}
+      />
 
       {/* 상단 보조 영역: 음식 추가 + 영양소 차트 */}
       <div className="grid shrink-0 grid-cols-1 gap-4 xl:grid-cols-2">
