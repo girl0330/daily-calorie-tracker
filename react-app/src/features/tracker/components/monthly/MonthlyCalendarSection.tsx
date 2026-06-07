@@ -1,6 +1,6 @@
 import type { FoodItem } from '../../../../types/types';
 import { calories, totalNutrients } from '../../../../utils/calculate';
-import { toRecordDate } from '../../../../utils/date';
+import { toRecordDate as formatRecordDate } from '../../../../utils/date';
 import SectionLayout from '../../../../components/common/SectionLayout';
 import { useNavigate } from 'react-router-dom';
 
@@ -67,8 +67,8 @@ export const MonthlyCalendarSection = ({
 }: MonthlyCalendarSectionProps) => {
   const navigate = useNavigate();
 
-  const todayRecordDate = toRecordDate();
-  const selectedRecordDate = toRecordDate(selectedDate);
+  const todayRecordDate = formatRecordDate();
+  const selectedRecordDate = formatRecordDate(selectedDate);
 
   const monthDates = getMonthGridDates(currentMonth);
 
@@ -89,7 +89,7 @@ export const MonthlyCalendarSection = ({
 
   const handleDateClick = (date: Date) => {
     // Date 객체를 food.recordDate와 같은 YYYY-MM-DD 형식으로 변환한다.
-    const recordDate = toRecordDate(date);
+    const recordDate = formatRecordDate(date);
     console.log(`${recordDate}를 클릭함함`);
 
     // 선택한 날짜를 DailyTrackerPage에 query string으로 전달한다.
@@ -146,7 +146,7 @@ export const MonthlyCalendarSection = ({
 
           <div className="grid grid-cols-7 gap-2">
             {monthDates.map(date => {
-              const recordDate = toRecordDate(date);
+              const recordDate = formatRecordDate(date);
               const dayFoods = foods.filter(food => food.recordDate === recordDate); // 그 날짜의 음식만 걸러냄
               const dayNutrition = totalNutrients(dayFoods);
               const dayCalories = calories(dayNutrition.carbs, dayNutrition.protein, dayNutrition.fat);
