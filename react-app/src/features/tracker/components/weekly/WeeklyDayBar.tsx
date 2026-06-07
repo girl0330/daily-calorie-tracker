@@ -1,62 +1,61 @@
 import type { FoodItem } from '../../../../types/types';
-import { toRecordDate } from '../../../../utils/date';
+import { toRecordDate as formatRecordDate } from '../../../../utils/date';
+
+const WEEK_DAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'];
 
 type WeeklyDayBarProps = {
   foods: FoodItem[];
+  displayedWeekDate: Date;
+  onWeekChange: (date: Date) => void;
   selectedDate: Date;
   onDateSelect: (date: Date) => void;
   className?: string;
 };
 
-const WeeklyDayBar = ({ foods, selectedDate, onDateSelect, className = '' }: WeeklyDayBarProps) => {
-  const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
-  // const weekDayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-
+const WeeklyDayBar = ({
+  foods,
+  displayedWeekDate,
+  onWeekChange,
+  selectedDate,
+  onDateSelect,
+  className = '',
+}: WeeklyDayBarProps) => {
   const handlePrevWeek = () => {
-    const prevWeekDate = new Date(selectedDate);
+    const prevWeekDate = new Date(displayedWeekDate);
 
-    // 선택된 날짜 기준으로 7일 전 날짜를 만든다.
-    prevWeekDate.setDate(selectedDate.getDate() - 7);
+    prevWeekDate.setDate(displayedWeekDate.getDate() - 7);
 
     // 부모 컴포넌트에게 변경할 주의 기준 날짜를 전달한다.
-    onDateSelect(prevWeekDate);
+    onWeekChange(prevWeekDate);
   };
 
   const handleNextWeek = () => {
     // 현재 선택된 날짜를 직접 수정하지 않기 위해 복사본을 만든다.
-    const nextWeekDate = new Date(selectedDate);
+    const nextWeekDate = new Date(displayedWeekDate);
 
     // 선택된 날짜 기준으로 7일 후 날짜를 만든다.
-    nextWeekDate.setDate(selectedDate.getDate() + 7);
+    nextWeekDate.setDate(displayedWeekDate.getDate() + 7);
 
     // 부모 컴포넌트에게 변경할 주의 기준 날짜를 전달한다.
-    onDateSelect(nextWeekDate);
+    onWeekChange(nextWeekDate);
   };
 
-  // 실제 오늘 날짜를 yyyy-MM-dd 형식으로 변환한다.
-  const todayRecordDate = toRecordDate(new Date());
+  const todayRecordDate = formatRecordDate(new Date());
+  const selectedRecordDate = formatRecordDate(selectedDate);
+  const displayedWeekDayIndex = displayedWeekDate.getDay();
 
-  // 선택된 날짜를 yyyy-MM-dd 형식으로 변환한다.
-  const selectedRecordDate = toRecordDate(selectedDate);
+  const displayedWeekStartDate = new Date(displayedWeekDate);
+  displayedWeekStartDate.setDate(displayedWeekDate.getDate() - displayedWeekDayIndex);
 
-  // 선택된 날짜가 한 주의 몇 번째 요일인지 구한다.
-  // 일요일: 0, 월요일: 1, ..., 토요일: 6
-  const selectedWeekdayIndex = selectedDate.getDay();
+  const displayedWeekDays = Array.from({ length: 7 }, (_, dayIndex) => {
+    const weekDate = new Date(displayedWeekStartDate);
+    weekDate.setDate(displayedWeekStartDate.getDate() + dayIndex);
 
-  // 선택된 날짜가 포함된 주의 시작일, 즉 일요일을 구한다.
-  const selectedWeekStartDate = new Date(selectedDate);
-  selectedWeekStartDate.setDate(selectedDate.getDate() - selectedWeekdayIndex);
-
-  // 선택된 날짜가 포함된 한 주의 날짜 목록을 만든다.
-  const selectedWeekDays = Array.from({ length: 7 }, (_, dayIndex) => {
-    const weekDate = new Date(selectedWeekStartDate);
-    weekDate.setDate(selectedWeekStartDate.getDate() + dayIndex);
-
-    const weekRecordDate = toRecordDate(weekDate);
+    const weekRecordDate = formatRecordDate(weekDate);
 
     return {
       key: weekRecordDate,
-      label: weekDays[dayIndex],
+      label: WEEK_DAY_LABELS[dayIndex],
       date: weekDate,
       dayNumber: weekDate.getDate(),
       isToday: weekRecordDate === todayRecordDate,
@@ -71,14 +70,14 @@ const WeeklyDayBar = ({ foods, selectedDate, onDateSelect, className = '' }: Wee
     >
       <button
         type="button"
-        onClick={() => handlePrevWeek()}
+        onClick={handlePrevWeek}
         aria-label="이전 주"
-        className="flex h-full items-center justify-center text-(--text-secondary) transition hover:bg-(--neutral-5)"
+        className="flex h-full w-10 items-center justify-center text-(--text-secondary) transition hover:bg-(--neutral-5)"
       >
         <img src="/chevron-left-arrow.svg" alt="" className="h-4 w-4" />
       </button>
       <div className="grid h-full flex-1 grid-cols-7">
-        {selectedWeekDays.map(day => {
+        {displayedWeekDays.map(day => {
           const dayClassName = [
             'flex h-full w-full flex-col items-center justify-center gap-2 transition',
             'hover:bg-(--neutral-5)',
@@ -110,9 +109,9 @@ const WeeklyDayBar = ({ foods, selectedDate, onDateSelect, className = '' }: Wee
       </div>
       <button
         type="button"
-        onClick={() => handleNextWeek()}
+        onClick={handleNextWeek}
         aria-label="다음 주"
-        className="flex h-4 h-full w-4 items-center justify-center text-(--text-secondary) transition hover:bg-(--neutral-5)"
+        className="flex h-full w-10 items-center justify-center text-(--text-secondary) transition hover:bg-(--neutral-5)"
       >
         <img src="/chevron-right-arrow.svg" alt="" className="h-4 w-4" />
       </button>
