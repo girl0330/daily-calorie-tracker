@@ -52,8 +52,6 @@ export default function DailyTrackerPage() {
     setSearchParams({ date: recordDate });
   };
 
-  const handleDisplayedWeekChange = (date: Date) => {};
-
   // 로그인 유저가 없으면 페이지를 렌더링하지 않음
   if (!userFromStore) {
     return null;
