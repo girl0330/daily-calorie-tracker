@@ -28,6 +28,12 @@ export const validateFoodForm = ({ foodName, carbs, protein, fat }: FoodFormValu
 
   const nutrientValues = [carbs, protein, fat];
 
+  // 저장 시점에는 완성된 숫자 형식인지 검사한다.
+  // input에서는 '1.' 같은 중간 입력을 허용하지만, 저장할 때는 막는다.
+  if (nutrientValues.some(value => !nutrientSavePattern.test(value))) {
+    return '탄수화물, 단백질, 지방은 소수점 2자리까지 입력할 수 있습니다.';
+  }
+
   if (nutrientValues.some(value => Number.isNaN(Number(value)))) {
     return '탄수화물, 단백질, 지방은 숫자여야 합니다.';
   }
@@ -78,4 +84,20 @@ export const getPreviewNutrients = (form: FoodFormValues) => {
     },
     { carbs: 0, protein: 0, fat: 0 }
   );
+};
+
+// 입력 중 허용할 영양소 값 패턴이다.
+// 예: '', '1', '1.', '1.2', '1.23' 허용
+// 예: '1.234', 'abc', '-1' 불가
+const nutrientInputPattern = /^\d*(\.\d{0,2})?$/;
+
+// 저장 시점에 허용할 최종 영양소 값 패턴이다.
+// 예: '1', '1.2', '1.23' 허용
+// 예: '', '.', '1.' 불가
+const nutrientSavePattern = /^\d+(\.\d{1,2})?$/;
+
+// input에서 값이 바뀔 때 사용할 검사 함수이다.
+// 입력 중에는 빈 문자열이나 '1.' 같은 중간 상태도 허용한다.
+export const isValidNutrientInput = (value: string): boolean => {
+  return nutrientInputPattern.test(value);
 };

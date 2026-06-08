@@ -132,11 +132,12 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
             <input
               id="carbs"
               name="carbs"
-              type="number"
+              type="text"
+              inputMode="decimal"
               min="0"
               value={form.carbs}
               onChange={handleFormChange}
-              placeholder="g"
+              placeholder="0.00 g"
               className="w-full rounded-md border border-(--neutral-4) bg-white px-3 py-2.5 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-muted) focus:border-(--primary-3)"
             />
           </div>
@@ -149,11 +150,12 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
             <input
               id="protein"
               name="protein"
-              type="number"
+              type="text"
+              inputMode="decimal"
               min="0"
               value={form.protein}
               onChange={handleFormChange}
-              placeholder="g"
+              placeholder="0.00 g"
               className="w-full rounded-md border border-(--neutral-4) bg-white px-3 py-2.5 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-muted) focus:border-(--primary-3)"
             />
           </div>
@@ -166,11 +168,12 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
             <input
               id="fat"
               name="fat"
-              type="number"
+              type="text"
+              inputMode="decimal"
               min="0"
               value={form.fat}
               onChange={handleFormChange}
-              placeholder="g"
+              placeholder="0.00 g"
               className="w-full rounded-md border border-(--neutral-4) bg-white px-3 py-2.5 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-muted) focus:border-(--primary-3)"
             />
           </div>
