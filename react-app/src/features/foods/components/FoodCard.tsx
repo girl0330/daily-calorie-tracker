@@ -3,6 +3,7 @@ import type { FoodItem } from '../../../types/types';
 import { calories } from '../../../utils/calculate';
 import EditFoodCard from './EditFoodCard';
 import { useRemoveFood } from '../hooks/useFoodMutations';
+import { showAlert, showConfirm } from '../utils/sweetAlert';
 
 type FoodCardProps = {
   food: FoodItem;
@@ -16,11 +17,23 @@ export default function FoodCard({ food, compact = false }: FoodCardProps) {
   const { mutate: removeFood, isPending } = useRemoveFood(food.userId);
 
   // 삭제 버튼 클릭 시 실행되는 함수
-  const handleDeleteFood = () => {
+  const handleDeleteFood = async () => {
+    const isConfirmed = await showConfirm({
+      title: '음식을 삭제할까요?',
+      text: '삭제한 음식 기록은 되돌릴 수 없습니다.',
+      icon: 'warning',
+      confirmButtonText: '삭제',
+      cancelButtonText: '취소',
+    });
+
+    if (!isConfirmed) return;
+
     removeFood(food.id, {
       onError: error => {
-        console.error('음식 삭제 실패:', error);
-        alert('음식 삭제에 실패했습니다.');
+        showAlert({
+          title: `${error}`,
+          icon: 'error',
+        });
       },
     });
   };

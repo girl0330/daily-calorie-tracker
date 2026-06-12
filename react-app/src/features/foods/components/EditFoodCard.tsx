@@ -9,6 +9,7 @@ import {
   validateFoodForm,
   type FoodFormValues,
 } from '../utils/foodForm';
+import { showAlert } from '../utils/sweetAlert';
 
 type EditFoodCardProps = {
   food: FoodItem;
@@ -46,9 +47,11 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
 
     const error = validateFoodForm(editInputForm);
 
-    // 토스트 알림으로 교체 예정
     if (error) {
-      alert(error);
+      showAlert({
+        title: `${error}`,
+        icon: 'warning',
+      });
       return;
     }
 
@@ -71,7 +74,10 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
       // 수정 실패 시 수정 모드는 유지
       onError: error => {
         console.error('음식 수정 실패:', error);
-        alert('음식 수정에 실패했습니다.');
+        showAlert({
+          title: error instanceof Error ? error.message : '음식 삭제에 실패했습니다.',
+          icon: 'error',
+        });
       },
     });
   };
