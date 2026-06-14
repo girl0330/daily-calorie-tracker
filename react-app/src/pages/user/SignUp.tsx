@@ -1,15 +1,40 @@
 import { useState } from 'react';
 import { signUp as signUpApi } from '../../service/UserService';
+import { useNavigate } from 'react-router-dom';
+import { showAlert } from '../../features/foods/utils/sweetAlert';
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('로그인 클릭', email);
+    try {
+      await signUpApi(email, password);
 
-    signUpApi(email, password);
+      await showAlert({
+        title: '회원가입 성공',
+        text: '바로 메인페이지로 이동 됩니다',
+        icon: 'success',
+      });
+
+      navigate('/', { replace: true });
+    } catch (error) {
+      console.error('회원가입 실패:', error);
+
+      const message =
+        error instanceof Error && error.message === 'User already registered'
+          ? '이미 존재하는 계정입니다.'
+          : '회원가입 중 알 수 없는 오류가 발생했습니다.';
+
+      showAlert({
+        title: '회원가입 실패',
+        text: message,
+        icon: 'error',
+      });
+    }
   };
 
   return (
@@ -17,7 +42,7 @@ const SignUp = () => {
       <div className="mx-auto w-full max-w-[430px] bg-white p-3">
         {/* 상단 로고/배너 영역 */}
         <div className="mb-10 flex justify-center">
-          <div className="h-[110px] w-[280px] rounded-md text-center text-4xl"> Daily Tracker </div>
+          <div className="flex h-[110px] items-center justify-center rounded-md text-4xl"> 계정만들기 </div>
         </div>
         {/* 이메일 폼 */}
         <form className="space-y-4" onSubmit={handleSubmit}>
@@ -51,7 +76,7 @@ const SignUp = () => {
 
           <button
             type="submit"
-            className="text-l mt-6 h-12 w-full rounded-2xl bg-[#2f80ed] font-semibold text-white shadow-[0_4px_10px_rgba(47,128,237,0.28)] transition hover:bg-[#2975da] active:scale-[0.99]"
+            className="text-l mt-6 h-12 w-full cursor-pointer rounded-2xl bg-[#2f80ed] font-semibold text-white shadow-[0_4px_10px_rgba(47,128,237,0.28)] transition hover:bg-[#2975da] active:scale-[0.99]"
           >
             회원가입
           </button>

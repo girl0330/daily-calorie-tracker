@@ -33,7 +33,7 @@ const Login = () => {
       <div className="mx-auto w-full max-w-[430px] bg-white p-3">
         {/* 상단 로고/배너 영역 */}
         <div className="mb-10 flex justify-center">
-          <div className="h-[110px] w-[280px] rounded-md text-center text-4xl"> Daily Tracker </div>
+          <div className="flex h-[110px] items-center justify-center rounded-md text-4xl"> 로그인 </div>
         </div>
         {/* 이메일 폼 */}
         <form className="space-y-4" onSubmit={handleSubmit}>
@@ -76,7 +76,10 @@ const Login = () => {
         {/* 구분선 */}
         <div className="my-12 flex items-center gap-4">
           <div className="h-px flex-1 bg-[#ddd6cf]" />
-          <Link to="/sign-up" className="shrink-0 cursor-pointer text-[17px] text-[#8a8178] hover:text-[#5f574f]">
+          <Link
+            to="/sign-up"
+            className="shrink-0 cursor-pointer text-[17px] text-[#8a8178] hover:font-bold hover:text-[#5f574f]"
+          >
             Sign up
           </Link>
           <div className="h-px flex-1 bg-[#ddd6cf]" />
