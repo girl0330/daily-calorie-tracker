@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { login as loginApi } from '../../service/UserService';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import { showAlert } from '../../features/foods/utils/sweetAlert';
+import { getRequiredInputErrorMessage } from '../../features/foods/utils/validateCommonInput';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -15,6 +17,27 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const validationMessage = getRequiredInputErrorMessage([
+      {
+        value: email,
+        message: '이메일을 입력해주세요.',
+      },
+      {
+        value: password,
+        message: '비밀번호를 입력해주세요.',
+      },
+    ]);
+
+    if (validationMessage) {
+      showAlert({
+        title: '로그인 실패',
+        text: validationMessage,
+        icon: 'error',
+      });
+
+      return;
+    }
+
     try {
       setIsPending(true);
       const data = await loginApi(email, password);
@@ -22,7 +45,16 @@ const Login = () => {
 
       navigate('/', { replace: true });
     } catch (error) {
-      alert(error instanceof Error ? error.message : '로그인에 실패했습니다.');
+      const message =
+        error instanceof Error && error.message === 'Invalid login credentials'
+          ? '이메일 또는 비밀번호를 확인하시고 다시 입력해주세요.'
+          : '로그인 중 알 수 없는 오류가 발생했습니다.';
+
+      showAlert({
+        title: '로그인 실패',
+        text: message,
+        icon: 'error',
+      });
     } finally {
       setIsPending(false);
     }
