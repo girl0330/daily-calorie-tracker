@@ -27,11 +27,17 @@ const ResetPassword = () => {
     const validationMessage = getRequiredInputErrorMessage([
       {
         value: password,
-        message: '비밀번호를 입력해주세요.',
+        rules: [
+          { type: 'required', message: '비밀번호를 입력해주세요.' },
+          { type: 'minLength', min: 8, message: '비밀번호는 최소 8자리 이상이어야 합니다.' },
+        ],
       },
       {
         value: confirmPassword,
-        message: '비밀번호 확인을 입력해주세요.',
+        rules: [
+          { type: 'required', message: '비밀번호 확인을 입력해주세요.' },
+          { type: 'match', compareValue: password, message: '비밀번호가 일치하지 않습니다.' },
+        ],
       },
     ]);
 
@@ -44,15 +50,15 @@ const ResetPassword = () => {
       return;
     }
 
-    // 3. 최종 제출 전 두 비밀번호 일치 여부 확인
-    if (!isMatched) {
-      showAlert({
-        title: '변경 실패',
-        text: '비밀번호가 일치하지 않습니다. 다시 확인해주세요.',
-        icon: 'error',
-      });
-      return;
-    }
+    // // 3. 최종 제출 전 두 비밀번호 일치 여부 확인
+    // if (!isMatched) {
+    //   showAlert({
+    //     title: '변경 실패',
+    //     text: '비밀번호가 일치하지 않습니다. 다시 확인해주세요.',
+    //     icon: 'error',
+    //   });
+    //   return;
+    // }
 
     try {
       setIsPending(true);
@@ -60,7 +66,7 @@ const ResetPassword = () => {
 
       await showAlert({
         title: '비밀번호 재설정 완료',
-        text: '비밀번호가 변경되었습니다. 새 비밀번호로 다시 로그인해 주세요.',
+        html: `비밀번호가 변경되었습니다. <br/> 새 비밀번호로 다시 로그인해 주세요.`,
         icon: 'success',
       });
 
@@ -153,8 +159,8 @@ const ResetPassword = () => {
           {/* 5. 조건에 맞지 않을 때 버튼 disabled 처리 추가 */}
           <button
             type="submit"
-            disabled={isPending || !password || !confirmPassword || !isMatched}
-            className="mt-6 h-12 w-full rounded-2xl border border-[#8a8178] bg-white font-semibold transition hover:bg-(--border-strong) active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
+            // disabled={isPending || !password || !confirmPassword || !isMatched}
+            className="mt-6 h-12 w-full rounded-2xl border border-[#8a8178] bg-white font-semibold transition hover:bg-(--border-strong) active:scale-[0.99]"
           >
             {isPending ? '변경 중...' : '확인'}
           </button>

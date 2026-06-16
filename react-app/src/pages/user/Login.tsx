@@ -20,11 +20,11 @@ const Login = () => {
     const validationMessage = getRequiredInputErrorMessage([
       {
         value: email,
-        message: '이메일을 입력해주세요.',
+        rules: [{ type: 'required', message: '이메일을 입력해주세요.' }],
       },
       {
         value: password,
-        message: '비밀번호를 입력해주세요.',
+        rules: [{ type: 'required', message: '비밀번호를 입력해주세요.' }],
       },
     ]);
 
