@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { login as loginApi } from '../../service/UserService';
+import { loginApi } from '../../service/UserService';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { showAlert } from '../../features/foods/utils/sweetAlert';

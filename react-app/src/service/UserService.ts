@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase';
 
-export const signUp = async (email: string, password: string) => {
+export const signUpApi = async (email: string, password: string) => {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -14,7 +14,7 @@ export const signUp = async (email: string, password: string) => {
   console.log('회원가입 통신 성공:', data);
 };
 
-export const login = async (email: string, password: string) => {
+export const loginApi = async (email: string, password: string) => {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
