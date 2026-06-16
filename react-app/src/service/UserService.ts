@@ -33,6 +33,32 @@ export const login = async (email: string, password: string) => {
   return data;
 };
 
-export const logout = async () => {
+// 재설정 이메일을 보내는 함수
+export const sendPasswordResetEmailApi = async (email: string) => {
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/reset-password`,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+// 실제 비밀번호 변경
+export const resetPasswordApi = async (password: string) => {
+  const { data, error } = await supabase.auth.updateUser({
+    password,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+export const logoutApi = async () => {
   await supabase.auth.signOut();
 };

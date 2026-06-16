@@ -100,11 +100,17 @@ const Login = () => {
           <button
             type="submit"
             disabled={isPending}
-            className="text-l mt-6 h-12 w-full rounded-2xl bg-[#2f80ed] font-semibold text-white shadow-[0_4px_10px_rgba(47,128,237,0.28)] transition hover:bg-[#2975da] active:scale-[0.99]"
+            className="text-l mt-6 h-12 w-full rounded-2xl bg-(--accent-2) font-semibold text-white transition hover:bg-(--accent-1) active:scale-[0.99]"
           >
             {isPending ? '로그인 중...' : '로그인'}
           </button>
         </form>
+        <button
+          onClick={() => navigate('/find-password')}
+          className="mt-6 h-12 w-full rounded-2xl border border-[#8a8178] bg-white font-semibold transition hover:bg-(--border-strong) active:scale-[0.99]"
+        >
+          비밀번호 찾기
+        </button>
         {/* 구분선 */}
         <div className="my-12 flex items-center gap-4">
           <div className="h-px flex-1 bg-[#ddd6cf]" />
