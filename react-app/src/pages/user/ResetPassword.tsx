@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { logoutApi, resetPasswordApi } from '../../service/UserService';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { showAlert } from '../../features/foods/utils/sweetAlert';
 import { getRequiredInputErrorMessage } from '../../features/foods/utils/validateCommonInput';
 
 const ResetPassword = () => {
+  const location = useLocation();
   const navigate = useNavigate();
 
   const clearUser = useAuthStore(state => state.clearUser);
@@ -76,6 +77,29 @@ const ResetPassword = () => {
       setIsPending(false);
     }
   };
+
+  useEffect(() => {
+    // 주소창의 '#' 뒤에 있는 파라미터 분석
+    const handleExpiredResetLink = async () => {
+      const hashParams = new URLSearchParams(location.hash.substring(1));
+      const errorCode = hashParams.get('error_code');
+
+      if (errorCode !== 'otp_expired') {
+        return;
+      }
+
+      await showAlert({
+        title: '비밀번호 재설정 링크 만료',
+        html: `비밀번호 재설정 링크가 만료되었습니다.<br />
+                다시 요청해주세요.`,
+        icon: 'error',
+      });
+
+      navigate('/find-password', { replace: true });
+    };
+
+    handleExpiredResetLink();
+  }, [location.hash, navigate]);
 
   return (
     <main className="min-h-screen px-6 py-10">

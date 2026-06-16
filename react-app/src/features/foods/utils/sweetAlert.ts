@@ -4,6 +4,7 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 type ShowAlertOptions = {
   title: string;
   text?: string;
+  html?: string;
   icon?: SweetAlertIcon;
 };
 
@@ -15,10 +16,11 @@ type ShowConfirmOptions = {
   icon?: SweetAlertIcon;
 };
 
-export const showAlert = ({ title, text, icon = 'info' }: ShowAlertOptions) => {
+export const showAlert = ({ title, text, html, icon = 'info' }: ShowAlertOptions) => {
   return Swal.fire({
     title,
     text,
+    html,
     icon,
     confirmButtonText: '확인',
   });
