@@ -54,9 +54,9 @@ function App() {
 
         <main className="flex-1 p-5">
           <Routes>
-            <Route path="/sign-up" element={<SignUp />} />
+            <Route path="/sign-up" element={userFromStore ? <Navigate to="/" replace /> : <SignUp />} />
 
-            <Route path="/find-password" element={<FindPassword />} />
+            <Route path="/find-password" element={userFromStore ? <Navigate to="/" replace /> : <FindPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
 
             <Route path="/login" element={userFromStore ? <Navigate to="/" replace /> : <Login />} />
