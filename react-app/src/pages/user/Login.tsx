@@ -133,11 +133,11 @@ const Login = () => {
           <div className="h-px flex-1 bg-[#ddd6cf]" />
         </div>
 
-        {/* 소셜 로그인 */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* 나중에 추가 예정*/}
+        {/* <div className="grid grid-cols-2 gap-4">
           <button className="h-14 border">카카오톡</button>
           <button className="h-14 border">구글</button>
-        </div>
+        </div> */}
       </div>
     </main>
   );
