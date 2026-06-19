@@ -2,10 +2,14 @@ import { useState } from 'react';
 import { showAlert } from '../../features/foods/utils/sweetAlert';
 import { Link } from 'react-router-dom';
 import { sendPasswordResetEmailApi } from '../../service/UserService';
+import { getRequiredInputErrorMessage } from '../../features/foods/utils/validateCommonInput';
 
 const FindPassword = () => {
   const [email, setEmail] = useState('');
   const [isPending, setIsPending] = useState(false);
+
+  // 이메일 패턴 정규식
+  const loginEmailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   /**
    * 입력한 이메일로 비밀번호 재설정 링크를 전송한다.
@@ -13,10 +17,20 @@ const FindPassword = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (email.trim().length === 0) {
-      await showAlert({
+    const validationMessage = getRequiredInputErrorMessage([
+      {
+        value: email,
+        rules: [
+          { type: 'required', message: '이메일을 입력해주세요.' },
+          { type: 'pattern', regex: loginEmailPattern, message: '올바른 이메일 형식으로 입력해주세요.' },
+        ],
+      },
+    ]);
+
+    if (validationMessage) {
+      showAlert({
         title: '비밀번호 재설정 실패',
-        text: '이메일을 입력해주세요.',
+        text: validationMessage,
         icon: 'error',
       });
 
@@ -30,16 +44,8 @@ const FindPassword = () => {
 
       await showAlert({
         title: '이메일 전송 완료',
-        text: '입력한 이메일로 비밀번호 재설정 링크를 보냈습니다.',
+        text: '계정이 존재하는 경우 비밀번호 재설정 링크를 보내드립니다.',
         icon: 'success',
-      });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : '비밀번호 재설정 이메일 전송 중 오류가 발생했습니다.';
-
-      await showAlert({
-        title: '비밀번호 재설정 실패',
-        text: message,
-        icon: 'error',
       });
     } finally {
       setIsPending(false);

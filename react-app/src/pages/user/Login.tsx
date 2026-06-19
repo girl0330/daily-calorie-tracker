@@ -14,20 +14,30 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [isPending, setIsPending] = useState(false);
 
+  // 이메일 패턴 정규식
+  const loginEmailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const validationMessage = getRequiredInputErrorMessage([
       {
         value: email,
-        rules: [{ type: 'required', message: '이메일을 입력해주세요.' }],
+        rules: [
+          { type: 'required', message: '이메일을 입력해주세요.' },
+          { type: 'pattern', regex: loginEmailPattern, message: '올바른 이메일 형식으로 입력해주세요.' },
+        ],
       },
       {
         value: password,
-        rules: [{ type: 'required', message: '비밀번호를 입력해주세요.' }],
+        rules: [
+          { type: 'required', message: '비밀번호를 입력해주세요.' },
+          { type: 'minLength', min: 8, message: '비밀번호는 최소 8자리 이상이어야 합니다.' },
+        ],
       },
     ]);
 
+    // 유효성 검사에 걸리면 즉시 경고창을 띄우고 함수 종료됨
     if (validationMessage) {
       showAlert({
         title: '로그인 실패',
@@ -45,14 +55,14 @@ const Login = () => {
 
       navigate('/', { replace: true });
     } catch (error) {
-      const message =
+      const apiErrorMessage =
         error instanceof Error && error.message === 'Invalid login credentials'
           ? '이메일 또는 비밀번호를 확인하시고 다시 입력해주세요.'
           : '로그인 중 알 수 없는 오류가 발생했습니다.';
 
       showAlert({
         title: '로그인 실패',
-        text: message,
+        text: apiErrorMessage,
         icon: 'error',
       });
     } finally {

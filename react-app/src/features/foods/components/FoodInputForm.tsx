@@ -76,8 +76,11 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
       // 저장 성공 후 입력값 초기화
       setForm(initialForm);
     } catch (error) {
-      console.error('음식 추가 실패:', error);
-      alert('음식 추가에 실패했습니다.');
+      showAlert({
+        title: '음식 추가 실패',
+        text: '음식 추가에 실패했습니다.',
+        icon: 'error',
+      });
     }
   };
 
@@ -184,7 +187,7 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
           <button
             type="submit"
             disabled={createFoodMutation.isPending}
-            className="rounded-md bg-(--primary-3) px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-(--primary-4) disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-md bg-(--primary-3) px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-(--primary-4)"
           >
             {createFoodMutation.isPending ? '저장 중' : '저장'}
           </button>

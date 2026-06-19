@@ -1,7 +1,9 @@
 type ValidationRule =
   | { type: 'required'; message: string }
   | { type: 'minLength'; min: number; message: string }
-  | { type: 'match'; compareValue: string; message: string };
+  | { type: 'match'; compareValue: string; message: string }
+  | { type: 'pattern'; regex: RegExp; message: string }
+  | { type: 'minNumber'; min: number; message: string };
 
 // 2. 각 필드가 가질 데이터 구조 정의
 interface ValidationField {
@@ -36,6 +38,21 @@ export const getRequiredInputErrorMessage = (fields: ValidationField[]): string 
         // 두 값이 일치하는지 검사
         case 'match':
           if (value !== rule.compareValue) {
+            return rule.message;
+          }
+          break;
+
+        //정규식 패턴 검사 (예: 영양소 포맷, 이메일 형식 등)
+        case 'pattern':
+          if (!rule.regex.test(value)) {
+            return rule.message;
+          }
+          break;
+
+        //영양소는 0 이상 입력
+        case 'minNumber':
+          const num = Number(value);
+          if (Number.isNaN(num) || num < rule.min) {
             return rule.message;
           }
           break;

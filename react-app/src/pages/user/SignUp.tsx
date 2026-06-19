@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { signUpApi } from '../../service/UserService';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { showAlert } from '../../features/foods/utils/sweetAlert';
+import { getRequiredInputErrorMessage } from '../../features/foods/utils/validateCommonInput';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -9,8 +10,39 @@ const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const loginEmailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const validationMessage = getRequiredInputErrorMessage([
+      {
+        value: email,
+        rules: [
+          { type: 'required', message: '이메일을 입력해주세요.' },
+          { type: 'pattern', regex: loginEmailPattern, message: '올바른 이메일 형식으로 입력해주세요.' },
+        ],
+      },
+      {
+        value: password,
+        rules: [
+          { type: 'required', message: '비밀번호를 입력해주세요.' },
+          { type: 'minLength', min: 8, message: '비밀번호는 최소 8자리 이상이어야 합니다.' },
+        ],
+      },
+    ]);
+
+    // 유효성 검사에 걸리면 즉시 경고창을 띄우고 함수 종료됨
+    if (validationMessage) {
+      showAlert({
+        title: '로그인 실패',
+        text: validationMessage,
+        icon: 'error',
+      });
+
+      return;
+    }
+
     try {
       await signUpApi(email, password);
 
@@ -24,14 +56,14 @@ const SignUp = () => {
     } catch (error) {
       console.error('회원가입 실패:', error);
 
-      const message =
+      const apiErrorMessage =
         error instanceof Error && error.message === 'User already registered'
           ? '이미 존재하는 계정입니다.'
           : '회원가입 중 알 수 없는 오류가 발생했습니다.';
 
       showAlert({
         title: '회원가입 실패',
-        text: message,
+        text: apiErrorMessage,
         icon: 'error',
       });
     }
@@ -84,7 +116,12 @@ const SignUp = () => {
         {/* 구분선 */}
         <div className="my-12 flex items-center gap-4">
           <div className="h-px flex-1 bg-[#ddd6cf]" />
-          <p className="shrink-0 text-[17px] text-[#8a8178]">Sign up</p>
+          <Link
+            to="/login"
+            className="shrink-0 cursor-pointer text-[17px] text-[#8a8178] hover:font-bold hover:text-[#5f574f]"
+          >
+            Login
+          </Link>
           <div className="h-px flex-1 bg-[#ddd6cf]" />
         </div>
 

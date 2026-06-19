@@ -36,6 +36,7 @@ const ResetPassword = () => {
         value: confirmPassword,
         rules: [
           { type: 'required', message: '비밀번호 확인을 입력해주세요.' },
+          { type: 'minLength', min: 8, message: '비밀번호는 최소 8자리 이상이어야 합니다.' },
           { type: 'match', compareValue: password, message: '비밀번호가 일치하지 않습니다.' },
         ],
       },
@@ -49,16 +50,6 @@ const ResetPassword = () => {
       });
       return;
     }
-
-    // // 3. 최종 제출 전 두 비밀번호 일치 여부 확인
-    // if (!isMatched) {
-    //   showAlert({
-    //     title: '변경 실패',
-    //     text: '비밀번호가 일치하지 않습니다. 다시 확인해주세요.',
-    //     icon: 'error',
-    //   });
-    //   return;
-    // }
 
     try {
       setIsPending(true);
