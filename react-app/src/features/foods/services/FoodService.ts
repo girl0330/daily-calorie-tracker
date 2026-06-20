@@ -67,7 +67,7 @@ const toUpdateFoodRow = (editFood: UpdateFoodRequest) => {
 };
 
 // 사용자별 음식 목록을 가져온다.
-export const getFoods = async (userId: UserId): Promise<FoodItem[]> => {
+export const getFoodsApi = async (userId: UserId): Promise<FoodItem[]> => {
   const { data, error } = await supabase
     .from('foods')
     .select(FOOD_SELECT_COLUMNS)
@@ -85,7 +85,7 @@ export const getFoods = async (userId: UserId): Promise<FoodItem[]> => {
 };
 
 // 음식을 등록하고, DB에서 생성된 id/created_at을 포함한 데이터를 다시 받는다.
-export const createFood = async (newFood: CreateFoodRequest): Promise<FoodItem> => {
+export const createFoodApi = async (newFood: CreateFoodRequest): Promise<FoodItem> => {
   const { data, error } = await supabase
     .from('foods')
     .insert(toCreateFoodRow(newFood))
@@ -102,7 +102,7 @@ export const createFood = async (newFood: CreateFoodRequest): Promise<FoodItem> 
 };
 
 // id와 user_id를 함께 조건으로 걸어 다른 사용자의 데이터 변경을 한 번 더 방어한다.
-export const updateFood = async (editFood: UpdateFoodRequest): Promise<FoodItem> => {
+export const updateFoodApi = async (editFood: UpdateFoodRequest): Promise<FoodItem> => {
   const { data, error } = await supabase
     .from('foods')
     .update(toUpdateFoodRow(editFood))
@@ -121,7 +121,7 @@ export const updateFood = async (editFood: UpdateFoodRequest): Promise<FoodItem>
 };
 
 // 삭제도 id만 보지 않고 user_id를 같이 확인한다.
-export const removeFood = async ({ id, userId }: DeleteFoodRequest): Promise<number> => {
+export const removeFoodApi = async ({ id, userId }: DeleteFoodRequest): Promise<number> => {
   const { data, error } = await supabase
     .from('foods')
     .delete()

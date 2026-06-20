@@ -68,7 +68,7 @@ export default function FoodCard({ food, compact = false }: FoodCardProps) {
             onClick={handleDeleteFood}
             disabled={isPending}
             aria-label="음식 삭제"
-            className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-5) focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-5) focus:outline-none"
           >
             <img src="/trash-bin.svg" alt="" className="h-4 w-4" />
           </button>

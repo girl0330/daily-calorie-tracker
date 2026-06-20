@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   /* ===== Base ===== */
@@ -58,7 +58,7 @@
   --info: var(--accent-2);
 
   /* ===== Chart ===== */
-  --chart-carb: #d09a5a;
+  --chart-carbs: #d09a5a;
   --chart-protein: #4f8f86;
   --chart-fat: #8e6bb3;
   --chart-calorie: #c76b4f;
@@ -66,8 +66,7 @@
 
   /* ===== Typography ===== */
 
-  --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-  Roboto, "Noto Sans KR", sans-serif;
+  --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
 
   --font-xs: 12px;
   --font-sm: 14px;

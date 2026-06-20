@@ -1,10 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { CreateFoodRequest, FoodItem, UpdateFoodRequest, UserId } from '../../../types/types';
-import {
-  createFood as createFoodApi,
-  removeFood as removeFoodApi,
-  updateFood as updateFoodApi,
-} from '../services/FoodService';
+import { createFoodApi, removeFoodApi, updateFoodApi } from '../services/FoodService';
 import { foodQueryKeys } from '../queryKeys';
 
 const getFoodListQueryKey = (userId: UserId) => foodQueryKeys.list(userId);

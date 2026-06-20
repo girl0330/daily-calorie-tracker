@@ -94,7 +94,7 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
               onChange={handleInputChange}
               placeholder={food.foodName}
               disabled={isPending}
-              className="col-span-3 h-8 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3) disabled:cursor-not-allowed disabled:opacity-60"
+              className="col-span-3 h-8 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
             />
             <p className="mt-1 text-center text-sm text-(--text-muted)">{previewCalories} 칼로리</p>
           </div>
@@ -103,7 +103,7 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
               type="submit"
               disabled={isPending}
               aria-label="음식 수정 저장"
-              className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-5) focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-5) focus:outline-none"
             >
               <img src="/check-good-yes.svg" alt="" className="h-4 w-4" />
             </button>
@@ -112,7 +112,7 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
               onClick={handleClose}
               disabled={isPending}
               aria-label="음식 수정 취소"
-              className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-5) focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-5) focus:outline-none"
             >
               <img src="/close.svg" alt="" className="h-4 w-4" />
             </button>
@@ -128,7 +128,7 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
               onChange={handleInputChange}
               placeholder="0"
               disabled={isPending}
-              className="h-6 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3) disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-6 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
             />
           </div>
           <div className="rounded-md bg-(--neutral-5) px-2 py-2">
@@ -140,7 +140,7 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
               onChange={handleInputChange}
               placeholder="0"
               disabled={isPending}
-              className="h-6 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3) disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-6 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
             />
           </div>
           <div className="rounded-md bg-(--neutral-5) px-2 py-2">
@@ -152,7 +152,7 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
               onChange={handleInputChange}
               placeholder="0"
               disabled={isPending}
-              className="h-6 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3) disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-6 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
             />
           </div>
         </div>

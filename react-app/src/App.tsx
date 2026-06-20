@@ -8,6 +8,8 @@ import { useEffect } from 'react';
 import Login from './pages/user/Login';
 import { supabase } from './lib/supabase';
 import { useAuthStore } from './store/authStore';
+import FindPassword from './pages/user/FindPassword';
+import ResetPassword from './pages/user/ResetPassword';
 
 function App() {
   const userFromStore = useAuthStore(state => state.user);
@@ -52,7 +54,10 @@ function App() {
 
         <main className="flex-1 p-5">
           <Routes>
-            <Route path="/sign-up" element={<SignUp />} />
+            <Route path="/sign-up" element={userFromStore ? <Navigate to="/" replace /> : <SignUp />} />
+
+            <Route path="/find-password" element={userFromStore ? <Navigate to="/" replace /> : <FindPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             <Route path="/login" element={userFromStore ? <Navigate to="/" replace /> : <Login />} />
 

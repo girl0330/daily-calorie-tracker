@@ -12,7 +12,7 @@ const nutrientBadges = [
   {
     key: 'carbs',
     label: '탄수화물',
-    colorClassName: 'bg-(--chart-carb)',
+    colorClassName: 'bg-(--chart-carbs)',
   },
   {
     key: 'protein',

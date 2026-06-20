@@ -20,7 +20,7 @@ const getCssVariable = (name: string, fallback: string) => {
 
 export const NutritionBarChart = ({ nutrition, className = '' }: NutritionBarChartProps) => {
   const chartColors = {
-    carbs: getCssVariable('--chart-carb', '#f59e0b'),
+    carbs: getCssVariable('--chart-carbs', '#f59e0b'),
     protein: getCssVariable('--chart-protein', '#22c55e'),
     fat: getCssVariable('--chart-fat', '#ef4444'),
   };
