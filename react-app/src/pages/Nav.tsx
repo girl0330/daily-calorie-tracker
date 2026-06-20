@@ -21,8 +21,8 @@ export default function Nav() {
 
         <div className="my-4 border border-(--primary-1)" />
 
-        <nav className="flex flex-col gap-2">
-          <div>로그인한 유저: {userFromStore?.email}</div>
+        <nav className="flex flex-1 flex-col gap-2">
+          <div className="mb-2 text-sm text-(--text-primary) opacity-80">로그인한 유저: {userFromStore?.email}</div>
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -48,9 +48,24 @@ export default function Nav() {
             Monthly Tracker
           </NavLink>
         </nav>
-        <button className="mt-auto cursor-pointer" onClick={handleLogout}>
-          로그아웃
-        </button>
+
+        <div className="mt-auto flex flex-col gap-2 pt-4">
+          <NavLink
+            to="/reset-password"
+            className={({ isActive }) =>
+              `rounded-md px-4 py-2 text-base font-medium transition-colors ${
+                isActive
+                  ? 'bg-(--paintedpony-light-active) text-(--text-primary)'
+                  : 'text-(--text-primary) hover:bg-(--paintedpony-light-hover)'
+              }`
+            }
+          >
+            비밀번호 재설정
+          </NavLink>
+          <button className="cursor-pointer text-left text-sm text-red-500 hover:underline" onClick={handleLogout}>
+            로그아웃
+          </button>
+        </div>
       </aside>
     </>
   );
