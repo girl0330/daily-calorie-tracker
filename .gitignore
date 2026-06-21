@@ -7,18 +7,24 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
+node_modules/
+dist/
 dist-ssr
+.env
+.env.local
+.env.*.local
 *.local
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+# Vercel CLI를 쓰면 .vercel 폴더가 생길 수 있는데, 보통 Git에 올리지 않음 
+.vercel/
+coverage/
