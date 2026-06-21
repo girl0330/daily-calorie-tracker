@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { showAlert } from '../../features/foods/utils/sweetAlert';
+import { showAlert } from '../../utils/sweetAlert';
 import { Link } from 'react-router-dom';
 import { sendPasswordResetEmailApi } from '../../service/UserService';
-import { getRequiredInputErrorMessage } from '../../features/foods/utils/validateCommonInput';
+import { getRequiredInputErrorMessage } from '../../utils/validateCommonInput';
 
 const FindPassword = () => {
   const [email, setEmail] = useState('');

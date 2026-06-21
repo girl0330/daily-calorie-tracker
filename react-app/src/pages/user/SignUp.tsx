@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { signUpApi } from '../../service/UserService';
 import { Link, useNavigate } from 'react-router-dom';
-import { showAlert } from '../../features/foods/utils/sweetAlert';
-import { getRequiredInputErrorMessage } from '../../features/foods/utils/validateCommonInput';
+import { showAlert } from '../../utils/sweetAlert';
+import { getRequiredInputErrorMessage } from '../../utils/validateCommonInput';
 
 const SignUp = () => {
   const navigate = useNavigate();

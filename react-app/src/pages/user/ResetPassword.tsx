@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { logoutApi, resetPasswordApi } from '../../service/UserService';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import { showAlert } from '../../features/foods/utils/sweetAlert';
-import { getRequiredInputErrorMessage } from '../../features/foods/utils/validateCommonInput';
+import { showAlert } from '../../utils/sweetAlert';
+import { getRequiredInputErrorMessage } from '../../utils/validateCommonInput';
 
 const ResetPassword = () => {
   const location = useLocation();
