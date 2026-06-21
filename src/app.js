@@ -168,7 +168,7 @@ export function initApp() {
         }
     })
 
-    // TODO 유효성 검사
+    // 유효성 검사
     const validateFood = ({ name, carbs, protein, fat }) => {
         if (!name || !name.trim()) return '음식 이름을 입력해주세요.'
         if (carbs === '' || protein === '' || fat === '') return '탄수화물, 단백질, 지방 값을 모두 입력해주세요.'
