@@ -4,7 +4,7 @@ import type { CreateFoodRequest, MealType, UserId } from '../../../types/types';
 import { parseFoodForm, validateFoodForm, type FoodFormValues } from '../utils/foodForm';
 import { useCreateFood } from '../hooks/useFoodMutations';
 import SectionLayout from '../../../components/common/SectionLayout';
-import { showAlert } from '../utils/sweetAlert';
+import { showAlert } from '../../../utils/sweetAlert';
 
 // 입력창 상태용 타입
 type FoodForm = FoodFormValues & {

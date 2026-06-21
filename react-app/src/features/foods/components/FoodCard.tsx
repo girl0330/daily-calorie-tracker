@@ -3,7 +3,7 @@ import type { FoodItem } from '../../../types/types';
 import { calories } from '../../../utils/calculate';
 import EditFoodCard from './EditFoodCard';
 import { useRemoveFood } from '../hooks/useFoodMutations';
-import { showAlert, showConfirm } from '../utils/sweetAlert';
+import { showAlert, showConfirm } from '../../../utils/sweetAlert';
 
 type FoodCardProps = {
   food: FoodItem;

@@ -1,6 +1,6 @@
 // 음식 입력/수정 폼에서 공통으로 사용하는 문자열 기반 폼 값 타입이다.
 
-import { getRequiredInputErrorMessage } from './validateCommonInput';
+import { getRequiredInputErrorMessage } from '../../../utils/validateCommonInput';
 
 // input value는 화면에서 문자열로 관리되므로, 저장 직전에 숫자로 변환한다.
 export type FoodFormValues = {

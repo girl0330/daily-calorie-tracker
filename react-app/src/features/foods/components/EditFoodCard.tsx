@@ -9,7 +9,7 @@ import {
   validateFoodForm,
   type FoodFormValues,
 } from '../utils/foodForm';
-import { showAlert } from '../utils/sweetAlert';
+import { showAlert } from '../../../utils/sweetAlert';
 
 type EditFoodCardProps = {
   food: FoodItem;
