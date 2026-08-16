@@ -34,7 +34,7 @@ Vanilla JavaScript 기반으로 구현한 MVP 버전
 ## V2 - React + TypeScript + Tailwind + Supabase (완료)
 
 ### 설명
-
+자세한 설명 보기(./docs/v2.md)
 
 ### 목표
 (구조 개선 중심의 리팩토링)
