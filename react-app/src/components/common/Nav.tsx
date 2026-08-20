@@ -16,15 +16,16 @@ export default function Nav() {
   };
   return (
     <>
-      // Mobile
-      <header className="flex h-16 w-full items-center justify-between bg-(--bg-section) px-5 lg:hidden">
-        <img src="/logo.svg" alt="Daily Tracker" className="h-10" />
+      {/* Mobile */}
+      <header className="relative flex h-16 w-full items-center justify-between bg-(--bg-section) px-5 lg:hidden">
+        <img src="/logo.svg" alt="Daily Tracker" className="absolute left-1/2 h-10 -translate-x-1/2" />
 
-        <button type="button" className="cursor-pointer">
+        <button type="button" className="ml-auto cursor-pointer">
           메뉴
         </button>
       </header>
-      // Desktop
+
+      {/* Desktop */}
       <div className="hidden w-70 shrink-0 flex-col bg-(--bg-section) p-5 lg:flex">
         <img src="/logo.svg" alt="Daily Tracker" className="h-10 lg:h-20" />
 
