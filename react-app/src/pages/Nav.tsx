@@ -17,7 +17,8 @@ export default function Nav() {
   return (
     <>
       <aside className="flex w-70 shrink-0 flex-col bg-(--bg-section) p-5">
-        <div className="flex h-20 items-center justify-center text-3xl font-bold text-(--primary-3)">Daily Tracker</div>
+        <img src="/logo.svg" alt="Logo" className="h-20" />
+        {/* <div className="flex h-20 items-center justify-center text-3xl font-bold text-(--primary-3)">Daily Tracker</div> */}
 
         <div className="my-4 border border-(--primary-1)" />
 

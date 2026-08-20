@@ -10,6 +10,7 @@ import { supabase } from './lib/supabase';
 import { useAuthStore } from './store/authStore';
 import FindPassword from './pages/user/FindPassword';
 import ResetPassword from './pages/user/ResetPassword';
+import AppLayout from './layout/AppLayout';
 
 function App() {
   const userFromStore = useAuthStore(state => state.user);
@@ -49,27 +50,23 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div style={{ display: 'flex', minHeight: '100vh' }}>
-        <Nav />
+      <Routes>
+        {/* 로그인 전 페이지 */}
+        <Route path="/login" element={userFromStore ? <Navigate to="/" replace /> : <Login />} />
 
-        <main className="flex-1 p-5">
-          <Routes>
-            <Route path="/sign-up" element={userFromStore ? <Navigate to="/" replace /> : <SignUp />} />
+        <Route path="/sign-up" element={userFromStore ? <Navigate to="/" replace /> : <SignUp />} />
 
-            <Route path="/find-password" element={userFromStore ? <Navigate to="/" replace /> : <FindPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/find-password" element={userFromStore ? <Navigate to="/" replace /> : <FindPassword />} />
 
-            <Route path="/login" element={userFromStore ? <Navigate to="/" replace /> : <Login />} />
+        {/* 비밀번호 복구 페이지 */}
+        <Route path="/reset-password" element={<ResetPassword />} />
 
-            <Route path="/" element={userFromStore ? <DailyTrackerPage /> : <Navigate to="/login" replace />} />
-
-            <Route
-              path="/monthly"
-              element={userFromStore ? <MonthlyTrackerPage /> : <Navigate to="/login" replace />}
-            />
-          </Routes>
-        </main>
-      </div>
+        {/* 로그인 후 공통 Layout */}
+        <Route element={userFromStore ? <AppLayout /> : <Navigate to="/login" replace />}>
+          <Route path="/" element={<DailyTrackerPage />} />
+          <Route path="/monthly" element={<MonthlyTrackerPage />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }
