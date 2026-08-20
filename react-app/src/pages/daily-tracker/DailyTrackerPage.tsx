@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { UserId } from '../../types/types';
-import WeeklyDayBar from '../../features/tracker/components/weekly/WeeklyDayBar';
+import DateNavigator from '../../features/tracker/components/DateNavigator';
 import FoodInputForm from '../../features/foods/components/FoodInputForm';
 import { CardBoard } from '../../features/tracker/components/meal-board/CardBoard';
 import { NutritionChart } from '../../features/tracker/components/nutrition/NutritionChart';
@@ -72,7 +72,7 @@ export default function DailyTrackerPage() {
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
       {/* 주간 날짜 영역 */}
-      <WeeklyDayBar
+      <DateNavigator
         foods={foods}
         displayedWeekDate={displayedWeekDate}
         selectedDate={selectedDate}
