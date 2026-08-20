@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
-import Nav from './components/common/Nav';
 import DailyTrackerPage from './pages/daily-tracker/DailyTrackerPage';
 import MonthlyTrackerPage from './pages/monthly-tracker/MonthlyTrackerPage';
 import SignUp from './pages/user/SignUp';
