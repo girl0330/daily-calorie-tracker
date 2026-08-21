@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { UserId } from '../../types/types';
 import DateNavigator from '../../features/tracker/components/DateNavigator';
