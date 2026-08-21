@@ -45,12 +45,12 @@ export default function DailyTrackerPage() {
   const userId = userFromStore.id as UserId;
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-4">
+    <div className="flex h-full min-h-0 flex-col">
       {/* 주간 날짜 영역 */}
       <DateNavigator foods={foods} selectedDate={selectedDate} onDateSelect={handleDateSelect} />
 
       {/* 상단 보조 영역: 음식 추가 + 영양소 차트 */}
-      <div className="grid shrink-0 grid-cols-1 gap-4 xl:grid-cols-2">
+      <div className="grid shrink-0 grid-cols-1 xl:grid-cols-2">
         <FoodInputForm userId={userId} recordDate={selectedRecordDate} />
 
         <NutritionChart foods={selectedDateFoods} />

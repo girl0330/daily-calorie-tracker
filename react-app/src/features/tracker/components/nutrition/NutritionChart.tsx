@@ -14,11 +14,19 @@ export const NutritionChart = ({ foods, className = '' }: NutritionChartProps) =
   const nutrition = totalNutrients(foods);
   const totalCalories = calories(nutrition.carbs, nutrition.protein, nutrition.fat);
 
+  const chartClassName = [
+    // 모든 섹션이 공유하는 기본 박스 스타일
+    'border-y border-(--neutral-4) bg-(--white) ',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <SectionLayout
       title="영양소 그래프"
       description="영양소를 그래프로 확인해 보세요"
-      className={className}
+      className={chartClassName}
       contentClassName="flex-1"
     >
       <div className="grid h-full min-h-0 grid-cols-1 gap-4 rounded-md md:grid-cols-[240px_1fr]">

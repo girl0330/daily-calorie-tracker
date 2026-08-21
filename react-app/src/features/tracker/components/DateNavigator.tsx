@@ -91,7 +91,7 @@ const DateNavigator = ({ foods, selectedDate, onDateSelect, className = '' }: Da
   return (
     <>
       {/* Tablet / Mobile */}
-      <section className="flex h-20 items-center justify-between border-b border-(--neutral-4) bg-(--bg-section) lg:hidden">
+      <section className="flex h-20 items-center justify-between border-b border-(--neutral-4) bg-(--white) lg:hidden">
         <button
           type="button"
           onClick={handlePreDate}
@@ -125,9 +125,10 @@ const DateNavigator = ({ foods, selectedDate, onDateSelect, className = '' }: Da
       </section>
 
       {/* Desktop */}
-      <section
+      {/* <section
         className={`hidden h-20 items-center justify-between overflow-hidden rounded-md border border-(--neutral-4) bg-(--bg-section) lg:flex ${className}`}
-      >
+      > */}
+      <section className={`hidden h-20 items-center justify-between overflow-hidden bg-(--white) lg:flex ${className}`}>
         <button
           type="button"
           onClick={handlePrevWeek}

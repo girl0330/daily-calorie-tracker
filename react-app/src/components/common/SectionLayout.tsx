@@ -22,7 +22,7 @@ const SectionLayout = ({
 }: SectionLayoutProps) => {
   const sectionClassName = [
     // 모든 섹션이 공유하는 기본 박스 스타일
-    'flex min-h-0 flex-col rounded-[24px] border border-(--neutral-4) bg-(--bg-section) px-6 py-5 shadow-sm',
+    'flex min-h-0 flex-col bg-(--bg-section) px-6 py-5',
     className,
   ]
     .filter(Boolean)
