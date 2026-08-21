@@ -1,44 +1,43 @@
+import { useEffect, useState } from 'react';
 import type { FoodItem } from '../../../types/types';
 import { toRecordDate as formatRecordDate } from '../../../utils/date';
 
 const WEEK_DAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'];
 
-type WeeklyDayBarProps = {
+type DateNavigatorProps = {
   foods: FoodItem[];
-  displayedWeekDate: Date;
-  onWeekChange: (date: Date) => void;
   selectedDate: Date;
   onDateSelect: (date: Date) => void;
   className?: string;
 };
 
-const DateNavigator = ({
-  foods,
-  displayedWeekDate,
-  onWeekChange,
-  selectedDate,
-  onDateSelect,
-  className = '',
-}: WeeklyDayBarProps) => {
+const DateNavigator = ({ foods, selectedDate, onDateSelect, className = '' }: DateNavigatorProps) => {
+  // 화면에 표시할 주의 기준 날짜
+  const [displayedWeekDate, setDisplayedWeekDate] = useState(selectedDate);
+
+  useEffect(() => {
+    setDisplayedWeekDate(selectedDate);
+  }, [selectedDate]);
+
   // 주 단위 날짜 변경 핸들러
   const handlePrevWeek = () => {
     const prevWeekDate = new Date(displayedWeekDate);
 
     prevWeekDate.setDate(displayedWeekDate.getDate() - 7);
 
-    // 부모 컴포넌트에게 변경할 주의 기준 날짜를 전달한다.
-    onWeekChange(prevWeekDate);
+    // 화면에 표시할 주의 기준 날짜를 이전 주로 변경한다.
+    setDisplayedWeekDate(prevWeekDate);
   };
 
   const handleNextWeek = () => {
     // 현재 선택된 날짜를 직접 수정하지 않기 위해 복사본을 만든다.
     const nextWeekDate = new Date(displayedWeekDate);
 
-    // 선택된 날짜 기준으로 7일 후 날짜를 만든다.
+    // 현재 표시 중인 주의 기준 날짜에서 7일 후 날짜를 만든다.
     nextWeekDate.setDate(displayedWeekDate.getDate() + 7);
 
     // 부모 컴포넌트에게 변경할 주의 기준 날짜를 전달한다.
-    onWeekChange(nextWeekDate);
+    setDisplayedWeekDate(nextWeekDate);
   };
 
   const todayRecordDate = formatRecordDate(new Date());
