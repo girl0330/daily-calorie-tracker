@@ -8,6 +8,9 @@ import { useAuthStore } from '../../store/authStore';
 import { useFoods } from '../../features/foods/hooks/useFoods';
 import useTodayFoods from '../../features/tracker/hooks/useTodayFoods';
 import { toRecordDate as formatRecordDate, parseRecordDate } from '../../utils/date';
+import { useState } from 'react';
+import SectionLayout from '../../components/common/SectionLayout';
+import BottomSheet from '../../components/common/BottomSheet';
 
 export default function DailyTrackerPage() {
   const userFromStore = useAuthStore(state => state.user);
@@ -30,6 +33,8 @@ export default function DailyTrackerPage() {
     });
   };
 
+  const [isFoodFormOpen, setIsFoodFormOpen] = useState(false);
+
   if (!userFromStore) {
     return null;
   }
@@ -46,20 +51,38 @@ export default function DailyTrackerPage() {
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      {/* 주간 날짜 영역 */}
       <DateNavigator foods={foods} selectedDate={selectedDate} onDateSelect={handleDateSelect} />
 
-      {/* 상단 보조 영역: 음식 추가 + 영양소 차트 */}
-      <div className="grid shrink-0 grid-cols-1 xl:grid-cols-2">
-        <FoodInputForm userId={userId} recordDate={selectedRecordDate} />
+      <div className="grid shrink-0 xl:grid-cols-2">
+        {/* Desktop */}
+        <div className="hidden lg:block">
+          <FoodInputForm userId={userId} recordDate={selectedRecordDate} />
+        </div>
 
         <NutritionChart foods={selectedDateFoods} />
       </div>
 
-      {/* 하단 메인 영역: 식사별 카드 보드 */}
+      {/* Tablet / Mobile */}
+      <div className="lg:hidden">
+        <button
+          type="button"
+          onClick={() => setIsFoodFormOpen(true)}
+          className="w-full bg-(--primary-3) px-4 py-3 font-semibold text-white"
+        >
+          음식 추가
+        </button>
+      </div>
+
       <div className="min-h-0 flex-1">
         <CardBoard foods={selectedDateFoods} className="h-full" />
       </div>
+
+      {/* Bottom Sheet */}
+      {isFoodFormOpen && (
+        <BottomSheet isOpen={isFoodFormOpen} onClose={() => setIsFoodFormOpen(false)}>
+          <FoodInputForm userId={userId} recordDate={selectedRecordDate} />
+        </BottomSheet>
+      )}
     </div>
   );
 }
