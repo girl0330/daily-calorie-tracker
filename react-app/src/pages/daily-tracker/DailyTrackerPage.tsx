@@ -9,7 +9,6 @@ import { useFoods } from '../../features/foods/hooks/useFoods';
 import useTodayFoods from '../../features/tracker/hooks/useTodayFoods';
 import { toRecordDate as formatRecordDate, parseRecordDate } from '../../utils/date';
 import { useState } from 'react';
-import SectionLayout from '../../components/common/SectionLayout';
 import BottomSheet from '../../components/common/BottomSheet';
 
 export default function DailyTrackerPage() {
