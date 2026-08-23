@@ -58,10 +58,10 @@
   --info: var(--accent-2);
 
   /* ===== Chart ===== */
-  --chart-carbs: #d09a5a;
+  --chart-carbs: #c76b4f;
   --chart-protein: #4f8f86;
   --chart-fat: #8e6bb3;
-  --chart-calorie: #c76b4f;
+  --chart-calorie: #d09a5a;
   --chart-grid: #ddd6d0;
 
   /* ===== Typography ===== */

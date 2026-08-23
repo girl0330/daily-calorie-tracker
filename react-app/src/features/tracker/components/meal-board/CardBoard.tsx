@@ -5,19 +5,20 @@ import { MealSection } from './MealSection';
 type CardBoardProps = {
   foods: FoodItem[];
   className?: string;
-  // variant?: CardBoardVariant;
-  defaultExpanded?: boolean;
 };
 
 export const CardBoard = ({ foods, className = '' }: CardBoardProps) => {
+  const cardClassName = ['!bg-(--white)', className].filter(Boolean).join(' ');
+
   return (
     <SectionLayout
       title="음식 카드"
       description="오늘 식단을 아침, 점심, 저녁으로 나눠 확인해 보세요."
-      className={className}
+      className={cardClassName}
       contentClassName="flex-1"
     >
-      <div className="grid h-full min-h-[420px] grid-cols-3 divide-x divide-(--neutral-4) rounded-[24px] border border-(--neutral-4)">
+      {/* <div className="grid grid-cols-1 lg:h-full lg:min-h-[420px] lg:grid-cols-3 lg:divide-x lg:divide-(--neutral-4) lg:border lg:border-(--neutral-4)"> */}
+      <div className="grid grid-cols-1 xl:h-full xl:min-h-[420px] xl:grid-cols-3 xl:divide-x xl:divide-(--neutral-4) xl:border xl:border-(--neutral-4)">
         <MealSection title="아침" mealType="breakfast" foods={foods} />
         <MealSection title="점심" mealType="lunch" foods={foods} />
         <MealSection title="저녁" mealType="dinner" foods={foods} />

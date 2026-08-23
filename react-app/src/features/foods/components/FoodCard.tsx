@@ -7,10 +7,27 @@ import { showAlert, showConfirm } from '../../../utils/sweetAlert';
 
 type FoodCardProps = {
   food: FoodItem;
-  compact?: boolean;
 };
 
-export default function FoodCard({ food, compact = false }: FoodCardProps) {
+const nutrientItems = [
+  {
+    key: 'carbs',
+    label: '탄수화물',
+    colorClassName: 'bg-(--chart-carbs)',
+  },
+  {
+    key: 'protein',
+    label: '단백질',
+    colorClassName: 'bg-(--chart-protein)',
+  },
+  {
+    key: 'fat',
+    label: '지방',
+    colorClassName: 'bg-(--chart-fat)',
+  },
+] as const;
+
+export default function FoodCard({ food }: FoodCardProps) {
   const [isEditing, setIsEditing] = useState(false);
 
   // 삭제 mutation
@@ -43,51 +60,49 @@ export default function FoodCard({ food, compact = false }: FoodCardProps) {
   }
 
   return (
-    <article className={`rounded-md border border-(--neutral-4) bg-(--white) shadow-sm ${compact ? 'p-3' : 'p-4'}`}>
-      <div className="flex flex-row items-center justify-between gap-3">
-        <div className="flex flex-1 flex-col items-center justify-center">
-          <h3 className={`text-center font-bold text-(--text-primary) ${compact ? 'text-base' : 'text-2xl'}`}>
-            {food.foodName}
-          </h3>
-          <p className={`mt-1 text-center text-(--text-muted) ${compact ? 'text-xs' : 'text-sm'}`}>
-            {calories(food.carbs, food.protein, food.fat)} 칼로리
-          </p>
-        </div>
+    <article className="relative h-[130px] rounded-md bg-(--neutral-5) p-4">
+      {/* article 기준 가운데 - 텍스트 */}
+      <div className="flex flex-col items-center justify-center">
+        <h3 className="text-center text-2xl font-bold text-(--text-primary)">{food.foodName}</h3>
 
-        <div className="flex flex-col justify-end">
-          <button
-            type="button"
-            onClick={() => setIsEditing(true)}
-            aria-label="음식 수정"
-            className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-5) focus:outline-none"
-          >
-            <img src="/cut-scissors.svg" alt="" className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            onClick={handleDeleteFood}
-            disabled={isPending}
-            aria-label="음식 삭제"
-            className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-5) focus:outline-none"
-          >
-            <img src="/trash-bin.svg" alt="" className="h-4 w-4" />
-          </button>
-        </div>
+        <p className="mt-1 text-center text-sm text-(--text-muted)">
+          {calories(food.carbs, food.protein, food.fat)} 칼로리
+        </p>
       </div>
 
-      <div className={`grid grid-cols-3 gap-2 text-center ${compact ? 'mt-3' : 'mt-4'}`}>
-        <div className="rounded-md bg-(--neutral-5) px-2 py-2">
-          <p className={`text-(--text-muted) ${compact ? 'text-xs' : 'text-sm'}`}>탄</p>
-          <p className={`font-semibold text-(--text-primary) ${compact ? 'text-sm' : ''}`}>{food.carbs}g</p>
-        </div>
-        <div className="rounded-md bg-(--neutral-5) px-2 py-2">
-          <p className={`text-(--text-muted) ${compact ? 'text-xs' : 'text-sm'}`}>단</p>
-          <p className={`font-semibold text-(--text-primary) ${compact ? 'text-sm' : ''}`}>{food.protein}g</p>
-        </div>
-        <div className="rounded-md bg-(--neutral-5) px-2 py-2">
-          <p className={`text-(--text-muted) ${compact ? 'text-xs' : 'text-sm'}`}>지</p>
-          <p className={`font-semibold text-(--text-primary) ${compact ? 'text-sm' : ''}`}>{food.fat}g</p>
-        </div>
+      {/* 수정 / 삭제 */}
+      <div className="absolute top-3 right-3 flex flex-col">
+        <button
+          type="button"
+          onClick={() => setIsEditing(true)}
+          aria-label="음식 수정"
+          className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-4) focus:outline-none"
+        >
+          <img src="/edit.svg" alt="" className="h-4 w-4" />
+        </button>
+
+        <button
+          type="button"
+          onClick={handleDeleteFood}
+          disabled={isPending}
+          aria-label="음식 삭제"
+          className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-4) focus:outline-none"
+        >
+          <img src="/trash-bin.svg" alt="" className="h-4 w-4" />
+        </button>
+      </div>
+
+      {/* 영양소 */}
+      <div className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm">
+        {nutrientItems.map(({ key, label, colorClassName }) => (
+          <div key={key} className="flex items-center gap-1.5">
+            <span className={`h-2 w-2 shrink-0 rounded-full ${colorClassName}`} />
+
+            <span className="text-(--text-muted)">{label}</span>
+
+            <span className="font-semibold text-(--text-primary)">{food[key]}g</span>
+          </div>
+        ))}
       </div>
     </article>
   );

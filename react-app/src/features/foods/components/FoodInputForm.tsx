@@ -84,9 +84,17 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
     }
   };
 
+  const inputClassName = [
+    // 모든 섹션이 공유하는 기본 박스 스타일
+    'border-y border-r border-(--neutral-4) bg-(--white) ',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <SectionLayout title="음식 추가" description={`${recordDate} 식단에 추가됩니다.`} className={className}>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <SectionLayout title="음식 추가" description={`${recordDate} 식단에 추가됩니다.`} className={inputClassName}>
+      <form onSubmit={handleSubmit} className="space-y-4 px-10">
         {/* Meal type radio */}
         <fieldset>
           <legend className="mb-2 text-sm font-semibold text-(--text-secondary)">식사 시간</legend>
