@@ -23,6 +23,8 @@ export const NutritionDoughnutChart = ({
   totalCalories,
   className = '',
 }: NutritionDoughnutChartProps) => {
+  const hasNutritionData = nutrientCalories.carbs > 0 || nutrientCalories.protein > 0 || nutrientCalories.fat > 0;
+
   const chartColors = {
     carbs: getCssVariable('--chart-carbs', '#f59e0b'),
     protein: getCssVariable('--chart-protein', '#22c55e'),
@@ -30,13 +32,18 @@ export const NutritionDoughnutChart = ({
   };
 
   const data = {
-    labels: ['탄수화물', '단백질', '지방'],
+    labels: hasNutritionData ? ['탄수화물', '단백질', '지방'] : ['기록 없음'],
+
     datasets: [
       {
-        data: [nutrientCalories.carbs, nutrientCalories.protein, nutrientCalories.fat],
-        backgroundColor: [chartColors.carbs, chartColors.protein, chartColors.fat],
+        data: hasNutritionData ? [nutrientCalories.carbs, nutrientCalories.protein, nutrientCalories.fat] : [1],
+
+        backgroundColor: hasNutritionData
+          ? [chartColors.carbs, chartColors.protein, chartColors.fat]
+          : [getCssVariable('--neutral-4', '#e5e7eb')],
+
         borderWidth: 0,
-        hoverOffset: 2,
+        hoverOffset: hasNutritionData ? 2 : 0,
       },
     ],
   };
@@ -47,9 +54,11 @@ export const NutritionDoughnutChart = ({
     cutout: '70%',
     plugins: {
       tooltip: {
+        enabled: hasNutritionData,
         backgroundColor: 'rgba(34, 34, 34, 0.92)',
         padding: 10,
         displayColors: false,
+
         callbacks: {
           label: context => {
             const value = Number(context.raw);
