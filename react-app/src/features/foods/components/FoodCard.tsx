@@ -93,7 +93,7 @@ export default function FoodCard({ food }: FoodCardProps) {
       </div>
 
       {/* 영양소 */}
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm">
+      <div className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm">
         {nutrientItems.map(({ key, label, colorClassName }) => (
           <div key={key} className="flex items-center gap-1.5">
             <span className={`h-2 w-2 shrink-0 rounded-full ${colorClassName}`} />

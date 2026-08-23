@@ -27,14 +27,14 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
   return (
     <div className="flex min-h-0 flex-col">
       {/* 식사 요약 영역 - Desktop */}
-      <div className="hidden h-[60px] shrink-0 grid-cols-[auto_auto] items-center justify-center border-b border-(--neutral-4) bg-(--white) lg:grid">
+      <div className="hidden h-[60px] shrink-0 grid-cols-[auto_auto] items-center justify-center border-b border-(--neutral-4) bg-(--white) xl:grid">
         <div className="shrink-0 justify-self-end">
           <img src={mealImages[mealType]} alt={title} className="h-7 w-7" />
         </div>
 
         <h2 className="ml-2 shrink-0 text-xl font-bold text-(--text-primary)">{title}</h2>
 
-        <div className="col-span-2 flex min-w-0 flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm">
+        <div className="col-span-2 flex min-w-0 items-center justify-center gap-x-2 text-xs whitespace-nowrap 2xl:text-sm">
           <span className="text-(--text-muted)">
             탄수화물 <span className="text-(--text-primary)">{mealNutrition.carbs}</span>g
           </span>
@@ -54,7 +54,7 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
       </div>
 
       {/* 식사 요약 영역 - Tablet / Mobile */}
-      <div className="grid grid-cols-[auto_1fr_auto] gap-x-3 border border-(--neutral-4) bg-(--white) px-4 py-3 lg:hidden">
+      <div className="grid grid-cols-[auto_1fr_auto] gap-x-3 border border-(--neutral-4) bg-(--white) px-4 py-3 xl:hidden">
         <div className="row-span-2 flex flex-col items-center justify-center">
           <img src={mealImages[mealType]} alt={title} className="h-10 w-10" />
 
@@ -98,7 +98,7 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
 
       {/* 카드 리스트 영역 */}
       <div
-        className={`[container-type:inline-size] min-h-0 flex-1 overflow-y-auto p-4 ${isExpanded ? '' : 'hidden'} lg:block`}
+        className={`[container-type:inline-size] min-h-0 flex-1 overflow-y-auto p-4 ${isExpanded ? '' : 'hidden'} xl:block`}
       >
         {mealFoods.length > 0 ? (
           <div className="grid grid-cols-1 gap-4 @[676px]:grid-cols-2 @[1022px]:grid-cols-3">

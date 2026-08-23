@@ -17,7 +17,8 @@ export const CardBoard = ({ foods, className = '' }: CardBoardProps) => {
       className={cardClassName}
       contentClassName="flex-1"
     >
-      <div className="grid grid-cols-1 lg:h-full lg:min-h-[420px] lg:grid-cols-3 lg:divide-x lg:divide-(--neutral-4) lg:border lg:border-(--neutral-4)">
+      {/* <div className="grid grid-cols-1 lg:h-full lg:min-h-[420px] lg:grid-cols-3 lg:divide-x lg:divide-(--neutral-4) lg:border lg:border-(--neutral-4)"> */}
+      <div className="grid grid-cols-1 xl:h-full xl:min-h-[420px] xl:grid-cols-3 xl:divide-x xl:divide-(--neutral-4) xl:border xl:border-(--neutral-4)">
         <MealSection title="아침" mealType="breakfast" foods={foods} />
         <MealSection title="점심" mealType="lunch" foods={foods} />
         <MealSection title="저녁" mealType="dinner" foods={foods} />
