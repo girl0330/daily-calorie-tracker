@@ -49,7 +49,7 @@ export default function DailyTrackerPage() {
   const userId = userFromStore.id as UserId;
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       <DateNavigator foods={foods} selectedDate={selectedDate} onDateSelect={handleDateSelect} />
 
       <div className="grid shrink-0 xl:grid-cols-2">
@@ -73,7 +73,7 @@ export default function DailyTrackerPage() {
       </div>
 
       <div className="min-h-0 flex-1">
-        <CardBoard foods={selectedDateFoods} className="h-full" />
+        <CardBoard foods={selectedDateFoods} className="min-h-full" />
       </div>
 
       {/* Bottom Sheet */}

@@ -61,14 +61,12 @@ export default function FoodCard({ food, compact = false }: FoodCardProps) {
   }
 
   return (
-    <article className={`relative h-[130px] rounded-md bg-(--neutral-5) ${compact ? 'p-3' : 'p-4'}`}>
+    <article className="relative h-[130px] rounded-md bg-(--neutral-5) p-4">
       {/* article 기준 가운데 - 텍스트 */}
       <div className="flex flex-col items-center justify-center">
-        <h3 className={`text-center font-bold text-(--text-primary) ${compact ? 'text-base' : 'text-2xl'}`}>
-          {food.foodName}
-        </h3>
+        <h3 className="text-center text-2xl font-bold text-(--text-primary)">{food.foodName}</h3>
 
-        <p className={`mt-1 text-center text-(--text-muted) ${compact ? 'text-xs' : 'text-sm'}`}>
+        <p className="mt-1 text-center text-sm text-(--text-muted)">
           {calories(food.carbs, food.protein, food.fat)} 칼로리
         </p>
       </div>
