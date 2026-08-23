@@ -5,7 +5,6 @@ import { MealSection } from './MealSection';
 type CardBoardProps = {
   foods: FoodItem[];
   className?: string;
-  defaultExpanded?: boolean;
 };
 
 export const CardBoard = ({ foods, className = '' }: CardBoardProps) => {

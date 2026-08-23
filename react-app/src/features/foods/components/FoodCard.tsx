@@ -7,7 +7,6 @@ import { showAlert, showConfirm } from '../../../utils/sweetAlert';
 
 type FoodCardProps = {
   food: FoodItem;
-  compact?: boolean;
 };
 
 const nutrientItems = [
@@ -28,7 +27,7 @@ const nutrientItems = [
   },
 ] as const;
 
-export default function FoodCard({ food, compact = false }: FoodCardProps) {
+export default function FoodCard({ food }: FoodCardProps) {
   const [isEditing, setIsEditing] = useState(false);
 
   // 삭제 mutation
@@ -94,11 +93,7 @@ export default function FoodCard({ food, compact = false }: FoodCardProps) {
       </div>
 
       {/* 영양소 */}
-      <div
-        className={`flex flex-wrap items-center justify-center gap-x-4 gap-y-1 ${
-          compact ? 'mt-3 text-xs' : 'mt-4 text-sm'
-        }`}
-      >
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm">
         {nutrientItems.map(({ key, label, colorClassName }) => (
           <div key={key} className="flex items-center gap-1.5">
             <span className={`h-2 w-2 shrink-0 rounded-full ${colorClassName}`} />

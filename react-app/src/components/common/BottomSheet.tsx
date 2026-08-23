@@ -6,7 +6,7 @@ type BottomSheetProps = {
   children: ReactNode;
 };
 
-export default function DailyTrackerPage({ isOpen, onClose, children }: BottomSheetProps) {
+export default function BottomSheet({ isOpen, onClose, children }: BottomSheetProps) {
   if (!isOpen) return null;
 
   return (
