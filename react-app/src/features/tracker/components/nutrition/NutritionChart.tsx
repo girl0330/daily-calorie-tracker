@@ -34,11 +34,11 @@ export const NutritionChart = ({ foods, className = '' }: NutritionChartProps) =
       className={chartClassName}
       contentClassName="flex-1"
     >
-      <div className="grid h-full min-h-0 w-full grid-cols-[minmax(0,2fr)_minmax(80px,1fr)] items-center md:px-10">
+      <div className="grid h-full min-h-0 w-full grid-cols-[minmax(0,2fr)_minmax(80px,1fr)] items-center rounded-lg border border-(--neutral-4) p-4 md:px-10">
         <NutritionSummary nutrition={nutrition} totalCalories={totalCalories} className="min-w-0" />
 
         <div className="flex w-full justify-center">
-          <NutritionDoughnutChart nutrientCalories={nutrientCalories} totalCalories={totalCalories} />
+          <NutritionDoughnutChart nutrientCalories={nutrientCalories} />
         </div>
       </div>
     </SectionLayout>
