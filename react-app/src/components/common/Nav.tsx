@@ -98,7 +98,7 @@ export default function Nav() {
         )}
       </div>
       {/* Desktop */}
-      <div className="hidden w-70 shrink-0 flex-col border-r border-(--neutral-4) bg-(--bg-section) p-5 lg:flex">
+      <div className="hidden min-h-full w-70 shrink-0 flex-col border-r border-(--neutral-4) bg-(--bg-section) p-5 lg:flex">
         <img src="/logo.svg" alt="Daily Tracker" className="h-10 lg:h-20" />
 
         <nav className="mt-8 flex flex-1 flex-col gap-2">
