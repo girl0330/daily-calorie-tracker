@@ -10,16 +10,19 @@ const nutrientBadges = [
   {
     key: 'carbs',
     label: '탄수화물',
+    shortLabel: '탄',
     colorClassName: 'bg-(--chart-carbs)',
   },
   {
     key: 'protein',
     label: '단백질',
+    shortLabel: '단',
     colorClassName: 'bg-(--chart-protein)',
   },
   {
     key: 'fat',
     label: '지방',
+    shortLabel: '지',
     colorClassName: 'bg-(--chart-fat)',
   },
 ] as const;
@@ -87,15 +90,17 @@ export const MonthlyCalendarSection = ({
     navigate(`/?date=${recordDate}`);
   };
 
+  const sectionClassName = ['flex min-h-0 flex-1 flex-col bg-(--white)', className].filter(Boolean).join(' ');
+
   return (
     <SectionLayout
       title="월간 캘린더"
       description="한 달의 식단과 영양 섭취 기록을 확인해 보세요."
-      className={className}
+      className={sectionClassName}
       contentClassName="flex min-h-0 flex-1 flex-col"
     >
       {/* 월 이동 영역 */}
-      <div className="mb-4 flex min-h-10 items-center justify-center gap-10">
+      <div className="mb-4 flex min-h-10 shrink-0 items-center justify-center gap-3 lg:gap-10">
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -123,29 +128,42 @@ export const MonthlyCalendarSection = ({
         <button
           type="button"
           onClick={handleTodayClick}
-          className="rounded-md border border-(--neutral-4) px-3 py-1.5 text-sm font-medium text-(--text-secondary) transition hover:border-(--primary-3) hover:bg-(--primary-5) hover:text-(--primary-1)"
+          className="flex h-8 items-center justify-center rounded-md border border-(--neutral-4) px-2 text-xs font-medium text-(--text-secondary) transition hover:border-(--primary-3) hover:bg-(--primary-5) hover:text-(--primary-1) lg:px-3 lg:text-sm"
         >
           오늘
         </button>
       </div>
 
       {/* 캘린더 영역 */}
-      <div className="min-h-0 flex-1">
+      <div
+        className={[
+          'relative left-1/2 flex w-dvw -translate-x-1/2 flex-col overflow-hidden bg-(--white)',
+          'border-y border-(--neutral-4)',
+          'md:static md:left-auto md:min-h-0 md:flex-1 md:translate-x-0',
+          'md:w-auto md:rounded-md md:border',
+        ].join(' ')}
+      >
         {/* 요일 */}
-        <div className="mb-3 grid grid-cols-7 text-center text-sm font-semibold text-(--text-primary)">
+        <div className="grid shrink-0 grid-cols-7 border-b border-(--neutral-4)">
           {WEEK_LABELS.map(label => (
-            <span key={label}>{label}</span>
+            <span key={label} className="px-2 py-2 text-left text-xs font-medium text-(--text-muted)">
+              {label}
+            </span>
           ))}
         </div>
 
         {/* 날짜 */}
-        <div className="grid grid-cols-7 gap-2">
-          {monthDates.map(date => {
+        <div className="grid grid-cols-7 grid-rows-6 md:min-h-[36rem] md:flex-1">
+          {monthDates.map((date, index) => {
             const recordDate = formatRecordDate(date);
+
             const dayFoods = foods.filter(food => food.recordDate === recordDate);
 
             const dayNutrition = totalNutrients(dayFoods);
+
             const dayCalories = calories(dayNutrition.carbs, dayNutrition.protein, dayNutrition.fat);
+
+            const visibleNutrients = nutrientBadges.filter(({ key }) => dayNutrition[key] > 0);
 
             const hasData = dayFoods.length > 0;
 
@@ -153,12 +171,14 @@ export const MonthlyCalendarSection = ({
               date.getFullYear() === currentMonth.getFullYear() && date.getMonth() === currentMonth.getMonth();
 
             const isToday = recordDate === todayRecordDate;
+            const isLastRow = index >= monthDates.length - 7;
 
             const dayButtonClassName = [
-              'flex h-32 flex-col rounded-2xl border p-3 text-left transition',
+              'relative flex min-h-24 min-w-0 flex-col p-2 text-left transition',
               'hover:bg-(--neutral-5)',
-              isCurrentMonth ? 'border-(--neutral-4)' : 'border-(--neutral-4) opacity-45',
-              isToday ? '!border-(--primary-3)' : '',
+              isLastRow ? '' : 'border-b border-(--neutral-4)',
+              isCurrentMonth ? '' : 'bg-(--bg-section) text-(--text-muted)',
+              isToday ? 'shadow-[inset_0_0_0_1px_var(--primary-3)]' : '',
             ]
               .filter(Boolean)
               .join(' ');
@@ -170,30 +190,62 @@ export const MonthlyCalendarSection = ({
                 onClick={() => handleDateClick(date)}
                 className={dayButtonClassName}
               >
-                <span className="text-sm font-bold text-(--text-primary)">{date.getDate()}</span>
+                <span
+                  className={[
+                    'text-xs font-semibold md:text-sm',
+                    isCurrentMonth ? 'text-(--text-primary)' : 'text-(--text-muted)',
+                  ].join(' ')}
+                >
+                  {date.getDate()}
+                </span>
 
-                {hasData ? (
+                {hasData && (
                   <>
-                    <span className="mb-1 text-sm font-semibold text-(--primary-1)">{dayCalories} kcal</span>
-
-                    <div className="mt-auto space-y-1">
-                      {nutrientBadges.map(({ key, label, colorClassName }) => (
-                        <div key={key} className="flex items-center gap-1.5 text-[11px] text-(--text-secondary)">
+                    {/* Mobile: 0g보다 큰 영양소의 색상만 표시 */}
+                    {visibleNutrients.length > 0 && (
+                      <div className="mt-auto flex gap-1 md:hidden">
+                        {visibleNutrients.map(({ key, label, colorClassName }) => (
                           <span
+                            key={key}
                             aria-label={`${label} ${dayNutrition[key]}g`}
                             title={`${label} ${dayNutrition[key]}g`}
-                            className={['h-2 w-2 shrink-0 rounded-full', colorClassName].join(' ')}
+                            className={['h-1.5 w-1.5 rounded-full', colorClassName].join(' ')}
                           />
+                        ))}
+                      </div>
+                    )}
 
-                          <p>
-                            {label} <span className="font-semibold text-(--text-primary)">{dayNutrition[key]}</span>g
-                          </p>
+                    {/* Tablet·Desktop */}
+                    <div className="hidden md:contents">
+                      <span className="mt-1 text-sm font-semibold text-(--primary-1)">{dayCalories} kcal</span>
+
+                      {visibleNutrients.length > 0 && (
+                        <div className="mt-1 space-y-1">
+                          {visibleNutrients.map(({ key, label, shortLabel, colorClassName }) => (
+                            <div
+                              key={key}
+                              title={`${label} ${dayNutrition[key]}g`}
+                              className="flex items-center gap-1.5 text-[11px] text-(--text-secondary)"
+                            >
+                              <span
+                                aria-hidden="true"
+                                className={['h-2 w-2 shrink-0 rounded-full', colorClassName].join(' ')}
+                              />
+
+                              <span className="sr-only">
+                                {label} {dayNutrition[key]}g
+                              </span>
+
+                              <p>
+                                {shortLabel}{' '}
+                                <span className="font-semibold text-(--text-primary)">{dayNutrition[key]}</span>g
+                              </p>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </div>
                   </>
-                ) : (
-                  <span className="my-1 text-xs text-(--text-muted)">기록 없음</span>
                 )}
               </button>
             );
