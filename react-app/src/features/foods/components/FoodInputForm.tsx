@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import type { CreateFoodRequest, MealType, UserId } from '../../../types/types';
 import { parseFoodForm, validateFoodForm, type FoodFormValues } from '../utils/foodForm';
@@ -15,6 +15,7 @@ type FoodInputFormProps = {
   userId: UserId;
   recordDate: string;
   className?: string;
+  onSaveSuccess?: () => void; // 음식 추가 성공 시 호출되는 콜백 함수
 };
 
 // 초기 폼
@@ -32,7 +33,14 @@ const mealOptions: { label: string; value: MealType }[] = [
   { label: '저녁', value: 'dinner' },
 ];
 
-const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProps) => {
+const FoodInputForm = ({ userId, recordDate, className = '', onSaveSuccess }: FoodInputFormProps) => {
+  const inputId = useId();
+
+  const foodNameId = `${inputId}-foodName`;
+  const carbsId = `${inputId}-carbs`;
+  const proteinId = `${inputId}-protein`;
+  const fatId = `${inputId}-fat`;
+
   const [form, setForm] = useState<FoodForm>(initialForm);
 
   const createFoodMutation = useCreateFood(userId);
@@ -75,7 +83,8 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
 
       // 저장 성공 후 입력값 초기화
       setForm(initialForm);
-    } catch (error) {
+      onSaveSuccess?.(); // 음식 추가 성공 시 호출되는 콜백 함수
+    } catch {
       showAlert({
         title: '음식 추가 실패',
         text: '음식 추가에 실패했습니다.',
@@ -84,7 +93,7 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
     }
   };
 
-  const inputClassName = [
+  const inputSectionClassName = [
     // 모든 섹션이 공유하는 기본 박스 스타일
     'border-y border-r border-(--neutral-4) bg-(--white) ',
     className,
@@ -93,8 +102,8 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
     .join(' ');
 
   return (
-    <SectionLayout title="음식 추가" description={`${recordDate} 식단에 추가됩니다.`} className={inputClassName}>
-      <form onSubmit={handleSubmit} className="space-y-4 px-10">
+    <SectionLayout title="음식 추가" description={`${recordDate} 식단에 추가됩니다.`} className={inputSectionClassName}>
+      <form onSubmit={handleSubmit} autoComplete="off" className="space-y-4 px-10">
         {/* Meal type radio */}
         <fieldset>
           <legend className="mb-2 text-sm font-semibold text-(--text-secondary)">식사 시간</legend>
@@ -108,6 +117,7 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
                   value={meal.value}
                   checked={form.mealType === meal.value}
                   onChange={handleFormChange}
+                  autoComplete="off"
                   className="peer sr-only"
                 />
 
@@ -126,12 +136,13 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
           </label>
 
           <input
-            id="foodName"
+            id={foodNameId}
             name="foodName"
             type="text"
             value={form.foodName}
             onChange={handleFormChange}
             placeholder="예: 닭가슴살 샐러드"
+            autoComplete="off"
             className="w-full rounded-md border border-(--neutral-4) bg-white px-4 py-2.5 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-muted) focus:border-(--primary-3)"
           />
         </div>
@@ -144,14 +155,14 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
             </label>
 
             <input
-              id="carbs"
+              id={carbsId}
               name="carbs"
               type="text"
               inputMode="decimal"
-              min="0"
               value={form.carbs}
               onChange={handleFormChange}
               placeholder="0.00 g"
+              autoComplete="off"
               className="w-full rounded-md border border-(--neutral-4) bg-white px-3 py-2.5 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-muted) focus:border-(--primary-3)"
             />
           </div>
@@ -162,14 +173,14 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
             </label>
 
             <input
-              id="protein"
+              id={proteinId}
               name="protein"
               type="text"
               inputMode="decimal"
-              min="0"
               value={form.protein}
               onChange={handleFormChange}
               placeholder="0.00 g"
+              autoComplete="off"
               className="w-full rounded-md border border-(--neutral-4) bg-white px-3 py-2.5 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-muted) focus:border-(--primary-3)"
             />
           </div>
@@ -180,14 +191,14 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
             </label>
 
             <input
-              id="fat"
+              id={fatId}
               name="fat"
               type="text"
               inputMode="decimal"
-              min="0"
               value={form.fat}
               onChange={handleFormChange}
               placeholder="0.00 g"
+              autoComplete="off"
               className="w-full rounded-md border border-(--neutral-4) bg-white px-3 py-2.5 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-muted) focus:border-(--primary-3)"
             />
           </div>
@@ -195,9 +206,9 @@ const FoodInputForm = ({ userId, recordDate, className = '' }: FoodInputFormProp
           <button
             type="submit"
             disabled={createFoodMutation.isPending}
-            className="rounded-md bg-(--primary-3) px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-(--primary-4)"
+            className="rounded-md bg-(--primary-3) px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-(--primary-4) disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-(--primary-3)"
           >
-            {createFoodMutation.isPending ? '저장 중' : '저장'}
+            {createFoodMutation.isPending ? '저장 중...' : '저장'}
           </button>
         </div>
       </form>
