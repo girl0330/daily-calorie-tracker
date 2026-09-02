@@ -79,7 +79,11 @@ export default function DailyTrackerPage() {
       {/* Bottom Sheet */}
       {isFoodFormOpen && (
         <BottomSheet isOpen={isFoodFormOpen} onClose={() => setIsFoodFormOpen(false)}>
-          <FoodInputForm userId={userId} recordDate={selectedRecordDate} />
+          <FoodInputForm
+            userId={userId}
+            recordDate={selectedRecordDate}
+            onSaveSuccess={() => setIsFoodFormOpen(false)}
+          />
         </BottomSheet>
       )}
     </div>

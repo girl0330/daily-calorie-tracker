@@ -11,8 +11,11 @@ export const useCreateFood = (userId: UserId) => {
   return useMutation({
     mutationFn: (newFood: CreateFoodRequest) => createFoodApi(newFood),
 
+    networkMode: 'always',
+    retry: false,
+
     onSuccess: () => {
-      queryClient.invalidateQueries({
+      return queryClient.invalidateQueries({
         queryKey: getFoodListQueryKey(userId),
       });
     },
