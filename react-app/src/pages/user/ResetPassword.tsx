@@ -66,7 +66,7 @@ const ResetPassword = () => {
       navigate('/login', { replace: true });
     } catch (error) {
       showAlert({
-        title: '변경 실패', // 타이틀 수정
+        title: '변경 실패',
         text: `${error}`,
         icon: 'error',
       });
