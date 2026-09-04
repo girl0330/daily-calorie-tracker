@@ -10,6 +10,7 @@ import useTodayFoods from '../../features/tracker/hooks/useTodayFoods';
 import { toRecordDate as formatRecordDate, parseRecordDate } from '../../utils/date';
 import { useState } from 'react';
 import BottomSheet from '../../components/common/BottomSheet';
+import DailyTrackerSkeleton from './DailyTrackerSkeleton';
 
 export default function DailyTrackerPage() {
   const userFromStore = useAuthStore(state => state.user);
@@ -39,7 +40,7 @@ export default function DailyTrackerPage() {
   }
 
   if (isLoading) {
-    return <div>음식 데이터를 불러오는 중입니다.</div>;
+    return <DailyTrackerSkeleton />;
   }
 
   if (isError) {
