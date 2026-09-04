@@ -77,11 +77,44 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* 로그인 전 페이지 */}
-        <Route path="/login" element={userFromStore ? <Navigate to="/" replace /> : <Login />} />
+        <Route
+          path="/login"
+          element={
+            isPasswordRecoveryFromStore ? (
+              <Navigate to="/reset-password" replace />
+            ) : userFromStore ? (
+              <Navigate to="/" replace />
+            ) : (
+              <Login />
+            )
+          }
+        />
 
-        <Route path="/sign-up" element={userFromStore ? <Navigate to="/" replace /> : <SignUp />} />
+        <Route
+          path="/sign-up"
+          element={
+            isPasswordRecoveryFromStore ? (
+              <Navigate to="/reset-password" replace />
+            ) : userFromStore ? (
+              <Navigate to="/" replace />
+            ) : (
+              <SignUp />
+            )
+          }
+        />
 
-        <Route path="/find-password" element={userFromStore ? <Navigate to="/" replace /> : <FindPassword />} />
+        <Route
+          path="/find-password"
+          element={
+            isPasswordRecoveryFromStore ? (
+              <Navigate to="/reset-password" replace />
+            ) : userFromStore ? (
+              <Navigate to="/" replace />
+            ) : (
+              <FindPassword />
+            )
+          }
+        />
 
         {/* 비밀번호 복구 페이지 */}
         <Route
@@ -98,14 +131,24 @@ function App() {
         />
 
         {/* 비밀번호 변경 페이지 */}
-        <Route path="/change-password" element={<ChangePassword />} />
+        <Route
+          path="/change-password"
+          element={
+            isPasswordRecoveryFromStore ? (
+              <Navigate to="/reset-password" replace />
+            ) : userFromStore ? (
+              <ChangePassword />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
 
         {/* 로그인 후 공통 Layout */}
         <Route
           element={
             isPasswordRecoveryFromStore ? (
-              // <Navigate to="/reset-password" replace />
-              <Navigate to="/change-password" replace />
+              <Navigate to="/reset-password" replace />
             ) : userFromStore ? (
               <AppLayout />
             ) : (

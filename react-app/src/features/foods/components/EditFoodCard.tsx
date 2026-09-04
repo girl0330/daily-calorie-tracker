@@ -75,7 +75,8 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
       onError: error => {
         console.error('음식 수정 실패:', error);
         showAlert({
-          title: error instanceof Error ? error.message : '음식 삭제에 실패했습니다.',
+          title: '음식 수정 실패',
+          text: '음식을 수정하지 못했습니다. 다시 시도해 주세요.',
           icon: 'error',
         });
       },

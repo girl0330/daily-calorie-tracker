@@ -46,9 +46,10 @@ export default function FoodCard({ food }: FoodCardProps) {
     if (!isConfirmed) return;
 
     removeFood(food.id, {
-      onError: error => {
+      onError: () => {
         showAlert({
-          title: `${error}`,
+          title: '음식 삭제 실패',
+          text: '음식을 삭제하지 못했습니다. 다시 시도해 주세요.',
           icon: 'error',
         });
       },
