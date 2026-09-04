@@ -22,7 +22,7 @@ export default function DailyTrackerPage() {
 
   const selectedRecordDate = formatRecordDate(selectedDate);
 
-  const { data: foods = [], isLoading, isError, error } = useFoods(userFromStore?.id);
+  const { data: foods = [], isLoading, isError, refetch } = useFoods(userFromStore?.id);
 
   // 선택된 날짜의 음식 데이터
   const selectedDateFoods = useTodayFoods(foods, selectedRecordDate);
@@ -44,7 +44,15 @@ export default function DailyTrackerPage() {
   }
 
   if (isError) {
-    return <div>음식 데이터를 불러오지 못했습니다: {error.message}</div>;
+    return (
+      <div>
+        <p>음식 데이터를 불러오지 못했습니다. 다시 시도해 주세요.</p>
+
+        <button type="button" onClick={() => refetch()}>
+          다시 시도
+        </button>
+      </div>
+    );
   }
 
   const userId = userFromStore.id as UserId;
