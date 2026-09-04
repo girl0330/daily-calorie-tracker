@@ -28,7 +28,6 @@ export const getRequiredInputErrorMessage = (fields: ValidationField[]): string 
           break;
 
         // 최소 글자수 검사
-        // TODO: 비밀번호 입력 input에 모두 적용하기기
         case 'minLength':
           if (value.length < rule.min) {
             return rule.message;

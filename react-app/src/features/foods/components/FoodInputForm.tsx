@@ -131,7 +131,7 @@ const FoodInputForm = ({ userId, recordDate, className = '', onSaveSuccess }: Fo
 
         {/* Food name */}
         <div>
-          <label htmlFor="foodName" className="mb-2 block text-sm font-semibold text-(--text-secondary)">
+          <label htmlFor={foodNameId} className="mb-2 block text-sm font-semibold text-(--text-secondary)">
             음식 이름
           </label>
 
@@ -150,7 +150,7 @@ const FoodInputForm = ({ userId, recordDate, className = '', onSaveSuccess }: Fo
         {/* Nutrients + submit button */}
         <div className="grid grid-cols-1 gap-2 md:grid-cols-[1fr_1fr_1fr_90px] md:items-end">
           <div>
-            <label htmlFor="carbs" className="mb-2 block text-sm font-semibold text-(--text-secondary)">
+            <label htmlFor={carbsId} className="mb-2 block text-sm font-semibold text-(--text-secondary)">
               탄수화물
             </label>
 
@@ -168,7 +168,7 @@ const FoodInputForm = ({ userId, recordDate, className = '', onSaveSuccess }: Fo
           </div>
 
           <div>
-            <label htmlFor="protein" className="mb-2 block text-sm font-semibold text-(--text-secondary)">
+            <label htmlFor={proteinId} className="mb-2 block text-sm font-semibold text-(--text-secondary)">
               단백질
             </label>
 
@@ -186,7 +186,7 @@ const FoodInputForm = ({ userId, recordDate, className = '', onSaveSuccess }: Fo
           </div>
 
           <div>
-            <label htmlFor="fat" className="mb-2 block text-sm font-semibold text-(--text-secondary)">
+            <label htmlFor={fatId} className="mb-2 block text-sm font-semibold text-(--text-secondary)">
               지방
             </label>
 

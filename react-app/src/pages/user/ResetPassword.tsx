@@ -150,7 +150,7 @@ const ResetPassword = () => {
           {/* 5. 조건에 맞지 않을 때 버튼 disabled 처리 추가 */}
           <button
             type="submit"
-            // disabled={isPending || !password || !confirmPassword || !isMatched}
+            disabled={isPending || !password || !confirmPassword || !isMatched}
             className="mt-6 h-12 w-full rounded-2xl border border-[#8a8178] bg-white font-semibold transition hover:bg-(--border-strong) active:scale-[0.99]"
           >
             {isPending ? '변경 중...' : '확인'}
