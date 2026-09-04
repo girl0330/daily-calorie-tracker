@@ -78,11 +78,12 @@ export default function Nav() {
                 <div className="px-4 text-sm text-(--text-primary) opacity-80">{userFromStore?.email}</div>
 
                 <NavLink
-                  to="/reset-password"
+                  to="/change-password"
+                  // to="/reset-password"
                   onClick={() => setIsMenuOpen(false)}
                   className="rounded-md px-4 py-2 text-(--text-primary)"
                 >
-                  비밀번호 재설정
+                  비밀번호 변경
                 </NavLink>
 
                 <button
@@ -133,7 +134,8 @@ export default function Nav() {
           <div className="px-4 text-sm text-(--text-primary) opacity-80">{userFromStore?.email}</div>
 
           <NavLink
-            to="/reset-password"
+            // to="/reset-password"
+            to="/change-password"
             className={({ isActive }) =>
               `rounded-md px-4 py-2 text-base font-medium transition-colors ${
                 isActive

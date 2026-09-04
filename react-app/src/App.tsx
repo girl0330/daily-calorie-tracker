@@ -10,6 +10,7 @@ import { useAuthStore } from './store/authStore';
 import FindPassword from './pages/user/FindPassword';
 import ResetPassword from './pages/user/ResetPassword';
 import AppLayout from './layout/AppLayout';
+import ChangePassword from './pages/user/ChangePassword';
 
 function App() {
   const userFromStore = useAuthStore(state => state.user);
@@ -83,13 +84,28 @@ function App() {
         <Route path="/find-password" element={userFromStore ? <Navigate to="/" replace /> : <FindPassword />} />
 
         {/* 비밀번호 복구 페이지 */}
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route
+          path="/reset-password"
+          element={
+            isPasswordRecoveryFromStore ? (
+              <ResetPassword />
+            ) : userFromStore ? (
+              <Navigate to="/" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        {/* 비밀번호 변경 페이지 */}
+        <Route path="/change-password" element={<ChangePassword />} />
 
         {/* 로그인 후 공통 Layout */}
         <Route
           element={
             isPasswordRecoveryFromStore ? (
-              <Navigate to="/reset-password" replace />
+              // <Navigate to="/reset-password" replace />
+              <Navigate to="/change-password" replace />
             ) : userFromStore ? (
               <AppLayout />
             ) : (

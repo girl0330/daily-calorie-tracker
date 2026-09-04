@@ -46,6 +46,26 @@ export const sendPasswordResetEmailApi = async (email: string) => {
   return data;
 };
 
+// 현재 비밀번호 확인
+export const reauthenticateApi = async (email: string, currentPassword: string) => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password: currentPassword,
+  });
+
+  if (error) {
+    console.error('비밀번호 확인 실패:', error.message);
+    throw new Error(error.message);
+  }
+
+  if (!data.user) {
+    throw new Error('현재 비밀번호가 일치하지 않습니다.');
+  }
+
+  console.log('비밀번호 확인 성공', data);
+  return data;
+};
+
 // 실제 비밀번호 변경
 export const resetPasswordApi = async (password: string) => {
   const { data, error } = await supabase.auth.updateUser({
