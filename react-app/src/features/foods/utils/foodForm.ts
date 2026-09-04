@@ -18,7 +18,7 @@ export type ParsedFoodFormValues = {
 };
 
 const nutrientSavePattern = /^\d+(\.\d{1,2})?$/;
-const numberRegex = /^\d+(\.\d+)?$/;
+const numberRegex = /^-?\d+(\.\d+)?$/;
 
 const nutrientFields: Array<keyof Pick<FoodFormValues, 'carbs' | 'protein' | 'fat'>> = ['carbs', 'protein', 'fat'];
 
@@ -33,8 +33,8 @@ export const validateFoodForm = (form: FoodFormValues): string | null => {
       value: form.carbs,
       rules: [
         { type: 'required', message: '탄수화물(carbs) 값을 입력해주세요.' },
-        { type: 'minNumber', min: 0, message: `${form.carbs}은 0 이상이어야 합니다.` },
         { type: 'pattern', regex: numberRegex, message: '숫자만 입력할 수 있습니다.' },
+        { type: 'minNumber', min: 0, message: '0 이상이어야 합니다.' },
         { type: 'pattern', regex: nutrientSavePattern, message: '탄수화물은 소수점 2자리까지 입력할 수 있습니다.' },
       ],
     },
@@ -42,18 +42,18 @@ export const validateFoodForm = (form: FoodFormValues): string | null => {
       value: form.protein,
       rules: [
         { type: 'required', message: '단백질(protein) 값을 입력해주세요.' },
-        { type: 'minNumber', min: 0, message: `${form.protein}은 0 이상이어야 합니다.` },
         { type: 'pattern', regex: numberRegex, message: '숫자만 입력할 수 있습니다.' },
-        { type: 'pattern', regex: nutrientSavePattern, message: '탄수화물은 소수점 2자리까지 입력할 수 있습니다.' },
+        { type: 'minNumber', min: 0, message: '0 이상이어야 합니다.' },
+        { type: 'pattern', regex: nutrientSavePattern, message: '단백질 소수점 2자리까지 입력할 수 있습니다.' },
       ],
     },
     {
       value: form.fat,
       rules: [
         { type: 'required', message: '지방(fat) 값을 입력해주세요.' },
-        { type: 'minNumber', min: 0, message: `${form.fat}은 0 이상이어야 합니다.` },
         { type: 'pattern', regex: numberRegex, message: '숫자만 입력할 수 있습니다.' },
-        { type: 'pattern', regex: nutrientSavePattern, message: '탄수화물은 소수점 2자리까지 입력할 수 있습니다.' },
+        { type: 'minNumber', min: 0, message: '0 이상이어야 합니다.' },
+        { type: 'pattern', regex: nutrientSavePattern, message: '지방 소수점 2자리까지 입력할 수 있습니다.' },
       ],
     },
   ]);

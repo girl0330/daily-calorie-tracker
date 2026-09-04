@@ -35,7 +35,7 @@ const SignUp = () => {
     // 유효성 검사에 걸리면 즉시 경고창을 띄우고 함수 종료됨
     if (validationMessage) {
       showAlert({
-        title: '로그인 실패',
+        title: '회원가입 실패',
         text: validationMessage,
         icon: 'error',
       });
