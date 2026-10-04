@@ -17,6 +17,9 @@ export type ParsedFoodFormValues = {
   fat: number;
 };
 
+// 입력 중 허용할 영양소 값 패턴.
+// 예: '', '1', '1.', '1.2', '1.23' 허용
+// 예: '1.234', 'abc', '-1' 불가
 const nutrientSavePattern = /^\d+(\.\d{1,2})?$/;
 const numberRegex = /^-?\d+(\.\d+)?$/;
 

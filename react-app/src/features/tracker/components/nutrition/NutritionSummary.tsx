@@ -31,7 +31,10 @@ export const NutritionSummary = ({ nutrition, totalCalories, className = '' }: N
     <div className={summaryClassName}>
       <div className="flex items-end gap-1">
         <strong className="text-3xl font-medium tracking-[-0.04em] text-(--text-primary)">
-          {totalCalories.toLocaleString()}
+          {totalCalories.toLocaleString('ko-KR', {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1,
+          })}
         </strong>
 
         <span className="pb-1 text-xs text-(--text-secondary)">kcal</span>
@@ -46,7 +49,13 @@ export const NutritionSummary = ({ nutrition, totalCalories, className = '' }: N
               <span className="hidden max-[420px]:inline">{shortLabel}</span>
             </p>
 
-            <p className="mt-1 text-sm font-medium text-(--text-primary)">{nutrition[key].toLocaleString()}g</p>
+            <p className="mt-1 text-sm font-medium text-(--text-primary)">
+              {nutrition[key].toLocaleString('ko-KR', {
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1,
+              })}
+              g
+            </p>
           </div>
         ))}
       </div>
