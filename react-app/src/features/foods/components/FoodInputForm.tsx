@@ -161,7 +161,7 @@ const FoodInputForm = ({ userId, recordDate, className = '', onSaveSuccess }: Fo
               inputMode="decimal"
               value={form.carbs}
               onChange={handleFormChange}
-              placeholder="0.00 g"
+              placeholder="0.0 g"
               autoComplete="off"
               className="w-full rounded-md border border-(--neutral-4) bg-white px-3 py-2.5 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-muted) focus:border-(--primary-3)"
             />
@@ -179,7 +179,7 @@ const FoodInputForm = ({ userId, recordDate, className = '', onSaveSuccess }: Fo
               inputMode="decimal"
               value={form.protein}
               onChange={handleFormChange}
-              placeholder="0.00 g"
+              placeholder="0 g"
               autoComplete="off"
               className="w-full rounded-md border border-(--neutral-4) bg-white px-3 py-2.5 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-muted) focus:border-(--primary-3)"
             />
@@ -197,7 +197,7 @@ const FoodInputForm = ({ userId, recordDate, className = '', onSaveSuccess }: Fo
               inputMode="decimal"
               value={form.fat}
               onChange={handleFormChange}
-              placeholder="0.00 g"
+              placeholder="0.0 g"
               autoComplete="off"
               className="w-full rounded-md border border-(--neutral-4) bg-white px-3 py-2.5 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-muted) focus:border-(--primary-3)"
             />
