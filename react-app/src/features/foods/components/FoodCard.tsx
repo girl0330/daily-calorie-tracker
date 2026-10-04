@@ -28,6 +28,8 @@ const nutrientItems = [
 ] as const;
 
 export default function FoodCard({ food }: FoodCardProps) {
+  const totalCalories = calories(food.carbs, food.protein, food.fat);
+
   const [isEditing, setIsEditing] = useState(false);
 
   // 삭제 mutation
@@ -67,7 +69,11 @@ export default function FoodCard({ food }: FoodCardProps) {
         <h3 className="text-center text-2xl font-bold text-(--text-primary)">{food.foodName}</h3>
 
         <p className="mt-1 text-center text-sm text-(--text-muted)">
-          {calories(food.carbs, food.protein, food.fat)} 칼로리
+          {totalCalories.toLocaleString('ko-KR', {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1,
+          })}{' '}
+          칼로리
         </p>
       </div>
 
@@ -101,7 +107,13 @@ export default function FoodCard({ food }: FoodCardProps) {
 
             <span className="text-(--text-muted)">{label}</span>
 
-            <span className="font-semibold text-(--text-primary)">{food[key]}g</span>
+            <span className="font-semibold text-(--text-primary)">
+              {food[key].toLocaleString('ko-KR', {
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1,
+              })}
+              g
+            </span>
           </div>
         ))}
       </div>

@@ -217,7 +217,9 @@ export const MonthlyCalendarSection = ({
 
                     {/* Tablet·Desktop */}
                     <div className="hidden md:contents">
-                      <span className="mt-1 text-sm font-semibold text-(--primary-1)">{dayCalories} kcal</span>
+                      <span className="mt-1 text-sm font-semibold text-(--primary-1)">
+                        {dayCalories.toFixed(1)} kcal
+                      </span>
 
                       {visibleNutrients.length > 0 && (
                         <div className="mt-1 space-y-1">

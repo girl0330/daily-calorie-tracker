@@ -36,20 +36,47 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
 
         <div className="col-span-2 flex min-w-0 items-center justify-center gap-x-2 text-xs whitespace-nowrap 2xl:text-sm">
           <span className="text-(--text-muted)">
-            탄수화물 <span className="text-(--text-primary)">{mealNutrition.carbs}</span>g
+            탄수화물{' '}
+            <span className="text-(--text-primary)">
+              {mealNutrition.carbs.toLocaleString('ko-KR', {
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1,
+              })}
+            </span>
+            g
           </span>
 
           <span className="text-(--text-muted)">
-            단백질 <span className="text-(--text-primary)">{mealNutrition.protein}</span>g
+            단백질{' '}
+            <span className="text-(--text-primary)">
+              {mealNutrition.protein.toLocaleString('ko-KR', {
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1,
+              })}
+            </span>
+            g
           </span>
 
           <span className="text-(--text-muted)">
-            지방 <span className="text-(--text-primary)">{mealNutrition.fat}</span>g
+            지방{' '}
+            <span className="text-(--text-primary)">
+              {mealNutrition.fat.toLocaleString('ko-KR', {
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1,
+              })}
+            </span>
+            g
           </span>
 
           <span className="text-(--neutral-3)">|</span>
 
-          <span className="shrink-0 font-semibold text-(--primary-1)">{totalCalories} kcal</span>
+          <span className="shrink-0 font-semibold text-(--primary-1)">
+            {totalCalories.toLocaleString('ko-KR', {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1,
+            })}{' '}
+            kcal
+          </span>
         </div>
       </div>
 
@@ -62,20 +89,66 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
         </div>
 
         <div className="flex min-w-0 flex-wrap items-center gap-x-2 text-sm">
-          <span className="md:hidden">탄 {mealNutrition.carbs}g</span>
-          <span className="hidden md:inline">탄수화물 {mealNutrition.carbs}g</span>
+          <span className="md:hidden">
+            탄{' '}
+            {mealNutrition.carbs.toLocaleString('ko-KR', {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1,
+            })}
+            g
+          </span>
+          <span className="hidden md:inline">
+            탄수화물{' '}
+            {mealNutrition.carbs.toLocaleString('ko-KR', {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1,
+            })}
+            g
+          </span>
 
-          <span className="md:hidden">단 {mealNutrition.protein}g</span>
-          <span className="hidden md:inline">단백질 {mealNutrition.protein}g</span>
+          <span className="md:hidden">
+            단{' '}
+            {mealNutrition.protein.toLocaleString('ko-KR', {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1,
+            })}
+            g
+          </span>
+          <span className="hidden md:inline">
+            단백질{' '}
+            {mealNutrition.protein.toLocaleString('ko-KR', {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1,
+            })}
+            g
+          </span>
 
-          <span className="md:hidden">지 {mealNutrition.fat}g</span>
-          <span className="hidden md:inline">지방 {mealNutrition.fat}g</span>
+          <span className="md:hidden">
+            지{' '}
+            {mealNutrition.fat.toLocaleString('ko-KR', {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1,
+            })}
+            g
+          </span>
+          <span className="hidden md:inline">
+            지방{' '}
+            {mealNutrition.fat.toLocaleString('ko-KR', {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1,
+            })}
+            g
+          </span>
 
           <span className="text-(--neutral-3)">|</span>
 
           <span className="font-semibold text-(--primary-1)">
             <span className="hidden md:inline">총 </span>
-            {totalCalories} kcal
+            {totalCalories.toLocaleString('ko-KR', {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1,
+            })}{' '}
+            kcal
           </span>
         </div>
 
