@@ -4,6 +4,8 @@ import type { FoodItem } from '../../../../types/types';
 import { calories, totalNutrients } from '../../../../utils/calculate';
 import { toRecordDate as formatRecordDate } from '../../../../utils/date';
 
+const formatNumber = (value: number) => value.toLocaleString('ko-KR', { maximumFractionDigits: 2 });
+
 const WEEK_LABELS = ['일', '월', '화', '수', '목', '금', '토'];
 
 const nutrientBadges = [
@@ -207,8 +209,8 @@ export const MonthlyCalendarSection = ({
                         {visibleNutrients.map(({ key, label, colorClassName }) => (
                           <span
                             key={key}
-                            aria-label={`${label} ${dayNutrition[key]}g`}
-                            title={`${label} ${dayNutrition[key]}g`}
+                            aria-label={`${label} ${formatNumber(dayNutrition[key])}g`}
+                            title={`${label} ${formatNumber(dayNutrition[key])}g`}
                             className={['h-1.5 w-1.5 rounded-full', colorClassName].join(' ')}
                           />
                         ))}
@@ -218,7 +220,7 @@ export const MonthlyCalendarSection = ({
                     {/* Tablet·Desktop */}
                     <div className="hidden md:contents">
                       <span className="mt-1 text-sm font-semibold text-(--primary-1)">
-                        {dayCalories.toFixed(1)} kcal
+                        {formatNumber(dayCalories)} kcal
                       </span>
 
                       {visibleNutrients.length > 0 && (
@@ -226,7 +228,7 @@ export const MonthlyCalendarSection = ({
                           {visibleNutrients.map(({ key, label, shortLabel, colorClassName }) => (
                             <div
                               key={key}
-                              title={`${label} ${dayNutrition[key]}g`}
+                              title={`${label} ${formatNumber(dayNutrition[key])}g`}
                               className="flex items-center gap-1.5 text-[11px] text-(--text-secondary)"
                             >
                               <span
@@ -235,12 +237,12 @@ export const MonthlyCalendarSection = ({
                               />
 
                               <span className="sr-only">
-                                {label} {dayNutrition[key]}g
+                                {label} {formatNumber(dayNutrition[key])}g
                               </span>
 
                               <p>
                                 {shortLabel}{' '}
-                                <span className="font-semibold text-(--text-primary)">{dayNutrition[key]}</span>g
+                                <span className="font-semibold text-(--text-primary)">{formatNumber(dayNutrition[key])}</span>g
                               </p>
                             </div>
                           ))}
