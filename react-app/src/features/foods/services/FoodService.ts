@@ -7,7 +7,7 @@ import type {
   UpdateFoodRequest,
   UserId,
 } from '../../../types/types';
-import { toRecordDate as formatRecordDate } from '../../../utils/date';
+import { parseRecordDate, toRecordDate as formatRecordDate } from '../../../utils/date';
 
 // 화면에서 실제로 사용하는 컬럼만 조회한다.
 // DB 컬럼이 늘어나도 프론트 도메인 타입이 불필요하게 영향을 받지 않도록 한다.
@@ -82,6 +82,59 @@ export const getFoodsApi = async (userId: UserId): Promise<FoodItem[]> => {
   }
 
   return (data as FoodRow[]).map(toFoodItem);
+};
+
+// 시작일과 종료일을 포함한 사용자별 기간 조회. 기존 null 날짜 보정 기준도 유지한다.
+export const getFoodsByPeriodApi = async (userId: UserId, startDate: string, endDate: string): Promise<FoodItem[]> => {
+  if (!userId) throw new Error('사용자 ID가 없습니다.');
+
+  const start = parseRecordDate(startDate);
+  const end = parseRecordDate(endDate);
+  const isRecordDate = (value: string, date: Date) =>
+    /^\d{4}-\d{2}-\d{2}$/.test(value) && formatRecordDate(date) === value;
+
+  if (!isRecordDate(startDate, start) || !isRecordDate(endDate, end) || startDate > endDate) {
+    throw new RangeError('유효한 시작일과 종료일이 필요합니다.');
+  }
+
+  // record_date가 null인 기존 기록만 created_at의 로컬 날짜로 조회한다.
+  const afterEnd = new Date(end);
+  afterEnd.setDate(afterEnd.getDate() + 1);
+  const dateFilter = [
+    `and(record_date.gte.${startDate},record_date.lte.${endDate})`,
+    `and(record_date.is.null,created_at.gte.${start.toISOString()},created_at.lt.${afterEnd.toISOString()})`,
+  ].join(',');
+
+  const foods: FoodItem[] = [];
+  const pageSize = 500;
+  let offset = 0;
+
+  while (true) {
+    const { data, error, count } = await supabase
+      .from('foods')
+      .select(FOOD_SELECT_COLUMNS, { count: 'exact' })
+      .eq('user_id', userId)
+      .or(dateFilter)
+      .order('id', { ascending: true })
+      .range(offset, offset + pageSize - 1);
+
+    if (error) throw error;
+
+    const rows = (data ?? []) as FoodRow[];
+    if (rows.length === 0) {
+      if (count !== null && offset < count) {
+        throw new Error('기간 내 음식 기록을 모두 가져오지 못했습니다.');
+      }
+      break;
+    }
+
+    foods.push(...rows.map(toFoodItem));
+    // 실제 반환 개수로 이동해 서버의 행 제한이 pageSize보다 작아도 누락하지 않는다.
+    offset += rows.length;
+    if (count !== null && offset >= count) break;
+  }
+
+  return foods;
 };
 
 // 음식을 등록하고, DB에서 생성된 id/created_at을 포함한 데이터를 다시 받는다.
