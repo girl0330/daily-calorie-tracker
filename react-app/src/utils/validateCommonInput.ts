@@ -49,12 +49,13 @@ export const getRequiredInputErrorMessage = (fields: ValidationField[]): string 
           break;
 
         //영양소는 0 이상 입력
-        case 'minNumber':
+        case 'minNumber': {
           const num = Number(value);
           if (Number.isNaN(num) || num < rule.min) {
             return rule.message;
           }
           break;
+        }
 
         default:
           break;
