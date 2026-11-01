@@ -72,6 +72,15 @@ export default function Nav() {
                 >
                   Monthly Tracker
                 </NavLink>
+                <NavLink
+                  to="/weekly-report"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `rounded-md px-4 py-3 font-medium ${isActive ? 'bg-(--primary-5) text-(--primary-1)' : 'text-(--text-primary) hover:bg-(--bg-hover)'}`
+                  }
+                >
+                  주간 리포트
+                </NavLink>
               </nav>
 
               <div className="mt-4 flex flex-col gap-2 border-t border-(--primary-4) pt-4">
@@ -127,6 +136,14 @@ export default function Nav() {
             }
           >
             Monthly Tracker
+          </NavLink>
+          <NavLink
+            to="/weekly-report"
+            className={({ isActive }) =>
+              `rounded-md px-4 py-3 text-xl font-medium ${isActive ? 'bg-(--primary-5) text-(--primary-1)' : 'text-(--text-primary) hover:bg-(--bg-hover)'}`
+            }
+          >
+            주간 리포트
           </NavLink>
         </nav>
 
