@@ -27,7 +27,7 @@ export default function WeeklyReportPage() {
   const parsedDate = dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam) ? parseRecordDate(dateParam) : null;
   const selectedDate = parsedDate && toRecordDate(parsedDate) === dateParam ? parsedDate : new Date();
   const week = getWeekRange(selectedDate);
-  const { data: report, isLoading, isError, isFetching, refetch } = useWeeklyReport(user?.id, selectedDate);
+  const { data: weeklyStats, isLoading, isError, isFetching, refetch } = useWeeklyReport(user?.id, selectedDate);
 
   const moveWeek = (offset: number) => {
     const date = parseRecordDate(week.startDate);
@@ -39,12 +39,12 @@ export default function WeeklyReportPage() {
 
   if (!user) return null;
 
-  const maxCalories = Math.max(1, ...(report?.days.map(day => day.calories) ?? []));
+  const maxCalories = Math.max(1, ...(weeklyStats?.days.map(day => day.calories) ?? []));
 
-  const nutrientCalories = report ? caloriesByNutrient(report.nutrients) : null;
-  const proportions = report
+  const nutrientCalories = weeklyStats ? caloriesByNutrient(weeklyStats.nutrients) : null;
+  const proportions = weeklyStats
     ? proportionType === 'meal'
-      ? report.meals.map(meal => ({
+      ? weeklyStats.meals.map(meal => ({
           key: meal.mealType,
           label: mealLabels[meal.mealType],
           calories: meal.calories,
@@ -55,7 +55,8 @@ export default function WeeklyReportPage() {
           key: item.key,
           label: item.label,
           calories: nutrientCalories![item.key],
-          percentage: report.totalCalories > 0 ? (nutrientCalories![item.key] / report.totalCalories) * 100 : null,
+          percentage:
+            weeklyStats.totalCalories > 0 ? (nutrientCalories![item.key] / weeklyStats.totalCalories) * 100 : null,
           color: item.color,
         }))
     : [];
@@ -106,11 +107,11 @@ export default function WeeklyReportPage() {
             {isFetching ? '불러오는 중...' : '다시 시도'}
           </button>
         </div>
-      ) : report ? (
+      ) : weeklyStats ? (
         <>
-          {report.recordedDays === 0 && (
+          {weeklyStats.recordedDays === 0 && (
             <p role="status" className="border-b border-(--neutral-4) px-6 py-5 text-(--text-secondary)">
-              이번 주에 기록한 음식이 없어요. 일간 기록에서 식사를 추가해 주세요.
+              선택한 주에 기록한 음식이 없어요. 일간 기록에서 식사를 추가해 주세요.
             </p>
           )}
           <div className="grid border-b border-(--neutral-4) lg:flex-1 lg:grid-cols-[2fr_1fr]">
@@ -120,9 +121,7 @@ export default function WeeklyReportPage() {
               contentClassName="flex flex-1 items-center"
               description="AI 요약 준비 중"
             >
-              <p className="text-(--text-secondary)">
-                AI 요약은 추후 제공될 예정이에요. 아래에서 실제 기록의 집계 결과를 확인해 주세요.
-              </p>
+              <p className="text-(--text-secondary)">AI가 선택한 주의 음식 기록을 정리하는 기능을 준비하고 있어요.</p>
             </SectionLayout>
             <SectionLayout title="기록 비중" className="bg-(--white) lg:py-3">
               <div className="mb-3 flex lg:mb-1" role="group" aria-label="기록 비중 기준">
@@ -158,7 +157,7 @@ export default function WeeklyReportPage() {
                   </div>
                 ))}
               </div>
-              {report.totalCalories === 0 && (
+              {weeklyStats.totalCalories === 0 && (
                 <p className="mt-4 text-xs text-(--text-muted) lg:mt-2">
                   기록된 총 칼로리가 0kcal이면 비중을 계산할 수 없어요.
                 </p>
@@ -171,7 +170,7 @@ export default function WeeklyReportPage() {
             contentClassName="flex flex-1 flex-col justify-end"
           >
             <div className="grid grid-cols-7 gap-2" aria-label="요일별 칼로리">
-              {report.days.map((day, index) => (
+              {weeklyStats.days.map((day, index) => (
                 <div key={day.recordDate} className="min-w-0 text-center">
                   <div className="flex h-44 flex-col justify-end gap-2 lg:h-[150px]">
                     <span className="text-xs text-(--text-muted) tabular-nums">
