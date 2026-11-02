@@ -62,7 +62,7 @@ export default function WeeklyReportPage() {
 
   return (
     <div className="flex min-h-0 w-full flex-1 flex-col bg-(--white)">
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-(--neutral-4) px-6 py-5">
+      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-(--neutral-4) px-6 py-5 lg:py-3">
         <div>
           <h1 className="text-2xl font-bold md:text-3xl">한 주의 기록을 돌아보세요</h1>
           <p className="mt-2 text-(--text-secondary)">기록한 식사를 주간 통계로 확인해요.</p>
@@ -91,11 +91,11 @@ export default function WeeklyReportPage() {
       </header>
 
       {isLoading ? (
-        <div role="status" className="animate-pulse px-6 py-5">
+        <div role="status" className="animate-pulse px-6 py-5 lg:py-3">
           주간 기록을 불러오는 중...
         </div>
       ) : isError ? (
-        <div role="alert" className="px-6 py-5">
+        <div role="alert" className="px-6 py-5 lg:py-3">
           <p>주간 기록을 불러오지 못했습니다. 다시 시도해 주세요.</p>
           <button
             type="button"
@@ -113,10 +113,10 @@ export default function WeeklyReportPage() {
               이번 주에 기록한 음식이 없어요. 일간 기록에서 식사를 추가해 주세요.
             </p>
           )}
-          <div className="grid border-b border-(--neutral-4) xl:grid-cols-[2fr_1fr]">
+          <div className="grid border-b border-(--neutral-4) lg:grid-cols-[2fr_1fr]">
             <SectionLayout
               title="AI가 정리한 이번 주"
-              className="min-h-72 border-b border-(--neutral-4) bg-(--white) xl:border-r xl:border-b-0"
+              className="border-b border-(--neutral-4) bg-(--white) lg:min-h-56 lg:border-r lg:border-b-0"
               contentClassName="flex flex-1 items-center"
               description="AI 요약 준비 중"
             >
@@ -124,8 +124,8 @@ export default function WeeklyReportPage() {
                 AI 요약은 추후 제공될 예정이에요. 아래에서 실제 기록의 집계 결과를 확인해 주세요.
               </p>
             </SectionLayout>
-            <SectionLayout title="기록 비중" className="bg-(--white)">
-              <div className="mb-3 flex" role="group" aria-label="기록 비중 기준">
+            <SectionLayout title="기록 비중" className="bg-(--white) lg:py-3">
+              <div className="mb-3 flex lg:mb-1" role="group" aria-label="기록 비중 기준">
                 {proportionTabs.map(tab => (
                   <button
                     key={tab.key}
@@ -138,11 +138,11 @@ export default function WeeklyReportPage() {
                   </button>
                 ))}
               </div>
-              <p className="mb-5 text-sm text-(--text-muted)">기록된 총 칼로리 기준</p>
-              <div className="flex flex-col gap-6">
+              <p className="mb-5 text-sm text-(--text-muted) lg:mb-2">기록된 총 칼로리 기준</p>
+              <div className="flex flex-col gap-6 lg:gap-2">
                 {proportions.map(item => (
                   <div key={item.key}>
-                    <div className="mb-2 flex items-center justify-between gap-2 text-sm">
+                    <div className="mb-2 flex items-center justify-between gap-2 text-sm lg:mb-1">
                       <span>{item.label}</span>
                       <span className="tabular-nums">
                         {item.percentage === null ? '계산 불가' : `${formatNumber(item.percentage)}%`}
@@ -159,7 +159,7 @@ export default function WeeklyReportPage() {
                 ))}
               </div>
               {report.totalCalories === 0 && (
-                <p className="mt-4 text-xs text-(--text-muted)">
+                <p className="mt-4 text-xs text-(--text-muted) lg:mt-2">
                   기록된 총 칼로리가 0kcal이면 비중을 계산할 수 없어요.
                 </p>
               )}
@@ -167,20 +167,20 @@ export default function WeeklyReportPage() {
           </div>
           <SectionLayout
             title="요일별 기록 칼로리"
-            className="border-b border-(--neutral-4) bg-(--white)"
+            className="border-b border-(--neutral-4) bg-(--white) lg:py-3"
             contentClassName="flex flex-1 flex-col justify-end"
           >
             <div className="grid grid-cols-7 gap-2" aria-label="요일별 칼로리">
               {report.days.map((day, index) => (
                 <div key={day.recordDate} className="min-w-0 text-center">
-                  <div className="flex h-44 flex-col justify-end gap-2">
+                  <div className="flex h-44 flex-col justify-end gap-2 lg:h-32">
                     <span className="text-xs text-(--text-muted) tabular-nums">
                       {day.hasRecord ? formatNumber(day.calories) : '기록 없음'}
                     </span>
                     <div
                       className={`mx-auto w-full max-w-12 rounded-t-md ${day.hasRecord ? 'bg-(--chart-calorie)' : 'border border-dashed border-(--primary-4)'}`}
                       style={{
-                        height: day.hasRecord ? `${Math.max(2, (day.calories / maxCalories) * 128)}px` : '40px',
+                        height: day.hasRecord ? `${Math.max(2, (day.calories / maxCalories) * 72)}%` : '40px',
                       }}
                       aria-hidden="true"
                     />
@@ -190,7 +190,7 @@ export default function WeeklyReportPage() {
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-xs text-(--text-muted)">
+            <p className="mt-4 text-xs text-(--text-muted) lg:mt-2">
               단위: kcal · 기록이 없는 날은 섭취량 0으로 판단하지 않아요.
             </p>
           </SectionLayout>
