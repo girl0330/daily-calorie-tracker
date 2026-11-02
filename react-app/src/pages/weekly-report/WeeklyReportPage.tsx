@@ -113,48 +113,17 @@ export default function WeeklyReportPage() {
               이번 주에 기록한 음식이 없어요. 일간 기록에서 식사를 추가해 주세요.
             </p>
           )}
-          <SectionLayout
-            title="AI가 정리한 이번 주"
-            className="min-h-72 border-b border-(--neutral-4) bg-(--white)"
-            contentClassName="flex flex-1 items-center"
-            description="AI 요약 준비 중"
-          >
-            <p className="text-(--text-secondary)">
-              AI 요약은 추후 제공될 예정이에요. 아래에서 실제 기록의 집계 결과를 확인해 주세요.
-            </p>
-          </SectionLayout>
-
-          <div className="grid border-b border-(--neutral-4) xl:grid-cols-[1.2fr_1fr]">
+          <div className="grid border-b border-(--neutral-4) xl:grid-cols-[2fr_1fr]">
             <SectionLayout
-              title="요일별 기록 칼로리"
-              className="border-b border-(--neutral-4) bg-(--white) xl:border-r xl:border-b-0"
-              contentClassName="flex flex-1 flex-col justify-end"
+              title="AI가 정리한 이번 주"
+              className="min-h-72 border-b border-(--neutral-4) bg-(--white) xl:border-r xl:border-b-0"
+              contentClassName="flex flex-1 items-center"
+              description="AI 요약 준비 중"
             >
-              <div className="grid grid-cols-7 gap-2" aria-label="요일별 칼로리">
-                {report.days.map((day, index) => (
-                  <div key={day.recordDate} className="min-w-0 text-center">
-                    <div className="flex h-44 flex-col justify-end gap-2">
-                      <span className="text-xs text-(--text-muted) tabular-nums">
-                        {day.hasRecord ? formatNumber(day.calories) : '기록 없음'}
-                      </span>
-                      <div
-                        className={`mx-auto w-full max-w-12 rounded-t-md ${day.hasRecord ? 'bg-(--chart-calorie)' : 'border border-dashed border-(--primary-4)'}`}
-                        style={{
-                          height: day.hasRecord ? `${Math.max(2, (day.calories / maxCalories) * 128)}px` : '40px',
-                        }}
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <p className="border-t border-(--border-light) pt-2 text-sm">{weekdays[index]}</p>
-                    <p className="mt-1 text-xs text-(--text-muted)">{day.recordDate.slice(5).replace('-', '/')}</p>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-4 text-xs text-(--text-muted)">
-                단위: kcal · 기록이 없는 날은 섭취량 0으로 판단하지 않아요.
+              <p className="text-(--text-secondary)">
+                AI 요약은 추후 제공될 예정이에요. 아래에서 실제 기록의 집계 결과를 확인해 주세요.
               </p>
             </SectionLayout>
-
             <SectionLayout title="기록 비중" className="bg-(--white)">
               <div className="mb-3 flex" role="group" aria-label="기록 비중 기준">
                 {proportionTabs.map(tab => (
@@ -196,6 +165,35 @@ export default function WeeklyReportPage() {
               )}
             </SectionLayout>
           </div>
+          <SectionLayout
+            title="요일별 기록 칼로리"
+            className="border-b border-(--neutral-4) bg-(--white)"
+            contentClassName="flex flex-1 flex-col justify-end"
+          >
+            <div className="grid grid-cols-7 gap-2" aria-label="요일별 칼로리">
+              {report.days.map((day, index) => (
+                <div key={day.recordDate} className="min-w-0 text-center">
+                  <div className="flex h-44 flex-col justify-end gap-2">
+                    <span className="text-xs text-(--text-muted) tabular-nums">
+                      {day.hasRecord ? formatNumber(day.calories) : '기록 없음'}
+                    </span>
+                    <div
+                      className={`mx-auto w-full max-w-12 rounded-t-md ${day.hasRecord ? 'bg-(--chart-calorie)' : 'border border-dashed border-(--primary-4)'}`}
+                      style={{
+                        height: day.hasRecord ? `${Math.max(2, (day.calories / maxCalories) * 128)}px` : '40px',
+                      }}
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <p className="border-t border-(--border-light) pt-2 text-sm">{weekdays[index]}</p>
+                  <p className="mt-1 text-xs text-(--text-muted)">{day.recordDate.slice(5).replace('-', '/')}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-xs text-(--text-muted)">
+              단위: kcal · 기록이 없는 날은 섭취량 0으로 판단하지 않아요.
+            </p>
+          </SectionLayout>
         </>
       ) : null}
     </div>
