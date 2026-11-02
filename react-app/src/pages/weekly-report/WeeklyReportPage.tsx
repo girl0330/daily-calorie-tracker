@@ -113,7 +113,7 @@ export default function WeeklyReportPage() {
               이번 주에 기록한 음식이 없어요. 일간 기록에서 식사를 추가해 주세요.
             </p>
           )}
-          <div className="grid border-b border-(--neutral-4) lg:grid-cols-[2fr_1fr]">
+          <div className="grid border-b border-(--neutral-4) lg:flex-1 lg:grid-cols-[2fr_1fr]">
             <SectionLayout
               title="AI가 정리한 이번 주"
               className="border-b border-(--neutral-4) bg-(--white) lg:min-h-56 lg:border-r lg:border-b-0"
