@@ -62,11 +62,10 @@ export default function WeeklyReportPage() {
     : [];
 
   return (
-    <div className="flex min-h-0 w-full flex-1 flex-col bg-(--white)">
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-(--neutral-4) px-6 py-5 lg:py-3">
+    <div className="flex min-h-0 w-full flex-1 flex-col bg-(--white) p-3 lg:p-5">
+      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-(--neutral-4) px-6 py-5 lg:py-6">
         <div>
-          <h1 className="text-2xl font-bold md:text-3xl">한 주의 기록을 돌아보세요</h1>
-          <p className="mt-2 text-(--text-secondary)">기록한 식사를 주간 통계로 확인해요.</p>
+          <h1 className="text-3xl font-bold tracking-tight md:text-5xl">주간 리포트</h1>
         </div>
         <nav aria-label="주 선택" className="flex items-center gap-2">
           <button
@@ -114,46 +113,55 @@ export default function WeeklyReportPage() {
               선택한 주에 기록한 음식이 없어요. 일간 기록에서 식사를 추가해 주세요.
             </p>
           )}
-          <div className="grid border-b border-(--neutral-4) lg:flex-1 lg:grid-cols-[2fr_1fr]">
-            <SectionLayout
-              title="AI가 정리한 이번 주"
-              className="border-b border-(--neutral-4) bg-(--white) lg:min-h-56 lg:border-r lg:border-b-0"
-              contentClassName="flex flex-1 items-center"
-              description="AI 요약 준비 중"
-            >
-              <p className="text-(--text-secondary)">AI가 선택한 주의 음식 기록을 정리하는 기능을 준비하고 있어요.</p>
-            </SectionLayout>
-            <SectionLayout title="기록 비중" className="bg-(--white) lg:py-3">
-              <div className="mb-3 flex lg:mb-1" role="group" aria-label="기록 비중 기준">
-                {proportionTabs.map(tab => (
-                  <button
-                    key={tab.key}
-                    type="button"
-                    aria-pressed={proportionType === tab.key}
-                    onClick={() => setProportionType(tab.key)}
-                    className={`cursor-pointer border-b-2 px-3 py-2 text-sm transition ${proportionType === tab.key ? 'border-(--primary-1) font-semibold text-(--primary-1)' : 'border-(--neutral-4) text-(--text-muted) hover:text-(--text-primary)'}`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
+          <div className="grid border-x border-b border-(--neutral-4) lg:flex-1 lg:grid-cols-[1.28fr_1fr]">
+            <section className="relative isolate flex flex-col justify-center overflow-hidden border-b border-(--neutral-4) px-6 py-8 lg:border-r lg:border-b-0">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute right-4 bottom-6 -z-10 h-24 w-1/3 -rotate-12 rounded-[50%] [mask-image:linear-gradient(35deg,transparent,black)] opacity-40 [background:radial-gradient(#bc7146_1px,transparent_1px)_0_0/10px_10px]"
+              />
+              <span aria-hidden="true" className="text-3xl text-[#b9704f]">
+                ✦
+              </span>
+              <h2 className="mt-4 text-2xl font-bold tracking-tight lg:text-3xl">AI가 정리한 이번 주</h2>
+              <span className="mt-4 self-start rounded-full border px-3 py-1 text-xs text-(--text-secondary)">
+                준비 중
+              </span>
+              <p className="mt-4 text-(--text-secondary)">선택한 주의 식사 기록을 요약할 예정이에요.</p>
+            </section>
+            <section className="min-w-0 px-5 py-6">
+              <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-xl font-bold">기록 비중</h2>
+                <div className="mb-3 flex lg:mb-1" role="group" aria-label="기록 비중 기준">
+                  {proportionTabs.map(tab => (
+                    <button
+                      key={tab.key}
+                      type="button"
+                      aria-pressed={proportionType === tab.key}
+                      onClick={() => setProportionType(tab.key)}
+                      className={`cursor-pointer rounded-md px-3 py-2 text-sm transition ${proportionType === tab.key ? 'bg-(--surface-3) font-semibold text-(--primary-1)' : 'border-(--neutral-4) text-(--text-muted) hover:text-(--text-primary)'}`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <p className="mb-5 text-sm text-(--text-muted) lg:mb-2">기록된 총 칼로리 기준</p>
-              <div className="flex flex-col gap-6 lg:gap-2">
+              <p className="sr-only">기록된 총 칼로리 기준</p>
+              <div className="flex flex-col gap-5">
                 {proportions.map(item => (
                   <div key={item.key}>
                     <div className="mb-2 flex items-center justify-between gap-2 text-sm lg:mb-1">
                       <span>{item.label}</span>
-                      <span className="tabular-nums">
+                      <span className="ml-auto tabular-nums">
                         {item.percentage === null ? '계산 불가' : `${formatNumber(item.percentage)}%`}
                       </span>
+                      <span className="text-xs text-(--text-muted)">{formatNumber(item.calories)} kcal</span>
                     </div>
-                    <div className="h-3 overflow-hidden rounded-full bg-(--surface-3)" aria-hidden="true">
+                    <div className="h-2 overflow-hidden rounded-full bg-(--surface-3)" aria-hidden="true">
                       <div
                         className={`h-full rounded-full ${item.color}`}
                         style={{ width: `${item.percentage ?? 0}%` }}
                       />
                     </div>
-                    <p className="mt-1 text-right text-xs text-(--text-muted)">{formatNumber(item.calories)} kcal</p>
                   </div>
                 ))}
               </div>
@@ -162,22 +170,22 @@ export default function WeeklyReportPage() {
                   기록된 총 칼로리가 0kcal이면 비중을 계산할 수 없어요.
                 </p>
               )}
-            </SectionLayout>
+            </section>
           </div>
           <SectionLayout
             title="요일별 기록 칼로리"
-            className="border-b border-(--neutral-4) bg-(--white) lg:py-3"
+            className="border-x border-b border-(--neutral-4) bg-(--white)"
             contentClassName="flex flex-1 flex-col justify-end"
           >
             <div className="grid grid-cols-7 gap-2" aria-label="요일별 칼로리">
               {weeklyStats.days.map((day, index) => (
                 <div key={day.recordDate} className="min-w-0 text-center">
-                  <div className="flex h-44 flex-col justify-end gap-2 lg:h-[150px]">
+                  <div className="flex h-44 flex-col justify-end gap-2 lg:h-[clamp(150px,23vh,220px)]">
                     <span className="text-xs text-(--text-muted) tabular-nums">
                       {day.hasRecord ? formatNumber(day.calories) : '기록 없음'}
                     </span>
                     <div
-                      className={`mx-auto w-full max-w-12 rounded-t-md ${day.hasRecord ? 'bg-(--chart-calorie)' : 'border border-dashed border-(--primary-4)'}`}
+                      className={`mx-auto w-full max-w-12 rounded-t-xl ${day.hasRecord ? 'bg-(--chart-calorie)' : 'border border-dashed border-(--primary-4)'}`}
                       style={{
                         height: day.hasRecord ? `${Math.max(2, (day.calories / maxCalories) * 72)}%` : '40px',
                       }}
