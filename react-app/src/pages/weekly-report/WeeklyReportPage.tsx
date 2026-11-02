@@ -173,7 +173,7 @@ export default function WeeklyReportPage() {
             <div className="grid grid-cols-7 gap-2" aria-label="요일별 칼로리">
               {report.days.map((day, index) => (
                 <div key={day.recordDate} className="min-w-0 text-center">
-                  <div className="flex h-44 flex-col justify-end gap-2 lg:h-32">
+                  <div className="flex h-44 flex-col justify-end gap-2 lg:h-[150px]">
                     <span className="text-xs text-(--text-muted) tabular-nums">
                       {day.hasRecord ? formatNumber(day.calories) : '기록 없음'}
                     </span>
