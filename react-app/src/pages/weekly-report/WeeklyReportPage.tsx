@@ -63,7 +63,7 @@ export default function WeeklyReportPage() {
 
   return (
     <div className="flex min-h-0 w-full flex-1 flex-col bg-(--white) p-3 lg:p-5">
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-(--neutral-4) px-6 py-5 lg:py-6">
+      <header className="flex flex-wrap items-center justify-between gap-4 px-6 py-5 lg:py-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight md:text-5xl">주간 리포트</h1>
         </div>
@@ -108,13 +108,20 @@ export default function WeeklyReportPage() {
         </div>
       ) : weeklyStats ? (
         <>
+          <p className="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 bg-(--neutral-5) px-6 py-3">
+            <span>기록일 <strong className="text-xl text-(--primary-1)">{weeklyStats.recordedDays}/7일</strong></span>
+            <span aria-hidden="true">·</span>
+            <span>기록한 날 평균 <strong className="text-xl text-(--primary-1)">
+              {weeklyStats.recordedDays > 0 ? `${formatNumber(weeklyStats.totalCalories / weeklyStats.recordedDays)} kcal` : '—'}
+            </strong></span>
+          </p>
           {weeklyStats.recordedDays === 0 && (
             <p role="status" className="border-b border-(--neutral-4) px-6 py-5 text-(--text-secondary)">
               선택한 주에 기록한 음식이 없어요. 일간 기록에서 식사를 추가해 주세요.
             </p>
           )}
-          <div className="grid border-x border-b border-(--neutral-4) lg:flex-1 lg:grid-cols-[1.28fr_1fr]">
-            <section className="relative isolate flex flex-col justify-center overflow-hidden border-b border-(--neutral-4) px-6 py-8 lg:border-r lg:border-b-0">
+          <div className="grid shrink-0 border border-(--neutral-4) lg:min-h-[300px] lg:grid-cols-[1.28fr_1fr]">
+            <section className="relative isolate flex min-h-0 flex-col overflow-hidden border-b border-(--neutral-4) px-6 py-6 lg:border-r lg:border-b-0">
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute right-4 bottom-6 -z-10 h-24 w-1/3 -rotate-12 rounded-[50%] [mask-image:linear-gradient(35deg,transparent,black)] opacity-40 [background:radial-gradient(#bc7146_1px,transparent_1px)_0_0/10px_10px]"
@@ -126,7 +133,7 @@ export default function WeeklyReportPage() {
               <span className="mt-4 self-start rounded-full border px-3 py-1 text-xs text-(--text-secondary)">
                 준비 중
               </span>
-              <p className="mt-4 text-(--text-secondary)">선택한 주의 식사 기록을 요약할 예정이에요.</p>
+              <p className="mt-4 text-(--text-secondary) lg:min-h-0 lg:h-0 lg:flex-1 lg:overflow-y-auto">선택한 주의 식사 기록을 요약할 예정이에요.</p>
             </section>
             <section className="min-w-0 px-5 py-6">
               <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
