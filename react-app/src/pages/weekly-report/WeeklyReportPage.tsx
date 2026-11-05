@@ -1,3 +1,4 @@
+import { formatNumber } from '../../utils/formatNumber';
 import { Link, useSearchParams } from 'react-router-dom';
 import { NutritionDoughnutChart } from '../../features/tracker/components/nutrition/NutritionDoughuntChart';
 import { useWeeklyReport } from '../../features/tracker/hooks/useWeeklyReport';
@@ -5,8 +6,6 @@ import { useAuthStore } from '../../store/authStore';
 import { caloriesByNutrient } from '../../utils/calculate';
 import { getWeekRange, parseRecordDate, toRecordDate } from '../../utils/date';
 
-const formatNumber = (value: number) =>
-  value.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
 const nutrientItems = [
   { key: 'carbs', label: '탄수화물', color: 'bg-(--chart-carbs)' },
@@ -101,7 +100,7 @@ export default function WeeklyReportPage() {
                     <NutritionDoughnutChart
                       nutrientCalories={nutrientCalories}
                       centerLabel={
-                        weeklyStats.totalCalories > 0 ? '' : weeklyStats.recordedDays ? '0 kcal' : '기록 없음'
+                        weeklyStats.totalCalories > 0 ? '' : weeklyStats.recordedDays ? `${formatNumber(0)} kcal` : '기록 없음'
                       }
                     />
                   )}

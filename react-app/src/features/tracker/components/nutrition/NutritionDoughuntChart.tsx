@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../../utils/formatNumber';
 import { ArcElement, Chart as ChartJS, Tooltip, type ChartOptions, type Plugin } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import type { NutrientCalories } from '../../../../utils/calculate';
@@ -64,7 +65,7 @@ export const NutritionDoughnutChart = ({
           label: context => {
             const value = Number(context.raw);
 
-            return `${context.label}: ${value.toLocaleString()}kcal`;
+            return `${context.label}: ${formatNumber(value)}kcal`;
           },
         },
       },
@@ -105,7 +106,7 @@ export const NutritionDoughnutChart = ({
         return;
       }
 
-      ctx.fillText(totalCalories.toLocaleString(), centerX, centerY - (isCompact ? 5 : 7));
+      ctx.fillText(formatNumber(totalCalories), centerX, centerY - (isCompact ? 5 : 7));
 
       ctx.fillStyle = getCssVariable('--text-secondary', '#6f675f');
       ctx.font = `500 ${isCompact ? 8 : 10}px sans-serif`;

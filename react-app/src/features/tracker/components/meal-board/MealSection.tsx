@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../../utils/formatNumber';
 import { useState } from 'react';
 import type { FoodItem, MealType } from '../../../../types/types';
 import { calories, nutrientsByMeal } from '../../../../utils/calculate';
@@ -38,10 +39,7 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
           <span className="text-(--text-muted)">
             탄수화물{' '}
             <span className="text-(--text-primary)">
-              {mealNutrition.carbs.toLocaleString('ko-KR', {
-                minimumFractionDigits: 1,
-                maximumFractionDigits: 1,
-              })}
+              {formatNumber(mealNutrition.carbs)}
             </span>
             g
           </span>
@@ -49,10 +47,7 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
           <span className="text-(--text-muted)">
             단백질{' '}
             <span className="text-(--text-primary)">
-              {mealNutrition.protein.toLocaleString('ko-KR', {
-                minimumFractionDigits: 1,
-                maximumFractionDigits: 1,
-              })}
+              {formatNumber(mealNutrition.protein)}
             </span>
             g
           </span>
@@ -60,10 +55,7 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
           <span className="text-(--text-muted)">
             지방{' '}
             <span className="text-(--text-primary)">
-              {mealNutrition.fat.toLocaleString('ko-KR', {
-                minimumFractionDigits: 1,
-                maximumFractionDigits: 1,
-              })}
+              {formatNumber(mealNutrition.fat)}
             </span>
             g
           </span>
@@ -71,10 +63,7 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
           <span className="text-(--neutral-3)">|</span>
 
           <span className="shrink-0 font-semibold text-(--primary-1)">
-            {totalCalories.toLocaleString('ko-KR', {
-              minimumFractionDigits: 1,
-              maximumFractionDigits: 1,
-            })}{' '}
+            {formatNumber(totalCalories)}{' '}
             kcal
           </span>
         </div>
@@ -91,52 +80,34 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
         <div className="flex min-w-0 flex-wrap items-center gap-x-2 text-sm">
           <span className="md:hidden">
             탄{' '}
-            {mealNutrition.carbs.toLocaleString('ko-KR', {
-              minimumFractionDigits: 1,
-              maximumFractionDigits: 1,
-            })}
+            {formatNumber(mealNutrition.carbs)}
             g
           </span>
           <span className="hidden md:inline">
             탄수화물{' '}
-            {mealNutrition.carbs.toLocaleString('ko-KR', {
-              minimumFractionDigits: 1,
-              maximumFractionDigits: 1,
-            })}
+            {formatNumber(mealNutrition.carbs)}
             g
           </span>
 
           <span className="md:hidden">
             단{' '}
-            {mealNutrition.protein.toLocaleString('ko-KR', {
-              minimumFractionDigits: 1,
-              maximumFractionDigits: 1,
-            })}
+            {formatNumber(mealNutrition.protein)}
             g
           </span>
           <span className="hidden md:inline">
             단백질{' '}
-            {mealNutrition.protein.toLocaleString('ko-KR', {
-              minimumFractionDigits: 1,
-              maximumFractionDigits: 1,
-            })}
+            {formatNumber(mealNutrition.protein)}
             g
           </span>
 
           <span className="md:hidden">
             지{' '}
-            {mealNutrition.fat.toLocaleString('ko-KR', {
-              minimumFractionDigits: 1,
-              maximumFractionDigits: 1,
-            })}
+            {formatNumber(mealNutrition.fat)}
             g
           </span>
           <span className="hidden md:inline">
             지방{' '}
-            {mealNutrition.fat.toLocaleString('ko-KR', {
-              minimumFractionDigits: 1,
-              maximumFractionDigits: 1,
-            })}
+            {formatNumber(mealNutrition.fat)}
             g
           </span>
 
@@ -144,10 +115,7 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
 
           <span className="font-semibold text-(--primary-1)">
             <span className="hidden md:inline">총 </span>
-            {totalCalories.toLocaleString('ko-KR', {
-              minimumFractionDigits: 1,
-              maximumFractionDigits: 1,
-            })}{' '}
+            {formatNumber(totalCalories)}{' '}
             kcal
           </span>
         </div>

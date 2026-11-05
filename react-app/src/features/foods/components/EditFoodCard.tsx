@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../utils/formatNumber';
 import { useState, type Dispatch, type SetStateAction } from 'react';
 import type { FoodItem, UpdateFoodRequest } from '../../../types/types';
 import { calories } from '../../../utils/calculate';
@@ -97,7 +98,7 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
               disabled={isPending}
               className="col-span-3 h-8 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
             />
-            <p className="mt-1 text-center text-sm text-(--text-muted)">{previewCalories} 칼로리</p>
+            <p className="mt-1 text-center text-sm text-(--text-muted)">{formatNumber(previewCalories)} 칼로리</p>
           </div>
           <div className="flex flex-col justify-end">
             <button
