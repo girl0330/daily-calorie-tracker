@@ -7,6 +7,7 @@ ChartJS.register(ArcElement, Tooltip);
 type NutritionDoughnutChartProps = {
   nutrientCalories: NutrientCalories;
   className?: string;
+  centerLabel?: string;
 };
 
 const getCssVariable = (name: string, fallback: string) => {
@@ -17,7 +18,11 @@ const getCssVariable = (name: string, fallback: string) => {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
 };
 
-export const NutritionDoughnutChart = ({ nutrientCalories, className = '' }: NutritionDoughnutChartProps) => {
+export const NutritionDoughnutChart = ({
+  nutrientCalories,
+  className = '',
+  centerLabel,
+}: NutritionDoughnutChartProps) => {
   const hasNutritionData = nutrientCalories.carbs > 0 || nutrientCalories.protein > 0 || nutrientCalories.fat > 0;
 
   const chartColors = {
@@ -93,6 +98,12 @@ export const NutritionDoughnutChart = ({ nutrientCalories, className = '' }: Nut
 
       ctx.fillStyle = getCssVariable('--text-primary', '#222222');
       ctx.font = `600 ${isCompact ? 11 : 15}px sans-serif`;
+
+      if (centerLabel !== undefined) {
+        ctx.fillText(centerLabel, centerX, centerY);
+        ctx.restore();
+        return;
+      }
 
       ctx.fillText(totalCalories.toLocaleString(), centerX, centerY - (isCompact ? 5 : 7));
 
