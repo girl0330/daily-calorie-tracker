@@ -1,10 +1,10 @@
+import { formatNumber } from '../../../../utils/formatNumber';
 import { useNavigate } from 'react-router-dom';
 import SectionLayout from '../../../../components/common/SectionLayout';
 import type { FoodItem } from '../../../../types/types';
 import { calories, totalNutrients } from '../../../../utils/calculate';
 import { toRecordDate as formatRecordDate } from '../../../../utils/date';
 
-const formatNumber = (value: number) => value.toLocaleString('ko-KR', { maximumFractionDigits: 2 });
 
 const WEEK_LABELS = ['일', '월', '화', '수', '목', '금', '토'];
 

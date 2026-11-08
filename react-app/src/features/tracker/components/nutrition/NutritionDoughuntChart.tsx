@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../../utils/formatNumber';
 import { ArcElement, Chart as ChartJS, Tooltip, type ChartOptions, type Plugin } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import type { NutrientCalories } from '../../../../utils/calculate';
@@ -7,6 +8,7 @@ ChartJS.register(ArcElement, Tooltip);
 type NutritionDoughnutChartProps = {
   nutrientCalories: NutrientCalories;
   className?: string;
+  centerLabel?: string;
 };
 
 const getCssVariable = (name: string, fallback: string) => {
@@ -17,7 +19,11 @@ const getCssVariable = (name: string, fallback: string) => {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
 };
 
-export const NutritionDoughnutChart = ({ nutrientCalories, className = '' }: NutritionDoughnutChartProps) => {
+export const NutritionDoughnutChart = ({
+  nutrientCalories,
+  className = '',
+  centerLabel,
+}: NutritionDoughnutChartProps) => {
   const hasNutritionData = nutrientCalories.carbs > 0 || nutrientCalories.protein > 0 || nutrientCalories.fat > 0;
 
   const chartColors = {
@@ -59,7 +65,7 @@ export const NutritionDoughnutChart = ({ nutrientCalories, className = '' }: Nut
           label: context => {
             const value = Number(context.raw);
 
-            return `${context.label}: ${value.toLocaleString()}kcal`;
+            return `${context.label}: ${formatNumber(value)}kcal`;
           },
         },
       },
@@ -91,13 +97,21 @@ export const NutritionDoughnutChart = ({ nutrientCalories, className = '' }: Nut
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      ctx.fillStyle = getCssVariable('--text-primary', '#222222');
-      ctx.font = `600 ${isCompact ? 11 : 15}px sans-serif`;
+      const fontFamily = getCssVariable('--font-family-base', 'sans-serif');
 
-      ctx.fillText(totalCalories.toLocaleString(), centerX, centerY - (isCompact ? 5 : 7));
+      ctx.fillStyle = getCssVariable('--text-primary', '#222222');
+      ctx.font = `600 ${isCompact ? 11 : 15}px ${fontFamily}`;
+
+      if (centerLabel !== undefined) {
+        ctx.fillText(centerLabel, centerX, centerY);
+        ctx.restore();
+        return;
+      }
+
+      ctx.fillText(formatNumber(totalCalories), centerX, centerY - (isCompact ? 5 : 7));
 
       ctx.fillStyle = getCssVariable('--text-secondary', '#6f675f');
-      ctx.font = `500 ${isCompact ? 8 : 10}px sans-serif`;
+      ctx.font = `500 ${isCompact ? 8 : 11}px ${fontFamily}`;
 
       ctx.fillText('kcal', centerX, centerY + (isCompact ? 8 : 10));
 

@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../utils/formatNumber';
 import { useState, type Dispatch, type SetStateAction } from 'react';
 import type { FoodItem, UpdateFoodRequest } from '../../../types/types';
 import { calories } from '../../../utils/calculate';
@@ -83,11 +84,24 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
     });
   };
 
+  const inputClassName =
+    'w-full rounded-sm border border-(--border-light) bg-(--bg-input) px-2 text-(--text-primary) transition-colors duration-150 outline-none focus:border-(--primary-2) disabled:opacity-50';
+  const actionButtonClassName =
+    'flex size-8 cursor-pointer items-center justify-center rounded-sm transition-colors duration-150 hover:bg-(--surface-3) focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-(--primary-2) disabled:cursor-not-allowed disabled:opacity-50';
+  const nutrientFields = [
+    { name: 'carbs', label: '탄수화물' },
+    { name: 'protein', label: '단백질' },
+    { name: 'fat', label: '지방' },
+  ] as const;
+
   return (
-    <article className="rounded-md border border-(--neutral-4) bg-(--white) p-4 shadow-sm">
+    <article className="rounded-xl bg-(--white) py-3 pr-2 pl-4 ring-1 ring-(--primary-3) ring-inset">
       <form onSubmit={handleEditSubmit}>
-        <div className="flex flex-row items-center justify-between gap-3">
-          <div className="flex flex-1 flex-col items-center justify-center">
+        <div className="flex items-start gap-2">
+          <div className="min-w-0 flex-1">
+            <label htmlFor={`food-name-${food.id}`} className="sr-only">
+              음식 이름
+            </label>
             <input
               id={`food-name-${food.id}`}
               name="foodName"
@@ -95,67 +109,46 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
               onChange={handleInputChange}
               placeholder={food.foodName}
               disabled={isPending}
-              className="col-span-3 h-8 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
+              className={`h-8 text-base ${inputClassName}`}
             />
-            <p className="mt-1 text-center text-sm text-(--text-muted)">{previewCalories} 칼로리</p>
+            <p className="mt-1 text-sm text-(--text-secondary) tabular-nums">
+              {formatNumber(previewCalories)}
+              <span className="ml-1 text-xs text-(--text-muted)">kcal</span>
+            </p>
           </div>
-          <div className="flex flex-col justify-end">
-            <button
-              type="submit"
-              disabled={isPending}
-              aria-label="음식 수정 저장"
-              className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-5) focus:outline-none"
-            >
-              <img src="/check-good-yes.svg" alt="" className="h-4 w-4" />
+          <div className="flex shrink-0">
+            <button type="submit" disabled={isPending} aria-label="음식 수정 저장" className={actionButtonClassName}>
+              <img src="/check-good-yes.svg" alt="" className="size-4" />
             </button>
             <button
               type="button"
               onClick={handleClose}
               disabled={isPending}
               aria-label="음식 수정 취소"
-              className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-5) focus:outline-none"
+              className={actionButtonClassName}
             >
-              <img src="/close.svg" alt="" className="h-4 w-4" />
+              <img src="/close.svg" alt="" className="size-4" />
             </button>
           </div>
         </div>
-        <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-          <div className="rounded-md bg-(--neutral-5) px-2 py-2">
-            <p className="text-sm text-(--text-muted)">carbs</p>
-            <input
-              id={`food-carbs-${food.id}`}
-              name="carbs"
-              value={editInputForm.carbs}
-              onChange={handleInputChange}
-              placeholder="0"
-              disabled={isPending}
-              className="h-6 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
-            />
-          </div>
-          <div className="rounded-md bg-(--neutral-5) px-2 py-2">
-            <p className="text-sm text-(--text-muted)">protein</p>
-            <input
-              id={`food-protein-${food.id}`}
-              name="protein"
-              value={editInputForm.protein}
-              onChange={handleInputChange}
-              placeholder="0"
-              disabled={isPending}
-              className="h-6 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
-            />
-          </div>
-          <div className="rounded-md bg-(--neutral-5) px-2 py-2">
-            <p className="text-sm text-(--text-muted)">fat</p>
-            <input
-              id={`food-fat-${food.id}`}
-              name="fat"
-              value={editInputForm.fat}
-              onChange={handleInputChange}
-              placeholder="0"
-              disabled={isPending}
-              className="h-6 w-full rounded-md border border-(--neutral-3) px-3 outline-none focus:border-(--primary-1) focus:ring-2 focus:ring-(--primary-3)"
-            />
-          </div>
+        <div className="mt-3 grid grid-cols-3 gap-2 pr-2">
+          {nutrientFields.map(field => (
+            <div key={field.name}>
+              <label htmlFor={`food-${field.name}-${food.id}`} className="text-xs text-(--text-muted)">
+                {field.label}
+              </label>
+              <input
+                id={`food-${field.name}-${food.id}`}
+                name={field.name}
+                inputMode="decimal"
+                value={editInputForm[field.name]}
+                onChange={handleInputChange}
+                placeholder="0.0"
+                disabled={isPending}
+                className={`mt-1 h-8 text-sm tabular-nums ${inputClassName}`}
+              />
+            </div>
+          ))}
         </div>
       </form>
     </article>

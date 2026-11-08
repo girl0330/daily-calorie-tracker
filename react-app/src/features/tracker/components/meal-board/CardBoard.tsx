@@ -11,14 +11,8 @@ export const CardBoard = ({ foods, className = '' }: CardBoardProps) => {
   const cardClassName = ['!bg-(--white)', className].filter(Boolean).join(' ');
 
   return (
-    <SectionLayout
-      title="음식 카드"
-      description="오늘 식단을 아침, 점심, 저녁으로 나눠 확인해 보세요."
-      className={cardClassName}
-      contentClassName="flex-1"
-    >
-      {/* <div className="grid grid-cols-1 lg:h-full lg:min-h-[420px] lg:grid-cols-3 lg:divide-x lg:divide-(--neutral-4) lg:border lg:border-(--neutral-4)"> */}
-      <div className="grid grid-cols-1 xl:h-full xl:min-h-[420px] xl:grid-cols-3 xl:divide-x xl:divide-(--neutral-4) xl:border xl:border-(--neutral-4)">
+    <SectionLayout title="식사 기록" className={cardClassName} contentClassName="flex-1">
+      <div className="grid grid-cols-1 gap-2 xl:h-full xl:min-h-105 xl:grid-cols-3 xl:gap-0 xl:divide-x xl:divide-(--border-light) xl:overflow-hidden xl:rounded-xl xl:border xl:border-(--border-light)">
         <MealSection title="아침" mealType="breakfast" foods={foods} />
         <MealSection title="점심" mealType="lunch" foods={foods} />
         <MealSection title="저녁" mealType="dinner" foods={foods} />

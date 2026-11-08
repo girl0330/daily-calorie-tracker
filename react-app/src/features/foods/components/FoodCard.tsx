@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../utils/formatNumber';
 import { useState } from 'react';
 import type { FoodItem } from '../../../types/types';
 import { calories } from '../../../utils/calculate';
@@ -62,61 +63,55 @@ export default function FoodCard({ food }: FoodCardProps) {
     return <EditFoodCard food={food} setIsEditing={setIsEditing} />;
   }
 
+  const actionButtonClassName =
+    'flex size-8 cursor-pointer items-center justify-center rounded-sm transition-colors duration-150 hover:bg-(--surface-4) focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-(--primary-2) disabled:cursor-not-allowed disabled:opacity-50';
+
   return (
-    <article className="relative h-[130px] rounded-md bg-(--neutral-5) p-4">
-      {/* article 기준 가운데 - 텍스트 */}
-      <div className="flex flex-col items-center justify-center">
-        <h3 className="text-center text-2xl font-bold text-(--text-primary)">{food.foodName}</h3>
+    <article className="rounded-xl bg-(--bg-section) py-3 pr-2 pl-4 ring-1 ring-(--border-light) ring-inset">
+      <div className="flex items-start gap-2">
+        <div className="min-w-0 flex-1 pt-1">
+          <h4 className="truncate text-base font-medium text-(--text-primary)">{food.foodName}</h4>
+          <p className="text-sm text-(--text-secondary) tabular-nums">
+            {formatNumber(totalCalories)}
+            <span className="ml-1 text-xs text-(--text-muted)">kcal</span>
+          </p>
+        </div>
 
-        <p className="mt-1 text-center text-sm text-(--text-muted)">
-          {totalCalories.toLocaleString('ko-KR', {
-            minimumFractionDigits: 1,
-            maximumFractionDigits: 1,
-          })}{' '}
-          칼로리
-        </p>
-      </div>
+        {/* 수정 / 삭제 */}
+        <div className="flex shrink-0">
+          <button
+            type="button"
+            onClick={() => setIsEditing(true)}
+            aria-label={`${food.foodName} 수정`}
+            className={actionButtonClassName}
+          >
+            <img src="/edit.svg" alt="" className="size-4" />
+          </button>
 
-      {/* 수정 / 삭제 */}
-      <div className="absolute top-3 right-3 flex flex-col">
-        <button
-          type="button"
-          onClick={() => setIsEditing(true)}
-          aria-label="음식 수정"
-          className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-4) focus:outline-none"
-        >
-          <img src="/edit.svg" alt="" className="h-4 w-4" />
-        </button>
-
-        <button
-          type="button"
-          onClick={handleDeleteFood}
-          disabled={isPending}
-          aria-label="음식 삭제"
-          className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-(--neutral-4) focus:outline-none"
-        >
-          <img src="/trash-bin.svg" alt="" className="h-4 w-4" />
-        </button>
+          <button
+            type="button"
+            onClick={handleDeleteFood}
+            disabled={isPending}
+            aria-label={`${food.foodName} 삭제`}
+            className={actionButtonClassName}
+          >
+            <img src="/trash-bin.svg" alt="" className="size-4" />
+          </button>
+        </div>
       </div>
 
       {/* 영양소 */}
-      <div className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm">
+      <ul className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 pr-2 text-xs">
         {nutrientItems.map(({ key, label, colorClassName }) => (
-          <div key={key} className="flex items-center gap-1.5">
-            <span className={`h-2 w-2 shrink-0 rounded-full ${colorClassName}`} />
+          <li key={key} className="flex items-center gap-1.5">
+            <span aria-hidden="true" className={`size-2 shrink-0 rounded-full ${colorClassName}`} />
 
             <span className="text-(--text-muted)">{label}</span>
 
-            <span className="font-semibold text-(--text-primary)">
-              {food[key].toLocaleString('ko-KR', {
-                minimumFractionDigits: 1,
-                maximumFractionDigits: 1,
-              })}
-              g
-            </span>
-          </div>
+            <span className="text-(--text-primary) tabular-nums">{formatNumber(food[key])}g</span>
+          </li>
         ))}
-      </div>
+      </ul>
     </article>
   );
 }

@@ -31,11 +31,11 @@ const SectionLayout = ({
   return (
     <section className={sectionClassName}>
       {/* Title */}
-      <div className="mb-5 shrink-0">
+      <div className="mb-4 shrink-0">
         {/* title과 header action만 같은 줄로 배치 */}
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-xl font-bold text-(--text-primary)">{title}</h2>
+            <h2 className="text-lg font-semibold text-(--text-primary)">{title}</h2>
             {description && <p className="mt-1 text-sm text-(--text-muted)">{description}</p>}
           </div>
 
