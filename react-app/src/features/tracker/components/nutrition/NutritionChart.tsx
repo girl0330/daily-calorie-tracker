@@ -21,20 +21,15 @@ export const NutritionChart = ({ foods, className = '' }: NutritionChartProps) =
 
   const chartClassName = [
     // 모든 섹션이 공유하는 기본 박스 스타일
-    'border-y border-(--neutral-4) bg-(--white) ',
+    'border-b border-(--border-light) bg-(--white)',
     className,
   ]
     .filter(Boolean)
     .join(' ');
 
   return (
-    <SectionLayout
-      title="영양소 그래프"
-      description="영양소를 그래프로 확인해 보세요"
-      className={chartClassName}
-      contentClassName="flex-1"
-    >
-      <div className="grid h-full min-h-0 w-full grid-cols-[minmax(0,2fr)_minmax(80px,1fr)] items-center rounded-lg border border-(--neutral-4) p-4 md:px-10">
+    <SectionLayout title="영양 요약" className={chartClassName} contentClassName="flex-1">
+      <div className="grid h-full min-h-0 w-full grid-cols-[minmax(0,2fr)_minmax(80px,1fr)] items-center rounded-xl border border-(--border-light) p-4 md:px-8">
         <NutritionSummary nutrition={nutrition} totalCalories={totalCalories} className="min-w-0" />
 
         <div className="flex w-full justify-center">

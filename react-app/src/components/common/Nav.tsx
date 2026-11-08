@@ -56,7 +56,7 @@ export default function Nav() {
                     }`
                   }
                 >
-                  Daily Tracker
+                  일일 기록
                 </NavLink>
 
                 <NavLink
@@ -70,7 +70,7 @@ export default function Nav() {
                     }`
                   }
                 >
-                  Monthly Tracker
+                  월간 기록
                 </NavLink>
                 <NavLink
                   to="/weekly-report"
@@ -122,7 +122,7 @@ export default function Nav() {
               }`
             }
           >
-            Daily Tracker
+            일일 기록
           </NavLink>
 
           <NavLink
@@ -135,7 +135,7 @@ export default function Nav() {
               }`
             }
           >
-            Monthly Tracker
+            월간 기록
           </NavLink>
           <NavLink
             to="/weekly-report"

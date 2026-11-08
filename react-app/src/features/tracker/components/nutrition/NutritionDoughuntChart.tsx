@@ -97,8 +97,10 @@ export const NutritionDoughnutChart = ({
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
+      const fontFamily = getCssVariable('--font-family-base', 'sans-serif');
+
       ctx.fillStyle = getCssVariable('--text-primary', '#222222');
-      ctx.font = `600 ${isCompact ? 11 : 15}px sans-serif`;
+      ctx.font = `600 ${isCompact ? 11 : 15}px ${fontFamily}`;
 
       if (centerLabel !== undefined) {
         ctx.fillText(centerLabel, centerX, centerY);
@@ -109,7 +111,7 @@ export const NutritionDoughnutChart = ({
       ctx.fillText(formatNumber(totalCalories), centerX, centerY - (isCompact ? 5 : 7));
 
       ctx.fillStyle = getCssVariable('--text-secondary', '#6f675f');
-      ctx.font = `500 ${isCompact ? 8 : 10}px sans-serif`;
+      ctx.font = `500 ${isCompact ? 8 : 11}px ${fontFamily}`;
 
       ctx.fillText('kcal', centerX, centerY + (isCompact ? 8 : 10));
 

@@ -88,29 +88,33 @@ const DateNavigator = ({ foods, selectedDate, onDateSelect, className = '' }: Da
     '0'
   )}. ${String(selectedDate.getDate()).padStart(2, '0')} (${WEEK_DAY_LABELS[selectedDate.getDay()]})`;
 
+  const displayedMonthLabel = `${displayedWeekStartDate.getFullYear()}년 ${displayedWeekStartDate.getMonth() + 1}월`;
+  const navButtonClassName =
+    'flex cursor-pointer items-center justify-center text-(--text-secondary) transition-colors duration-150 hover:bg-(--bg-hover) focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--primary-2)';
+
   return (
     <>
       {/* Tablet / Mobile */}
-      <section className="flex h-20 items-center justify-between border-b border-(--neutral-4) bg-(--white) lg:hidden">
+      <section className="flex h-16 items-center justify-between border-b border-(--border-light) bg-(--white) lg:hidden">
         <button
           type="button"
           onClick={handlePreDate}
           aria-label="이전 날짜"
-          className="flex h-full w-14 items-center justify-center"
+          className={`h-full w-14 ${navButtonClassName}`}
         >
-          <img src="/chevron-left-arrow.svg" alt="" className="h-4 w-4" />
+          <img src="/chevron-left-arrow.svg" alt="" className="size-4" />
         </button>
 
-        <div className="flex flex-col items-center justify-center gap-1">
-          <span className="text-base font-bold text-(--text-primary)">{selectedDateLabel}</span>
+        <div className="flex flex-col items-center justify-center">
+          <span className="text-base font-medium text-(--text-primary) tabular-nums">{selectedDateLabel}</span>
 
           <button
             type="button"
             onClick={handleToday}
             disabled={isToday}
-            className={`text-sm ${isToday ? 'invisible' : 'text-(--primary-2)'}`}
+            className={`text-xs ${isToday ? 'invisible' : 'cursor-pointer text-(--primary-1) hover:underline'}`}
           >
-            오늘
+            오늘로 이동
           </button>
         </div>
 
@@ -118,35 +122,29 @@ const DateNavigator = ({ foods, selectedDate, onDateSelect, className = '' }: Da
           type="button"
           onClick={handleNextDate}
           aria-label="다음 날짜"
-          className="flex h-full w-14 items-center justify-center"
+          className={`h-full w-14 ${navButtonClassName}`}
         >
-          <img src="/chevron-right-arrow.svg" alt="" className="h-4 w-4" />
+          <img src="/chevron-right-arrow.svg" alt="" className="size-4" />
         </button>
       </section>
 
       {/* Desktop */}
-      {/* <section
-        className={`hidden h-20 items-center justify-between overflow-hidden rounded-md border border-(--neutral-4) bg-(--bg-section) lg:flex ${className}`}
-      > */}
-      <section className={`hidden h-20 items-center justify-between overflow-hidden bg-(--white) lg:flex ${className}`}>
-        <button
-          type="button"
-          onClick={handlePrevWeek}
-          aria-label="이전 주"
-          className="flex h-full w-10 items-center justify-center text-(--text-secondary) transition hover:bg-(--neutral-5)"
-        >
-          <img src="/chevron-left-arrow.svg" alt="" className="h-4 w-4" />
+      <section
+        className={`hidden h-20 items-stretch border-b border-(--border-light) bg-(--white) lg:flex ${className}`}
+      >
+        <p className="flex w-32 shrink-0 items-center pl-6 text-sm font-medium text-(--text-primary) tabular-nums">
+          {displayedMonthLabel}
+        </p>
+        <button type="button" onClick={handlePrevWeek} aria-label="이전 주" className={`w-10 ${navButtonClassName}`}>
+          <img src="/chevron-left-arrow.svg" alt="" className="size-4" />
         </button>
-        <div className="grid h-full flex-1 grid-cols-7">
+        <div className="grid flex-1 grid-cols-7">
           {displayedWeekDays.map(day => {
             const dayClassName = [
-              'flex h-full w-full flex-col items-center justify-center gap-2 transition',
-              'hover:bg-(--neutral-5)',
-              day.isToday ? 'border-b-2 border-(--primary-1)' : '',
-              day.isSelected ? 'bg-(--neutral-5)' : '',
-            ]
-              .filter(Boolean)
-              .join(' ');
+              'flex cursor-pointer flex-col items-center justify-center gap-1 transition-colors duration-150',
+              'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--primary-2)',
+              day.isSelected ? 'bg-(--surface-3)' : 'hover:bg-(--bg-section)',
+            ].join(' ');
 
             return (
               <button
@@ -154,27 +152,30 @@ const DateNavigator = ({ foods, selectedDate, onDateSelect, className = '' }: Da
                 type="button"
                 onClick={() => onDateSelect(day.date)}
                 aria-pressed={day.isSelected}
+                aria-current={day.isToday ? 'date' : undefined}
+                aria-label={`${day.date.getMonth() + 1}월 ${day.dayNumber}일 ${day.label}요일${day.hasFoodData ? ', 기록 있음' : ''}`}
                 className={dayClassName}
               >
-                <span className="text-sm text-(--text-primary)">
-                  {day.label}
-                  <span className="ml-1 text-sm text-[var(--text-primary)]">( {day.dayNumber} )</span>
+                <span className={`text-xs ${day.isToday ? 'font-medium text-(--primary-1)' : 'text-(--text-muted)'}`}>
+                  {day.isToday ? '오늘' : day.label}
                 </span>
-
                 <span
-                  className={`h-2.5 w-2.5 rounded-full border border-(--text-primary) ${day.hasFoodData ? 'bg-(--primary-3)' : ''}`}
+                  className={`text-lg leading-none tabular-nums ${
+                    day.isSelected ? 'font-semibold text-(--text-primary)' : 'text-(--text-secondary)'
+                  }`}
+                >
+                  {day.dayNumber}
+                </span>
+                <span
+                  aria-hidden="true"
+                  className={`size-1.5 rounded-full ${day.hasFoodData ? 'bg-(--primary-2)' : 'bg-transparent'}`}
                 />
               </button>
             );
           })}
         </div>
-        <button
-          type="button"
-          onClick={handleNextWeek}
-          aria-label="다음 주"
-          className="flex h-full w-10 items-center justify-center text-(--text-secondary) transition hover:bg-(--neutral-5)"
-        >
-          <img src="/chevron-right-arrow.svg" alt="" className="h-4 w-4" />
+        <button type="button" onClick={handleNextWeek} aria-label="다음 주" className={`w-10 ${navButtonClassName}`}>
+          <img src="/chevron-right-arrow.svg" alt="" className="size-4" />
         </button>
       </section>
     </>
