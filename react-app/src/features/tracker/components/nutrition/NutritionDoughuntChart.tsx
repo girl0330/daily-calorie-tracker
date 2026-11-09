@@ -2,6 +2,7 @@ import { formatNumber } from '../../../../utils/formatNumber';
 import { ArcElement, Chart as ChartJS, Tooltip, type ChartOptions, type Plugin } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import type { NutrientCalories } from '../../../../utils/calculate';
+import { useResolvedTheme } from '../../../../hooks/useResolvedTheme';
 
 ChartJS.register(ArcElement, Tooltip);
 
@@ -24,6 +25,8 @@ export const NutritionDoughnutChart = ({
   className = '',
   centerLabel,
 }: NutritionDoughnutChartProps) => {
+  // 테마가 바뀌면 다시 렌더되면서 아래 getCssVariable이 새 색을 읽어요.
+  const resolvedTheme = useResolvedTheme();
   const hasNutritionData = nutrientCalories.carbs > 0 || nutrientCalories.protein > 0 || nutrientCalories.fat > 0;
 
   const chartColors = {
@@ -125,7 +128,8 @@ export const NutritionDoughnutChart = ({
 
   return (
     <div className={chartClassName}>
-      <Doughnut data={data} options={options} plugins={[centerTextPlugin]} />
+      {/* key가 바뀌면 차트를 새로 그려서 가운데 글자색까지 새 테마로 맞춰요. */}
+      <Doughnut key={resolvedTheme} data={data} options={options} plugins={[centerTextPlugin]} />
     </div>
   );
 };
