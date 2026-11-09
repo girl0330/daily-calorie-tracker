@@ -133,7 +133,7 @@ export default function Nav() {
 
         <nav aria-label="페이지" className="flex flex-col gap-1">
           {MENU_ITEMS.map(item => (
-            <NavLink key={item.to} to={item.to} end={item.to === '/'} className={menuLinkClassName}>
+            <NavLink key={item.to} to={item.to} className={menuLinkClassName}>
               {({ isActive }) => (
                 <>
                   <span
