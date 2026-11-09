@@ -27,9 +27,9 @@ export const NutritionDoughnutChart = ({
   const hasNutritionData = nutrientCalories.carbs > 0 || nutrientCalories.protein > 0 || nutrientCalories.fat > 0;
 
   const chartColors = {
-    carbs: getCssVariable('--chart-carbs', '#f59e0b'),
-    protein: getCssVariable('--chart-protein', '#22c55e'),
-    fat: getCssVariable('--chart-fat', '#ef4444'),
+    carbs: getCssVariable('--carbs', '#c76b4f'),
+    protein: getCssVariable('--protein', '#4f8f86'),
+    fat: getCssVariable('--fat', '#8e6bb3'),
   };
 
   const data = {
@@ -41,7 +41,7 @@ export const NutritionDoughnutChart = ({
 
         backgroundColor: hasNutritionData
           ? [chartColors.carbs, chartColors.protein, chartColors.fat]
-          : [getCssVariable('--neutral-4', '#e5e7eb')],
+          : [getCssVariable('--line', '#d9d2cc')],
 
         borderWidth: 0,
         hoverOffset: hasNutritionData ? 2 : 0,
@@ -99,7 +99,7 @@ export const NutritionDoughnutChart = ({
 
       const fontFamily = getCssVariable('--font-family-base', 'sans-serif');
 
-      ctx.fillStyle = getCssVariable('--text-primary', '#222222');
+      ctx.fillStyle = getCssVariable('--ink', '#2b2623');
       ctx.font = `600 ${isCompact ? 11 : 15}px ${fontFamily}`;
 
       if (centerLabel !== undefined) {
@@ -110,7 +110,7 @@ export const NutritionDoughnutChart = ({
 
       ctx.fillText(formatNumber(totalCalories), centerX, centerY - (isCompact ? 5 : 7));
 
-      ctx.fillStyle = getCssVariable('--text-secondary', '#6f675f');
+      ctx.fillStyle = getCssVariable('--ink-2', '#4d4641');
       ctx.font = `500 ${isCompact ? 8 : 11}px ${fontFamily}`;
 
       ctx.fillText('kcal', centerX, centerY + (isCompact ? 8 : 10));

@@ -47,7 +47,7 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
   );
 
   return (
-    <div className="flex min-h-0 flex-col overflow-hidden bg-(--white) max-xl:rounded-xl max-xl:border max-xl:border-(--border-light)">
+    <div className="flex min-h-0 flex-col overflow-hidden bg-(--surface) max-xl:rounded-xl max-xl:border max-xl:border-(--border-light)">
       {/* 식사 요약 영역 - Desktop */}
       <div className="hidden shrink-0 border-b border-(--border-light) px-4 py-3 xl:block">
         <div className="flex items-center gap-2">
@@ -64,7 +64,7 @@ export const MealSection = ({ title, mealType, foods }: MealSectionProps) => {
         onClick={() => setIsExpanded(prev => !prev)}
         aria-expanded={isExpanded}
         aria-label={`${title} 음식 목록 ${isExpanded ? '접기' : '펼치기'}`}
-        className="grid cursor-pointer grid-cols-[auto_1fr_auto] items-center gap-x-3 px-4 py-3 text-left transition-colors duration-150 hover:bg-(--bg-section) focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--primary-2) xl:hidden"
+        className="grid cursor-pointer grid-cols-[auto_1fr_auto] items-center gap-x-3 px-4 py-3 text-left transition-colors duration-150 hover:bg-(--bg-section) focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--brand) xl:hidden"
       >
         <img src={mealImages[mealType]} alt="" className="size-6" />
 

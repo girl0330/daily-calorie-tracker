@@ -90,12 +90,12 @@ const DateNavigator = ({ foods, selectedDate, onDateSelect, className = '' }: Da
 
   const displayedMonthLabel = `${displayedWeekStartDate.getFullYear()}년 ${displayedWeekStartDate.getMonth() + 1}월`;
   const navButtonClassName =
-    'flex cursor-pointer items-center justify-center text-(--text-secondary) transition-colors duration-150 hover:bg-(--bg-hover) focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--primary-2)';
+    'flex cursor-pointer items-center justify-center text-(--text-secondary) transition-colors duration-150 hover:bg-(--bg-hover) focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--brand)';
 
   return (
     <>
       {/* Tablet / Mobile */}
-      <section className="flex h-16 items-center justify-between border-b border-(--border-light) bg-(--white) lg:hidden">
+      <section className="flex h-16 items-center justify-between border-b border-(--border-light) bg-(--surface) lg:hidden">
         <button
           type="button"
           onClick={handlePreDate}
@@ -112,7 +112,7 @@ const DateNavigator = ({ foods, selectedDate, onDateSelect, className = '' }: Da
             type="button"
             onClick={handleToday}
             disabled={isToday}
-            className={`text-xs ${isToday ? 'invisible' : 'cursor-pointer text-(--primary-1) hover:underline'}`}
+            className={`text-xs ${isToday ? 'invisible' : 'cursor-pointer text-(--brand) hover:underline'}`}
           >
             오늘로 이동
           </button>
@@ -130,7 +130,7 @@ const DateNavigator = ({ foods, selectedDate, onDateSelect, className = '' }: Da
 
       {/* Desktop */}
       <section
-        className={`hidden h-20 items-stretch border-b border-(--border-light) bg-(--white) lg:flex ${className}`}
+        className={`hidden h-20 items-stretch border-b border-(--border-light) bg-(--surface) lg:flex ${className}`}
       >
         <p className="flex w-32 shrink-0 items-center pl-6 text-sm font-medium text-(--text-primary) tabular-nums">
           {displayedMonthLabel}
@@ -142,8 +142,8 @@ const DateNavigator = ({ foods, selectedDate, onDateSelect, className = '' }: Da
           {displayedWeekDays.map(day => {
             const dayClassName = [
               'flex cursor-pointer flex-col items-center justify-center gap-1 transition-colors duration-150',
-              'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--primary-2)',
-              day.isSelected ? 'bg-(--surface-3)' : 'hover:bg-(--bg-section)',
+              'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--brand)',
+              day.isSelected ? 'bg-(--skel)' : 'hover:bg-(--bg-section)',
             ].join(' ');
 
             return (
@@ -156,7 +156,7 @@ const DateNavigator = ({ foods, selectedDate, onDateSelect, className = '' }: Da
                 aria-label={`${day.date.getMonth() + 1}월 ${day.dayNumber}일 ${day.label}요일${day.hasFoodData ? ', 기록 있음' : ''}`}
                 className={dayClassName}
               >
-                <span className={`text-xs ${day.isToday ? 'font-medium text-(--primary-1)' : 'text-(--text-muted)'}`}>
+                <span className={`text-xs ${day.isToday ? 'font-medium text-(--brand)' : 'text-(--text-muted)'}`}>
                   {day.isToday ? '오늘' : day.label}
                 </span>
                 <span
@@ -168,7 +168,7 @@ const DateNavigator = ({ foods, selectedDate, onDateSelect, className = '' }: Da
                 </span>
                 <span
                   aria-hidden="true"
-                  className={`size-1.5 rounded-full ${day.hasFoodData ? 'bg-(--primary-2)' : 'bg-transparent'}`}
+                  className={`size-1.5 rounded-full ${day.hasFoodData ? 'bg-(--brand)' : 'bg-transparent'}`}
                 />
               </button>
             );

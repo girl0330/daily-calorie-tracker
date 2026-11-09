@@ -1,118 +1,151 @@
 @import 'tailwindcss';
 
+/*
+ * 디자인 토큰 (2026-11-08 확정 시안 기준)
+ * - 라이트가 기본, 시스템 다크 모드를 따라가고 <html data-theme="light|dark">로 직접 고를 수 있어요.
+ * - 새 코드는 아래 "시안 토큰"을 쓰고, "옛 이름" 블록은 화면을 새로 만들면서 하나씩 없앨 예정이에요.
+ */
+
 :root {
-  /* ===== Base ===== */
-  --white: #ffffff;
-  --black: #000000;
+  color-scheme: light;
 
-  /* ===== Primary: 주요 액션 / 버튼 ===== */
-  --primary-1: #7a4e2d;
-  --primary-2: #996744;
-  --primary-3: #b98a63;
-  --primary-4: #dbc0a7;
-  --primary-5: #f4ebe3;
+  /* ===== 시안 토큰: 바탕 / 글자 ===== */
+  --bg: #fcfaf8;
+  --surface: #ffffff;
+  --side: #f7f3ef;
+  --ink: #2b2623;
+  --ink-2: #4d4641;
+  --muted: #6b625b;
+  --faint: #a8a09a;
+  --line: #d9d2cc;
+  --line-soft: #ece6e0;
+  --skel: #f3eeea;
+  --track: #ebe4de;
+  --bar-empty: #d9d2cc;
+  --scrim: rgba(43, 38, 35, 0.35);
+  --shadow: 0 12px 32px rgba(43, 38, 35, 0.16);
 
-  /* ===== Neutral: 텍스트 / 기본 배경 ===== */
-  --neutral-1: #2b2623;
-  --neutral-2: #4d4641;
-  --neutral-3: #8d847d;
-  --neutral-4: #d9d2cc;
-  --neutral-5: #f6f3f0;
+  /* ===== 시안 토큰: 브랜드 ===== */
+  --brand: #7a4e2d;
+  --brand-soft: #f4ebe3;
+  --brand-bar: #dbc0a7;
+  --on-brand: var(--bg);
 
-  /* ===== Accent: 그래프 / 포인트 ===== */
-  --accent-1: #2f7f73;
-  --accent-2: #42998d;
-  --accent-3: #72cfc3;
-  --accent-4: #a7e6de;
-  --accent-5: #e4f7f4;
+  /* ===== 시안 토큰: 상태 ===== */
+  --ok: #2f7f73;
+  --ok-soft: #e4f7f4;
+  --err: #8f3b31;
+  --err-soft: #fbeeec;
+  --over: #d4321f;
 
-  /* ===== Surface: 카드 / 인풋 / 박스 ===== */
-  --surface-1: #ffffff;
-  --surface-2: #fcfaf8;
-  --surface-3: #f3eeea;
-  --surface-4: #ebe4de;
+  /* ===== 시안 토큰: 영양소 ===== */
+  --kcal: #d09a5a;
+  --carbs: #c76b4f;
+  --protein: #4f8f86;
+  --fat: #8e6bb3;
 
-  /* ===== Text ===== */
-  --text-primary: var(--neutral-1);
-  --text-secondary: var(--neutral-2);
-  --text-muted: var(--neutral-3);
-  --text-on-primary: var(--white);
-  --text-on-accent: var(--white);
+  /* ===== 글꼴 ===== */
+  --font-family-base: 'Noto Sans KR', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
 
-  /* ===== Background ===== */
-  --bg-body: var(--neutral-5);
-  --bg-section: var(--surface-2);
-  --bg-card: var(--surface-1);
-  --bg-input: var(--surface-1);
-  --bg-hover: var(--surface-3);
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #1d1a18;
+    --surface: #262220;
+    --side: #211e1c;
+    --ink: #f3eeea;
+    --ink-2: #cfc6bf;
+    --muted: #a59b93;
+    --faint: #6f665f;
+    --line: #45403b;
+    --line-soft: #35302c;
+    --skel: #35302c;
+    --track: #35302c;
+    --bar-empty: #45403b;
+    --scrim: rgba(0, 0, 0, 0.5);
+    --shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    --brand: #dbb08a;
+    --brand-soft: #3a2e25;
+    --brand-bar: #7d6450;
+    --ok: #6cc3b6;
+    --ok-soft: #1f3532;
+    --err: #f0a097;
+    --err-soft: #3a2522;
+    --over: #ff7a68;
+  }
+}
 
-  /* ===== Border ===== */
-  --border-light: var(--neutral-4);
-  --border-medium: #c9c0b8;
-  --border-strong: #b3a79d;
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #1d1a18;
+  --surface: #262220;
+  --side: #211e1c;
+  --ink: #f3eeea;
+  --ink-2: #cfc6bf;
+  --muted: #a59b93;
+  --faint: #6f665f;
+  --line: #45403b;
+  --line-soft: #35302c;
+  --skel: #35302c;
+  --track: #35302c;
+  --bar-empty: #45403b;
+  --scrim: rgba(0, 0, 0, 0.5);
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --brand: #dbb08a;
+  --brand-soft: #3a2e25;
+  --brand-bar: #7d6450;
+  --ok: #6cc3b6;
+  --ok-soft: #1f3532;
+  --err: #f0a097;
+  --err-soft: #3a2522;
+  --over: #ff7a68;
+}
 
-  /* ===== Status / Utility ===== */
-  --success: #3d8b5f;
-  --warning: #c58a2d;
-  --error: #c65b4f;
-  --info: var(--accent-2);
+:root {
+  /* 시안 토큰에서 계산하는 값 (라이트·다크 공통) */
+  --brand-hover: color-mix(in srgb, var(--brand) 86%, var(--ink));
 
-  /* ===== Chart ===== */
-  --chart-carbs: #c76b4f;
-  --chart-protein: #4f8f86;
-  --chart-fat: #8e6bb3;
-  --chart-calorie: #d09a5a;
-  --chart-grid: #ddd6d0;
+  /* ===== 옛 이름: 지금 화면이 쓰는 값. 새 코드에서는 쓰지 않아요 ===== */
+  --text-primary: var(--ink);
+  --text-secondary: var(--ink-2);
+  --text-muted: var(--muted);
+  --text-on-primary: var(--on-brand);
 
-  /* ===== Typography ===== */
+  --bg-body: var(--bg);
+  --bg-section: var(--bg);
+  --bg-card: var(--surface);
+  --bg-input: var(--surface);
+  --bg-hover: var(--skel);
 
-  --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+  --border-light: var(--line);
+  --border-medium: color-mix(in srgb, var(--line) 60%, var(--muted));
+  --border-strong: var(--muted);
 
-  --font-xs: 12px;
-  --font-sm: 14px;
-  --font-md: 16px;
-  --font-lg: 20px;
-  --font-xl: 24px;
-  --font-2xl: 32px;
+  --chart-carbs: var(--carbs);
+  --chart-protein: var(--protein);
+  --chart-fat: var(--fat);
+  --chart-calorie: var(--kcal);
+}
 
-  --line-height-tight: 1.2;
-  --line-height-base: 1.5;
-  --line-height-relaxed: 1.7;
+/*
+ * 다크 모드에서 public/ 아이콘(검정·갈색 선 SVG를 <img>로 씀)이 안 보이는 문제를 임시로 막아요.
+ * 화면을 새로 만들면서 currentColor 인라인 SVG로 바꾸면 이 규칙은 지워요.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) :is(img[src$='/menu.svg'], img[src*='/chevron-'], img[src$='/check-good-yes.svg'], img[src$='/close.svg'], img[src$='/edit.svg'], img[src$='/trash-bin.svg'], img[src$='/cut-scissors.svg']) {
+    filter: invert(1) hue-rotate(180deg);
+  }
+}
 
-  /* ===== Spacing ===== */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 12px;
-  --space-lg: 16px;
-  --space-xl: 24px;
-  --space-2xl: 32px;
-  --space-3xl: 40px;
-
-  /* ===== Radius ===== */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-pill: 9999px;
-
-  /* ===== Shadows ===== */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
-  --shadow-navbar: 0 2px 12px rgba(0, 0, 0, 0.08);
-
-  /* ===== Transition ===== */
-  --transition-fast: 150ms ease;
-  --transition-normal: 250ms ease;
-
-  /* ===== Layout ===== */
-  --container-width: 800px;
-  --sidebar-width: 240px;
-  --input-width: 250px;
+:root[data-theme='dark'] :is(img[src$='/menu.svg'], img[src*='/chevron-'], img[src$='/check-good-yes.svg'], img[src$='/close.svg'], img[src$='/edit.svg'], img[src$='/trash-bin.svg'], img[src$='/cut-scissors.svg']) {
+  filter: invert(1) hue-rotate(180deg);
 }
 
 body {
-  background: var(--bg-body);
-  color: var(--text-primary);
+  background: var(--bg);
+  color: var(--ink);
   font-family: var(--font-family-base);
-  font-size: var(--font-md);
-  line-height: var(--line-height-base);
+  font-size: 16px;
+  line-height: 1.5;
 }

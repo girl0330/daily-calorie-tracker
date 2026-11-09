@@ -45,13 +45,13 @@ export default function DailyTrackerPage() {
 
   if (isError) {
     return (
-      <div role="alert" className="flex-1 bg-(--white) px-6 py-6 text-sm text-(--text-secondary)">
+      <div role="alert" className="flex-1 bg-(--surface) px-6 py-6 text-sm text-(--text-secondary)">
         <p>식사 기록을 불러오지 못했어요. 다시 시도해 주세요.</p>
 
         <button
           type="button"
           onClick={() => refetch()}
-          className="mt-4 cursor-pointer rounded-sm bg-(--primary-1) px-4 py-2 text-(--text-on-primary) transition-colors duration-150 hover:bg-(--primary-2)"
+          className="mt-4 cursor-pointer rounded-sm bg-(--brand) px-4 py-2 text-(--text-on-primary) transition-colors duration-150 hover:bg-(--brand-hover)"
         >
           다시 시도
         </button>
@@ -75,11 +75,11 @@ export default function DailyTrackerPage() {
       </div>
 
       {/* Tablet / Mobile */}
-      <div className="bg-(--white) px-6 pt-4 lg:hidden">
+      <div className="bg-(--surface) px-6 pt-4 lg:hidden">
         <button
           type="button"
           onClick={() => setIsFoodFormOpen(true)}
-          className="w-full cursor-pointer rounded-sm bg-(--primary-1) px-4 py-3 font-medium text-(--text-on-primary) transition-colors duration-150 hover:bg-(--primary-2) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--primary-2)"
+          className="w-full cursor-pointer rounded-sm bg-(--brand) px-4 py-3 font-medium text-(--text-on-primary) transition-colors duration-150 hover:bg-(--brand-hover) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand)"
         >
           음식 추가
         </button>

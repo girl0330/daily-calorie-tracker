@@ -85,9 +85,9 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
   };
 
   const inputClassName =
-    'w-full rounded-sm border border-(--border-light) bg-(--bg-input) px-2 text-(--text-primary) transition-colors duration-150 outline-none focus:border-(--primary-2) disabled:opacity-50';
+    'w-full rounded-sm border border-(--border-light) bg-(--bg-input) px-2 text-(--text-primary) transition-colors duration-150 outline-none focus:border-(--brand) disabled:opacity-50';
   const actionButtonClassName =
-    'flex size-8 cursor-pointer items-center justify-center rounded-sm transition-colors duration-150 hover:bg-(--surface-3) focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-(--primary-2) disabled:cursor-not-allowed disabled:opacity-50';
+    'flex size-8 cursor-pointer items-center justify-center rounded-sm transition-colors duration-150 hover:bg-(--skel) focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-(--brand) disabled:cursor-not-allowed disabled:opacity-50';
   const nutrientFields = [
     { name: 'carbs', label: '탄수화물' },
     { name: 'protein', label: '단백질' },
@@ -95,7 +95,7 @@ export default function EditFoodCard({ food, setIsEditing }: EditFoodCardProps) 
   ] as const;
 
   return (
-    <article className="rounded-xl bg-(--white) py-3 pr-2 pl-4 ring-1 ring-(--primary-3) ring-inset">
+    <article className="rounded-xl bg-(--surface) py-3 pr-2 pl-4 ring-1 ring-(--brand) ring-inset">
       <form onSubmit={handleEditSubmit}>
         <div className="flex items-start gap-2">
           <div className="min-w-0 flex-1">

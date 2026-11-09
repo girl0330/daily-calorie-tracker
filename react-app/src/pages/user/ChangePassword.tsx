@@ -124,14 +124,14 @@ const ChangePassword = () => {
   };
   return (
     <main className="min-h-screen px-6 py-10">
-      <div className="mx-auto w-full max-w-[430px] bg-white p-3">
+      <div className="mx-auto w-full max-w-[430px] bg-(--surface) p-3">
         <div className="mb-10 flex justify-center">
           <div className="flex h-[110px] items-center justify-center rounded-md text-4xl font-bold">비밀번호 변경</div>
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <label htmlFor="currentPassword" className="block text-[15px] font-medium text-[#8c8278]">
+            <label htmlFor="currentPassword" className="block text-[15px] font-medium text-(--muted)">
               현재 비밀번호
             </label>
 
@@ -141,10 +141,10 @@ const ChangePassword = () => {
               value={currentPassword}
               onChange={e => setCurrentPassword(e.target.value)}
               placeholder="현재 비밀번호를 입력하세요."
-              className="h-12 w-full rounded-2xl border border-[#e4ded8] bg-white px-5 text-[18px] text-[#3a332d] transition outline-none focus:border-[#2f80ed] focus:ring-4 focus:ring-[#2f80ed]/10"
+              className="h-12 w-full rounded-2xl border border-(--line) bg-(--surface) px-5 text-[18px] text-(--ink) transition outline-none focus:border-(--brand) focus:ring-4 focus:ring-(--brand-soft)"
             />
 
-            <label htmlFor="password" className="block pt-2 text-[15px] font-medium text-[#8c8278]">
+            <label htmlFor="password" className="block pt-2 text-[15px] font-medium text-(--muted)">
               새 비밀번호
             </label>
 
@@ -154,10 +154,10 @@ const ChangePassword = () => {
               value={newPassword}
               onChange={e => setNewPassword(e.target.value)}
               placeholder="새 비밀번호를 입력하세요."
-              className="h-12 w-full rounded-2xl border border-[#e4ded8] bg-white px-5 text-[18px] text-[#3a332d] transition outline-none focus:border-[#2f80ed] focus:ring-4 focus:ring-[#2f80ed]/10"
+              className="h-12 w-full rounded-2xl border border-(--line) bg-(--surface) px-5 text-[18px] text-(--ink) transition outline-none focus:border-(--brand) focus:ring-4 focus:ring-(--brand-soft)"
             />
 
-            <label htmlFor="confirmPassword" className="block pt-2 text-[15px] font-medium text-[#8c8278]">
+            <label htmlFor="confirmPassword" className="block pt-2 text-[15px] font-medium text-(--muted)">
               비밀번호 확인
             </label>
 
@@ -167,11 +167,11 @@ const ChangePassword = () => {
               value={confirmNewPassword}
               onChange={e => setConfirmNewPassword(e.target.value)}
               placeholder="비밀번호를 다시 한번 입력하세요."
-              className="h-12 w-full rounded-2xl border border-[#e4ded8] bg-white px-5 text-[18px] text-[#3a332d] transition outline-none focus:border-[#2f80ed] focus:ring-4 focus:ring-[#2f80ed]/10"
+              className="h-12 w-full rounded-2xl border border-(--line) bg-(--surface) px-5 text-[18px] text-(--ink) transition outline-none focus:border-(--brand) focus:ring-4 focus:ring-(--brand-soft)"
             />
 
             {!isConfirmEmpty && (
-              <p className={`mt-1 pl-2 text-sm ${isMatched ? 'text-green-600' : 'text-red-500'}`}>
+              <p className={`mt-1 pl-2 text-sm ${isMatched ? 'text-(--ok)' : 'text-(--err)'}`}>
                 {isMatched ? '✓ 비밀번호가 일치합니다.' : '✗ 비밀번호가 일치하지 않습니다.'}
               </p>
             )}
@@ -180,7 +180,7 @@ const ChangePassword = () => {
           <button
             type="submit"
             disabled={isPending || !currentPassword || !newPassword || !confirmNewPassword || !isMatched}
-            className="mt-6 h-12 w-full rounded-2xl border border-[#8a8178] bg-white font-semibold transition hover:bg-(--border-strong) active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-6 h-12 w-full rounded-2xl border border-(--muted) bg-(--surface) font-semibold transition hover:bg-(--skel) active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isPending ? '변경 중...' : '비밀번호 변경'}
           </button>
@@ -189,7 +189,7 @@ const ChangePassword = () => {
             type="button"
             onClick={handleSkipPasswordChange}
             disabled={isPending}
-            className="mt-6 h-12 w-full rounded-2xl border border-[#8a8178] bg-white font-semibold transition hover:bg-(--border-strong) active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-6 h-12 w-full rounded-2xl border border-(--muted) bg-(--surface) font-semibold transition hover:bg-(--skel) active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
           >
             다음에 변경하기
           </button>
