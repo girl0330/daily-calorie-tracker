@@ -64,7 +64,7 @@ export default function FoodCard({ food }: FoodCardProps) {
   }
 
   const actionButtonClassName =
-    'flex size-8 cursor-pointer items-center justify-center rounded-sm transition-colors duration-150 hover:bg-(--surface-4) focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-(--primary-2) disabled:cursor-not-allowed disabled:opacity-50';
+    'flex size-8 cursor-pointer items-center justify-center rounded-sm transition-colors duration-150 hover:bg-(--track) focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-(--brand) disabled:cursor-not-allowed disabled:opacity-50';
 
   return (
     <article className="rounded-xl bg-(--bg-section) py-3 pr-2 pl-4 ring-1 ring-(--border-light) ring-inset">

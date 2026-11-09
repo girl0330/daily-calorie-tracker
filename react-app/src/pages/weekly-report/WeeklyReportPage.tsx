@@ -13,7 +13,7 @@ const nutrientItems = [
   { key: 'fat', label: '지방', color: 'bg-(--chart-fat)' },
 ] as const;
 const weekNavButtonClassName =
-  'flex size-10 cursor-pointer items-center justify-center rounded-sm text-(--text-secondary) transition-colors duration-150 hover:bg-(--bg-hover) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--primary-2)';
+  'flex size-10 cursor-pointer items-center justify-center rounded-sm text-(--text-secondary) transition-colors duration-150 hover:bg-(--bg-hover) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand)';
 
 export default function WeeklyReportPage() {
   const user = useAuthStore(state => state.user);
@@ -39,7 +39,7 @@ export default function WeeklyReportPage() {
 
   const nutrientCalories = weeklyStats ? caloriesByNutrient(weeklyStats.nutrients) : null;
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-(--white)">
+    <div className="flex min-h-0 flex-1 flex-col bg-(--surface)">
       <div className="mx-auto w-full max-w-400 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
         <header className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
           <h1 className="text-2xl font-semibold lg:text-3xl lg:tracking-tight">주간 리포트</h1>
@@ -67,7 +67,7 @@ export default function WeeklyReportPage() {
               type="button"
               disabled={isFetching}
               onClick={() => void refetch()}
-              className="mt-4 cursor-pointer rounded-sm bg-(--primary-1) px-4 py-2 text-(--text-on-primary) transition-colors duration-150 hover:bg-(--primary-2) disabled:opacity-50"
+              className="mt-4 cursor-pointer rounded-sm bg-(--brand) px-4 py-2 text-(--text-on-primary) transition-colors duration-150 hover:bg-(--brand-hover) disabled:opacity-50"
             >
               {isFetching ? '불러오는 중' : '다시 시도'}
             </button>
@@ -151,8 +151,8 @@ export default function WeeklyReportPage() {
                                   className={`w-3/5 max-w-12 rounded-t-[4px] ${
                                     day.hasRecord
                                       ? isToday
-                                        ? 'bg-(--primary-2)'
-                                        : 'bg-(--primary-4)'
+                                        ? 'bg-(--brand)'
+                                        : 'bg-(--brand-bar)'
                                       : 'border border-dashed border-(--border-medium)'
                                   }`}
                                   style={{
@@ -163,7 +163,7 @@ export default function WeeklyReportPage() {
                                 />
                               </div>
                               <p
-                                className={`border-t border-(--border-light) pt-1 text-sm ${isToday ? 'font-medium text-(--primary-1)' : ''}`}
+                                className={`border-t border-(--border-light) pt-1 text-sm ${isToday ? 'font-medium text-(--brand)' : ''}`}
                               >
                                 {weekdays[index]}
                               </p>
@@ -180,7 +180,7 @@ export default function WeeklyReportPage() {
                         <p className="mt-1">식사를 기록하면 요일별 변화를 확인할 수 있어요</p>
                         <Link
                           to={`/?date=${toRecordDate(selectedDate)}`}
-                          className="mt-4 inline-block rounded-sm bg-(--primary-1) px-4 py-2 text-(--text-on-primary) transition-colors duration-150 hover:bg-(--primary-2)"
+                          className="mt-4 inline-block rounded-sm bg-(--brand) px-4 py-2 text-(--text-on-primary) transition-colors duration-150 hover:bg-(--brand-hover)"
                         >
                           식사 기록하러 가기
                         </Link>
@@ -215,7 +215,7 @@ export default function WeeklyReportPage() {
               <Link to="/monthly">월간</Link>
               <Link
                 aria-current="page"
-                className="font-medium text-(--primary-1)"
+                className="font-medium text-(--brand)"
                 to={`/weekly-report?${searchParams}`}
               >
                 주간

@@ -54,7 +54,7 @@ const FindPassword = () => {
 
   return (
     <main className="min-h-screen px-6 py-10">
-      <div className="mx-auto w-full max-w-[430px] bg-white p-3">
+      <div className="mx-auto w-full max-w-[430px] bg-(--surface) p-3">
         <h1 className="mb-6 text-center text-3xl font-bold">비밀번호 재설정</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -63,20 +63,20 @@ const FindPassword = () => {
             value={email}
             onChange={e => setEmail(e.target.value)}
             placeholder="가입한 이메일을 입력해주세요."
-            className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none"
+            className="w-full rounded-md border border-(--line) px-4 py-3 outline-none"
           />
 
           <button
             type="submit"
             disabled={isPending}
-            className="w-full rounded-md bg-black py-3 text-white disabled:opacity-60"
+            className="w-full rounded-md bg-(--brand) py-3 text-(--on-brand) disabled:opacity-60"
           >
             {isPending ? '전송 중...' : '재설정 링크 보내기'}
           </button>
         </form>
 
         <div className="mt-6 text-center">
-          <Link to="/login" className="text-sm text-gray-600 hover:text-black">
+          <Link to="/login" className="text-sm text-(--muted) hover:text-(--ink)">
             로그인으로 돌아가기
           </Link>
         </div>

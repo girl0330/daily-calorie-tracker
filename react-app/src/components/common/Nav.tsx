@@ -38,7 +38,7 @@ export default function Nav() {
           <>
             <button
               type="button"
-              className="fixed inset-0 z-10 bg-black/20 lg:hidden"
+              className="fixed inset-0 z-10 bg-(--scrim) lg:hidden"
               onClick={() => setIsMenuOpen(false)}
               aria-label="메뉴 닫기"
             />
@@ -51,8 +51,8 @@ export default function Nav() {
                   className={({ isActive }) =>
                     `rounded-md px-4 py-3 font-medium ${
                       isActive
-                        ? 'bg-(--paintedpony-normal-active) text-(--text-primary)'
-                        : 'text-(--text-primary) hover:bg-(--paintedpony-normal-hover)'
+                        ? 'bg-(--brand-soft) text-(--text-primary)'
+                        : 'text-(--text-primary) hover:bg-(--skel)'
                     }`
                   }
                 >
@@ -65,8 +65,8 @@ export default function Nav() {
                   className={({ isActive }) =>
                     `rounded-md px-4 py-3 font-medium ${
                       isActive
-                        ? 'bg-(--paintedpony-light-active) text-(--text-primary)'
-                        : 'text-(--text-primary) hover:bg-(--paintedpony-light-hover)'
+                        ? 'bg-(--brand-soft) text-(--text-primary)'
+                        : 'text-(--text-primary) hover:bg-(--skel)'
                     }`
                   }
                 >
@@ -76,14 +76,14 @@ export default function Nav() {
                   to="/weekly-report"
                   onClick={() => setIsMenuOpen(false)}
                   className={({ isActive }) =>
-                    `rounded-md px-4 py-3 font-medium ${isActive ? 'bg-(--primary-5) text-(--primary-1)' : 'text-(--text-primary) hover:bg-(--bg-hover)'}`
+                    `rounded-md px-4 py-3 font-medium ${isActive ? 'bg-(--brand-soft) text-(--brand)' : 'text-(--text-primary) hover:bg-(--bg-hover)'}`
                   }
                 >
                   주간 리포트
                 </NavLink>
               </nav>
 
-              <div className="mt-4 flex flex-col gap-2 border-t border-(--primary-4) pt-4">
+              <div className="mt-4 flex flex-col gap-2 border-t border-(--brand-bar) pt-4">
                 <div className="px-4 text-sm text-(--text-primary) opacity-80">{userFromStore?.email}</div>
 
                 <NavLink
@@ -97,7 +97,7 @@ export default function Nav() {
 
                 <button
                   type="button"
-                  className="cursor-pointer px-4 py-2 text-left text-sm text-red-500"
+                  className="cursor-pointer px-4 py-2 text-left text-sm text-(--err)"
                   onClick={handleLogout}
                 >
                   로그아웃
@@ -108,7 +108,7 @@ export default function Nav() {
         )}
       </div>
       {/* Desktop */}
-      <div className="hidden min-h-full w-70 shrink-0 flex-col border-r border-(--neutral-4) bg-(--bg-section) p-5 lg:flex">
+      <div className="hidden min-h-full w-70 shrink-0 flex-col border-r border-(--line) bg-(--bg-section) p-5 lg:flex">
         <img src="/logo.svg" alt="Daily Tracker" className="h-10 lg:h-20" />
 
         <nav className="mt-8 flex flex-1 flex-col gap-2">
@@ -117,8 +117,8 @@ export default function Nav() {
             className={({ isActive }) =>
               `rounded-md px-4 py-3 text-xl font-medium transition-colors ${
                 isActive
-                  ? 'bg-(--paintedpony-normal-active) text-(--text-primary)'
-                  : 'text-(--text-primary) hover:bg-(--paintedpony-normal-hover)'
+                  ? 'bg-(--brand-soft) text-(--text-primary)'
+                  : 'text-(--text-primary) hover:bg-(--skel)'
               }`
             }
           >
@@ -130,8 +130,8 @@ export default function Nav() {
             className={({ isActive }) =>
               `rounded-md px-4 py-3 text-xl font-medium transition-colors ${
                 isActive
-                  ? 'bg-(--paintedpony-light-active) text-(--text-primary)'
-                  : 'text-(--text-primary) hover:bg-(--paintedpony-light-hover)'
+                  ? 'bg-(--brand-soft) text-(--text-primary)'
+                  : 'text-(--text-primary) hover:bg-(--skel)'
               }`
             }
           >
@@ -140,7 +140,7 @@ export default function Nav() {
           <NavLink
             to="/weekly-report"
             className={({ isActive }) =>
-              `rounded-md px-4 py-3 text-xl font-medium ${isActive ? 'bg-(--primary-5) text-(--primary-1)' : 'text-(--text-primary) hover:bg-(--bg-hover)'}`
+              `rounded-md px-4 py-3 text-xl font-medium ${isActive ? 'bg-(--brand-soft) text-(--brand)' : 'text-(--text-primary) hover:bg-(--bg-hover)'}`
             }
           >
             주간 리포트
@@ -156,8 +156,8 @@ export default function Nav() {
             className={({ isActive }) =>
               `rounded-md px-4 py-2 text-base font-medium transition-colors ${
                 isActive
-                  ? 'bg-(--paintedpony-light-active) text-(--text-primary)'
-                  : 'text-(--text-primary) hover:bg-(--paintedpony-light-hover)'
+                  ? 'bg-(--brand-soft) text-(--text-primary)'
+                  : 'text-(--text-primary) hover:bg-(--skel)'
               }`
             }
           >
@@ -165,7 +165,7 @@ export default function Nav() {
           </NavLink>
 
           <button
-            className="cursor-pointer px-4 py-2 text-left text-sm text-red-500 hover:underline"
+            className="cursor-pointer px-4 py-2 text-left text-sm text-(--err) hover:underline"
             onClick={handleLogout}
           >
             로그아웃

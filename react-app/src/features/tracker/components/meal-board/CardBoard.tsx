@@ -8,7 +8,7 @@ type CardBoardProps = {
 };
 
 export const CardBoard = ({ foods, className = '' }: CardBoardProps) => {
-  const cardClassName = ['!bg-(--white)', className].filter(Boolean).join(' ');
+  const cardClassName = ['!bg-(--surface)', className].filter(Boolean).join(' ');
 
   return (
     <SectionLayout title="식사 기록" className={cardClassName} contentClassName="flex-1">

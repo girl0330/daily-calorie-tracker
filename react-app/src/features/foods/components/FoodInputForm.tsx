@@ -95,7 +95,7 @@ const FoodInputForm = ({ userId, recordDate, className = '', onSaveSuccess }: Fo
 
   const inputSectionClassName = [
     // 모든 섹션이 공유하는 기본 박스 스타일
-    'border-b border-r border-(--border-light) bg-(--white)',
+    'border-b border-r border-(--border-light) bg-(--surface)',
     className,
   ]
     .filter(Boolean)
@@ -121,7 +121,7 @@ const FoodInputForm = ({ userId, recordDate, className = '', onSaveSuccess }: Fo
                   className="peer sr-only"
                 />
 
-                <span className="block rounded-sm border border-(--border-light) px-3 py-2 text-center text-sm text-(--text-secondary) transition-colors duration-150 peer-checked:border-(--primary-2) peer-checked:bg-(--primary-5) peer-checked:font-medium peer-checked:text-(--primary-1) peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-(--primary-2) hover:border-(--border-strong)">
+                <span className="block rounded-sm border border-(--border-light) px-3 py-2 text-center text-sm text-(--text-secondary) transition-colors duration-150 peer-checked:border-(--brand) peer-checked:bg-(--brand-soft) peer-checked:font-medium peer-checked:text-(--brand) peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-(--brand) hover:border-(--border-strong)">
                   {meal.label}
                 </span>
               </label>
@@ -143,7 +143,7 @@ const FoodInputForm = ({ userId, recordDate, className = '', onSaveSuccess }: Fo
             onChange={handleFormChange}
             placeholder="예: 닭가슴살 샐러드"
             autoComplete="off"
-            className="w-full rounded-sm border border-(--border-light) bg-(--bg-input) px-4 py-2.5 text-sm text-(--text-primary) transition-colors duration-150 outline-none placeholder:text-(--text-muted) focus:border-(--primary-2)"
+            className="w-full rounded-sm border border-(--border-light) bg-(--bg-input) px-4 py-2.5 text-sm text-(--text-primary) transition-colors duration-150 outline-none placeholder:text-(--text-muted) focus:border-(--brand)"
           />
         </div>
 
@@ -163,7 +163,7 @@ const FoodInputForm = ({ userId, recordDate, className = '', onSaveSuccess }: Fo
               onChange={handleFormChange}
               placeholder="0.0 g"
               autoComplete="off"
-              className="w-full rounded-sm border border-(--border-light) bg-(--bg-input) px-3 py-2.5 text-sm text-(--text-primary) transition-colors duration-150 outline-none placeholder:text-(--text-muted) focus:border-(--primary-2)"
+              className="w-full rounded-sm border border-(--border-light) bg-(--bg-input) px-3 py-2.5 text-sm text-(--text-primary) transition-colors duration-150 outline-none placeholder:text-(--text-muted) focus:border-(--brand)"
             />
           </div>
 
@@ -181,7 +181,7 @@ const FoodInputForm = ({ userId, recordDate, className = '', onSaveSuccess }: Fo
               onChange={handleFormChange}
               placeholder="0.0 g"
               autoComplete="off"
-              className="w-full rounded-sm border border-(--border-light) bg-(--bg-input) px-3 py-2.5 text-sm text-(--text-primary) transition-colors duration-150 outline-none placeholder:text-(--text-muted) focus:border-(--primary-2)"
+              className="w-full rounded-sm border border-(--border-light) bg-(--bg-input) px-3 py-2.5 text-sm text-(--text-primary) transition-colors duration-150 outline-none placeholder:text-(--text-muted) focus:border-(--brand)"
             />
           </div>
 
@@ -199,14 +199,14 @@ const FoodInputForm = ({ userId, recordDate, className = '', onSaveSuccess }: Fo
               onChange={handleFormChange}
               placeholder="0.0 g"
               autoComplete="off"
-              className="w-full rounded-sm border border-(--border-light) bg-(--bg-input) px-3 py-2.5 text-sm text-(--text-primary) transition-colors duration-150 outline-none placeholder:text-(--text-muted) focus:border-(--primary-2)"
+              className="w-full rounded-sm border border-(--border-light) bg-(--bg-input) px-3 py-2.5 text-sm text-(--text-primary) transition-colors duration-150 outline-none placeholder:text-(--text-muted) focus:border-(--brand)"
             />
           </div>
 
           <button
             type="submit"
             disabled={createFoodMutation.isPending}
-            className="cursor-pointer rounded-sm bg-(--primary-1) px-3 py-2.5 text-sm font-medium text-(--text-on-primary) transition-colors duration-150 hover:bg-(--primary-2) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--primary-2) disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-(--primary-1)"
+            className="cursor-pointer rounded-sm bg-(--brand) px-3 py-2.5 text-sm font-medium text-(--text-on-primary) transition-colors duration-150 hover:bg-(--brand-hover) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand) disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-(--brand)"
           >
             {createFoodMutation.isPending ? '저장 중' : '저장'}
           </button>

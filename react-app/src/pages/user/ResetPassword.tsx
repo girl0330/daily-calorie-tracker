@@ -100,7 +100,7 @@ const ResetPassword = () => {
 
   return (
     <main className="min-h-screen px-6 py-10">
-      <div className="mx-auto w-full max-w-[430px] bg-white p-3">
+      <div className="mx-auto w-full max-w-[430px] bg-(--surface) p-3">
         {/* 상단 로고/배너 영역 */}
         <div className="mb-10 flex justify-center">
           <div className="flex h-[110px] items-center justify-center rounded-md text-4xl font-bold">
@@ -114,7 +114,7 @@ const ResetPassword = () => {
         <form className="space-y-4" onSubmit={handleSubmitPW}>
           <div className="space-y-2">
             {/* 첫 번째: 비밀번호 입력 */}
-            <label htmlFor="password" className="block text-[15px] font-medium text-[#8c8278]">
+            <label htmlFor="password" className="block text-[15px] font-medium text-(--muted)">
               새 비밀번호
             </label>
             <input
@@ -123,11 +123,11 @@ const ResetPassword = () => {
               value={password}
               onChange={e => setPassword(e.target.value)} // onChange 연결
               placeholder="새 비밀번호를 입력하세요."
-              className="h-12 w-full rounded-2xl border border-[#e4ded8] bg-white px-5 text-[18px] text-[#3a332d] transition outline-none focus:border-[#2f80ed] focus:ring-4 focus:ring-[#2f80ed]/10"
+              className="h-12 w-full rounded-2xl border border-(--line) bg-(--surface) px-5 text-[18px] text-(--ink) transition outline-none focus:border-(--brand) focus:ring-4 focus:ring-(--brand-soft)"
             />
 
             {/* 두 번째: 비밀번호 확인 입력 */}
-            <label htmlFor="confirmPassword" className="block pt-2 text-[15px] font-medium text-[#8c8278]">
+            <label htmlFor="confirmPassword" className="block pt-2 text-[15px] font-medium text-(--muted)">
               비밀번호 확인
             </label>
             <input
@@ -136,12 +136,12 @@ const ResetPassword = () => {
               value={confirmPassword}
               onChange={e => setConfirmPassword(e.target.value)} // confirmPassword 상태와 연결
               placeholder="비밀번호를 다시 한번 입력하세요."
-              className="h-12 w-full rounded-2xl border border-[#e4ded8] bg-white px-5 text-[18px] text-[#3a332d] transition outline-none focus:border-[#2f80ed] focus:ring-4 focus:ring-[#2f80ed]/10"
+              className="h-12 w-full rounded-2xl border border-(--line) bg-(--surface) px-5 text-[18px] text-(--ink) transition outline-none focus:border-(--brand) focus:ring-4 focus:ring-(--brand-soft)"
             />
 
             {/* 4. 실시간 일치 여부 안내 메시지 추가 */}
             {!isConfirmEmpty && (
-              <p className={`mt-1 pl-2 text-sm ${isMatched ? 'text-green-600' : 'text-red-500'}`}>
+              <p className={`mt-1 pl-2 text-sm ${isMatched ? 'text-(--ok)' : 'text-(--err)'}`}>
                 {isMatched ? '✓ 비밀번호가 일치합니다.' : '✗ 비밀번호가 일치하지 않습니다.'}
               </p>
             )}
@@ -151,7 +151,7 @@ const ResetPassword = () => {
           <button
             type="submit"
             disabled={isPending || !password || !confirmPassword || !isMatched}
-            className="mt-6 h-12 w-full rounded-2xl border border-[#8a8178] bg-white font-semibold transition hover:bg-(--border-strong) active:scale-[0.99]"
+            className="mt-6 h-12 w-full rounded-2xl border border-(--muted) bg-(--surface) font-semibold transition hover:bg-(--skel) active:scale-[0.99]"
           >
             {isPending ? '변경 중...' : '확인'}
           </button>

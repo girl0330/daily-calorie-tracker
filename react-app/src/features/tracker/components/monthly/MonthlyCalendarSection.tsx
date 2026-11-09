@@ -92,7 +92,7 @@ export const MonthlyCalendarSection = ({
     navigate(`/?date=${recordDate}`);
   };
 
-  const sectionClassName = ['flex min-h-0 flex-1 flex-col bg-(--white)', className].filter(Boolean).join(' ');
+  const sectionClassName = ['flex min-h-0 flex-1 flex-col bg-(--surface)', className].filter(Boolean).join(' ');
 
   return (
     <SectionLayout
@@ -108,7 +108,7 @@ export const MonthlyCalendarSection = ({
             type="button"
             onClick={handlePrevMonth}
             aria-label="이전 달"
-            className="flex h-8 w-8 items-center justify-center rounded-md border border-(--neutral-4) text-(--text-secondary) transition hover:border-(--primary-3) hover:bg-(--neutral-5)"
+            className="flex h-8 w-8 items-center justify-center rounded-md border border-(--line) text-(--text-secondary) transition hover:border-(--brand) hover:bg-(--bg)"
           >
             <img src="/chevron-left-arrow.svg" alt="" className="h-4 w-4" />
           </button>
@@ -121,7 +121,7 @@ export const MonthlyCalendarSection = ({
             type="button"
             onClick={handleNextMonth}
             aria-label="다음 달"
-            className="flex h-8 w-8 items-center justify-center rounded-md border border-(--neutral-4) text-(--text-secondary) transition hover:border-(--primary-3) hover:bg-(--neutral-5)"
+            className="flex h-8 w-8 items-center justify-center rounded-md border border-(--line) text-(--text-secondary) transition hover:border-(--brand) hover:bg-(--bg)"
           >
             <img src="/chevron-right-arrow.svg" alt="" className="h-4 w-4" />
           </button>
@@ -130,7 +130,7 @@ export const MonthlyCalendarSection = ({
         <button
           type="button"
           onClick={handleTodayClick}
-          className="flex h-8 items-center justify-center rounded-md border border-(--neutral-4) px-2 text-xs font-medium text-(--text-secondary) transition hover:border-(--primary-3) hover:bg-(--primary-5) hover:text-(--primary-1) lg:px-3 lg:text-sm"
+          className="flex h-8 items-center justify-center rounded-md border border-(--line) px-2 text-xs font-medium text-(--text-secondary) transition hover:border-(--brand) hover:bg-(--brand-soft) hover:text-(--brand) lg:px-3 lg:text-sm"
         >
           오늘
         </button>
@@ -139,14 +139,14 @@ export const MonthlyCalendarSection = ({
       {/* 캘린더 영역 */}
       <div
         className={[
-          'relative left-1/2 flex w-dvw -translate-x-1/2 flex-col overflow-hidden bg-(--white)',
-          'border-y border-(--neutral-4)',
+          'relative left-1/2 flex w-dvw -translate-x-1/2 flex-col overflow-hidden bg-(--surface)',
+          'border-y border-(--line)',
           'md:static md:left-auto md:min-h-0 md:flex-1 md:translate-x-0',
           'md:w-auto md:rounded-md md:border',
         ].join(' ')}
       >
         {/* 요일 */}
-        <div className="grid shrink-0 grid-cols-7 border-b border-(--neutral-4)">
+        <div className="grid shrink-0 grid-cols-7 border-b border-(--line)">
           {WEEK_LABELS.map(label => (
             <span key={label} className="px-2 py-2 text-left text-xs font-medium text-(--text-muted)">
               {label}
@@ -177,10 +177,10 @@ export const MonthlyCalendarSection = ({
 
             const dayButtonClassName = [
               'relative flex min-h-24 min-w-0 flex-col p-2 text-left transition',
-              'hover:bg-(--neutral-5)',
-              isLastRow ? '' : 'border-b border-(--neutral-4)',
+              'hover:bg-(--bg)',
+              isLastRow ? '' : 'border-b border-(--line)',
               isCurrentMonth ? '' : 'bg-(--bg-section) text-(--text-muted)',
-              isToday ? 'shadow-[inset_0_0_0_1px_var(--primary-3)]' : '',
+              isToday ? 'shadow-[inset_0_0_0_1px_var(--brand)]' : '',
             ]
               .filter(Boolean)
               .join(' ');
@@ -219,7 +219,7 @@ export const MonthlyCalendarSection = ({
 
                     {/* Tablet·Desktop */}
                     <div className="hidden md:contents">
-                      <span className="mt-1 text-sm font-semibold text-(--primary-1)">
+                      <span className="mt-1 text-sm font-semibold text-(--brand)">
                         {formatNumber(dayCalories)} kcal
                       </span>
 

@@ -21,7 +21,7 @@ export const NutritionChart = ({ foods, className = '' }: NutritionChartProps) =
 
   const chartClassName = [
     // 모든 섹션이 공유하는 기본 박스 스타일
-    'border-b border-(--border-light) bg-(--white)',
+    'border-b border-(--border-light) bg-(--surface)',
     className,
   ]
     .filter(Boolean)

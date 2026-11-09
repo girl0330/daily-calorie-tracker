@@ -12,10 +12,10 @@ export default function BottomSheet({ isOpen, onClose, children }: BottomSheetPr
   return (
     <div className="fixed inset-0 z-50 lg:hidden">
       {/* Backdrop */}
-      <button type="button" aria-label="닫기" onClick={onClose} className="absolute inset-0 bg-black/40" />
+      <button type="button" aria-label="닫기" onClick={onClose} className="absolute inset-0 bg-(--scrim)" />
 
       {/* Sheet */}
-      <div className="absolute inset-x-0 bottom-0 max-h-[90vh] overflow-y-auto rounded-t-2xl bg-white">
+      <div className="absolute inset-x-0 bottom-0 max-h-[90vh] overflow-y-auto rounded-t-2xl bg-(--surface)">
         <button
           type="button"
           aria-label="닫기"

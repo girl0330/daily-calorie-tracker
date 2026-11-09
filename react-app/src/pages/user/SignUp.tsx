@@ -71,7 +71,7 @@ const SignUp = () => {
 
   return (
     <main className="min-h-screen px-6 py-10">
-      <div className="mx-auto w-full max-w-[430px] bg-white p-3">
+      <div className="mx-auto w-full max-w-[430px] bg-(--surface) p-3">
         {/* 상단 로고/배너 영역 */}
         <div className="mb-10 flex justify-center">
           <div className="flex h-[110px] items-center justify-center rounded-md text-4xl"> 계정만들기 </div>
@@ -79,7 +79,7 @@ const SignUp = () => {
         {/* 이메일 폼 */}
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-[15px] font-medium text-[#8c8278]">
+            <label htmlFor="email" className="block text-[15px] font-medium text-(--muted)">
               이메일
             </label>
 
@@ -89,10 +89,10 @@ const SignUp = () => {
               value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder="이메일 주소를 입력하세요."
-              className="h-12 w-full rounded-2xl border border-[#e4ded8] bg-white px-5 text-[18px] text-[#3a332d] transition outline-none focus:border-[#2f80ed] focus:ring-4 focus:ring-[#2f80ed]/10"
+              className="h-12 w-full rounded-2xl border border-(--line) bg-(--surface) px-5 text-[18px] text-(--ink) transition outline-none focus:border-(--brand) focus:ring-4 focus:ring-(--brand-soft)"
             />
 
-            <label htmlFor="password" className="block text-[15px] font-medium text-[#8c8278]">
+            <label htmlFor="password" className="block text-[15px] font-medium text-(--muted)">
               비밀번호
             </label>
 
@@ -102,27 +102,27 @@ const SignUp = () => {
               value={password}
               onChange={e => setPassword(e.target.value)}
               placeholder="비밀번호를 입력하세요."
-              className="h-12 w-full rounded-2xl border border-[#e4ded8] bg-white px-5 text-[18px] text-[#3a332d] transition outline-none focus:border-[#2f80ed] focus:ring-4 focus:ring-[#2f80ed]/10"
+              className="h-12 w-full rounded-2xl border border-(--line) bg-(--surface) px-5 text-[18px] text-(--ink) transition outline-none focus:border-(--brand) focus:ring-4 focus:ring-(--brand-soft)"
             />
           </div>
 
           <button
             type="submit"
-            className="text-l mt-6 h-12 w-full cursor-pointer rounded-2xl bg-[#2f80ed] font-semibold text-white shadow-[0_4px_10px_rgba(47,128,237,0.28)] transition hover:bg-[#2975da] active:scale-[0.99]"
+            className="text-l mt-6 h-12 w-full cursor-pointer rounded-2xl bg-(--brand) font-semibold text-(--on-brand) transition hover:bg-(--brand-hover) active:scale-[0.99]"
           >
             회원가입
           </button>
         </form>
         {/* 구분선 */}
         <div className="my-12 flex items-center gap-4">
-          <div className="h-px flex-1 bg-[#ddd6cf]" />
+          <div className="h-px flex-1 bg-(--line)" />
           <Link
             to="/login"
-            className="shrink-0 cursor-pointer text-[17px] text-[#8a8178] hover:font-bold hover:text-[#5f574f]"
+            className="shrink-0 cursor-pointer text-[17px] text-(--muted) hover:font-bold hover:text-(--ink-2)"
           >
             Login
           </Link>
-          <div className="h-px flex-1 bg-[#ddd6cf]" />
+          <div className="h-px flex-1 bg-(--line)" />
         </div>
 
         {/* 나중에 추가 예정*/}
