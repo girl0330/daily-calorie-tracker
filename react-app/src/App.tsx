@@ -12,6 +12,7 @@ import ResetPassword from './pages/user/ResetPassword';
 import AppLayout from './layout/AppLayout';
 import ChangePassword from './pages/user/ChangePassword';
 import WeeklyReportPage from './pages/weekly-report/WeeklyReportPage';
+import MyPage from './pages/mypage/MyPage';
 
 function App() {
   const userFromStore = useAuthStore(state => state.user);
@@ -160,6 +161,7 @@ function App() {
           <Route path="/" element={<DailyTrackerPage />} />
           <Route path="/monthly" element={<MonthlyTrackerPage />} />
           <Route path="/weekly-report" element={<WeeklyReportPage />} />
+          <Route path="/mypage" element={<MyPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

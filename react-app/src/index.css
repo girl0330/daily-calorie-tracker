@@ -133,12 +133,12 @@
  * 화면을 새로 만들면서 currentColor 인라인 SVG로 바꾸면 이 규칙은 지워요.
  */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) :is(img[src$='/menu.svg'], img[src*='/chevron-'], img[src$='/check-good-yes.svg'], img[src$='/close.svg'], img[src$='/edit.svg'], img[src$='/trash-bin.svg'], img[src$='/cut-scissors.svg']) {
+  :root:not([data-theme='light']) :is(img[src*='/chevron-'], img[src$='/check-good-yes.svg'], img[src$='/close.svg'], img[src$='/edit.svg'], img[src$='/trash-bin.svg'], img[src$='/cut-scissors.svg']) {
     filter: invert(1) hue-rotate(180deg);
   }
 }
 
-:root[data-theme='dark'] :is(img[src$='/menu.svg'], img[src*='/chevron-'], img[src$='/check-good-yes.svg'], img[src$='/close.svg'], img[src$='/edit.svg'], img[src$='/trash-bin.svg'], img[src$='/cut-scissors.svg']) {
+:root[data-theme='dark'] :is(img[src*='/chevron-'], img[src$='/check-good-yes.svg'], img[src$='/close.svg'], img[src$='/edit.svg'], img[src$='/trash-bin.svg'], img[src$='/cut-scissors.svg']) {
   filter: invert(1) hue-rotate(180deg);
 }
 
