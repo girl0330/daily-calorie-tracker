@@ -207,20 +207,6 @@ export default function WeeklyReportPage() {
                 </div>
               </section>
             </div>
-            <nav
-              aria-label="기록 화면"
-              className="mt-6 flex justify-around border-t border-(--border-light) py-3 text-sm lg:hidden"
-            >
-              <Link to="/">일일</Link>
-              <Link to="/monthly">월간</Link>
-              <Link
-                aria-current="page"
-                className="font-medium text-(--brand)"
-                to={`/weekly-report?${searchParams}`}
-              >
-                주간
-              </Link>
-            </nav>
           </>
         ) : null}
       </div>
