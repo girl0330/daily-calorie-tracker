@@ -16,7 +16,8 @@ export default function Switch({ checked, onChange, label, disabled = false }: S
       disabled={disabled}
       onClick={() => onChange(!checked)}
       className={`relative h-5.5 w-10 shrink-0 cursor-pointer rounded-full transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 ${
-        checked ? 'bg-(--brand)' : 'bg-(--line)'
+        // 꺼짐도 배경과 3:1 이상 차이 나야 보여서 --line 대신 --muted를 써요.
+        checked ? 'bg-(--brand)' : 'bg-(--muted)'
       }`}
     >
       <span
