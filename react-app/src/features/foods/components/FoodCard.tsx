@@ -116,6 +116,7 @@ export default function FoodCard({ food }: FoodCardProps) {
         title="이 기록을 삭제할까요?"
         description="삭제한 기록은 되돌릴 수 없어요."
         confirmLabel="삭제"
+        cancelLabel="닫기"
         onConfirm={handleDeleteFood}
         onCancel={() => setIsDeleteConfirmOpen(false)}
       >

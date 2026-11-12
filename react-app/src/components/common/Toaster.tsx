@@ -3,7 +3,7 @@ import { useToastStore } from '../../store/toastStore';
 
 const TOAST_DURATION_MS = 2400;
 
-// 시안의 .toast: 화면 아래 가운데에 잠깐 떴다 사라지는 알림. AppLayout에 한 번만 둬요.
+// 시안의 .toast: 화면 아래 가운데에 잠깐 떴다 사라지는 알림. App 맨 바깥에 한 번만 둬요.
 export default function Toaster() {
   const toast = useToastStore(state => state.toast);
   const hideToast = useToastStore(state => state.hideToast);
