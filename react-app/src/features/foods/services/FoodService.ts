@@ -137,6 +137,34 @@ export const getFoodsByPeriodApi = async (userId: UserId, startDate: string, end
   return foods;
 };
 
+// 기록한 날 수: 음식을 하나라도 기록한 서로 다른 날짜의 개수.
+// 날짜와 등록 시간만 가져와서 브라우저에서 중복을 빼고 센다.
+export const getRecordedDayCountApi = async (userId: UserId): Promise<number> => {
+  const days = new Set<string>();
+  const pageSize = 1000;
+  let offset = 0;
+
+  while (true) {
+    const { data, error } = await supabase
+      .from('foods')
+      .select('record_date, created_at')
+      .eq('user_id', userId)
+      .order('id', { ascending: true })
+      .range(offset, offset + pageSize - 1);
+
+    if (error) throw error;
+
+    const rows = (data ?? []) as Pick<FoodRow, 'record_date' | 'created_at'>[];
+    // 날짜가 비어 있는 옛 기록은 목록 화면과 같은 방식(등록 시간의 날짜)으로 센다.
+    rows.forEach(row => days.add(row.record_date ?? formatRecordDate(new Date(row.created_at))));
+
+    if (rows.length < pageSize) break;
+    offset += rows.length;
+  }
+
+  return days.size;
+};
+
 // 음식을 등록하고, DB에서 생성된 id/created_at을 포함한 데이터를 다시 받는다.
 export const createFoodApi = async (newFood: CreateFoodRequest): Promise<FoodItem> => {
   const { data, error } = await supabase

@@ -10,7 +10,7 @@ import { useAuthStore } from './store/authStore';
 import FindPassword from './pages/user/FindPassword';
 import ResetPassword from './pages/user/ResetPassword';
 import AppLayout from './layout/AppLayout';
-import ChangePassword from './pages/user/ChangePassword';
+import Toaster from './components/common/Toaster';
 import WeeklyReportPage from './pages/weekly-report/WeeklyReportPage';
 import MyPage from './pages/mypage/MyPage';
 import ComponentsPreviewPage from './pages/dev/ComponentsPreviewPage';
@@ -133,20 +133,6 @@ function App() {
           }
         />
 
-        {/* 비밀번호 변경 페이지 */}
-        <Route
-          path="/change-password"
-          element={
-            isPasswordRecoveryFromStore ? (
-              <Navigate to="/reset-password" replace />
-            ) : userFromStore ? (
-              <ChangePassword />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
-
         {/* 로그인 후 공통 Layout */}
         <Route
           element={
@@ -167,6 +153,9 @@ function App() {
           {import.meta.env.DEV && <Route path="/dev/components" element={<ComponentsPreviewPage />} />}
         </Route>
       </Routes>
+
+      {/* 로그인 화면 등 모든 페이지에서 토스트를 띄울 수 있게 앱 맨 바깥에 둬요. */}
+      <Toaster />
     </BrowserRouter>
   );
 }
