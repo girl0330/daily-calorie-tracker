@@ -13,6 +13,7 @@ import AppLayout from './layout/AppLayout';
 import ChangePassword from './pages/user/ChangePassword';
 import WeeklyReportPage from './pages/weekly-report/WeeklyReportPage';
 import MyPage from './pages/mypage/MyPage';
+import ComponentsPreviewPage from './pages/dev/ComponentsPreviewPage';
 
 function App() {
   const userFromStore = useAuthStore(state => state.user);
@@ -162,6 +163,8 @@ function App() {
           <Route path="/monthly" element={<MonthlyTrackerPage />} />
           <Route path="/weekly-report" element={<WeeklyReportPage />} />
           <Route path="/mypage" element={<MyPage />} />
+          {/* 개발 서버에서만 생기는 공통 부품 확인 페이지 */}
+          {import.meta.env.DEV && <Route path="/dev/components" element={<ComponentsPreviewPage />} />}
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,9 +1,7 @@
-const SkeletonBlock = ({ className = '' }: { className?: string }) => {
-  return <div className={`animate-pulse rounded-md bg-(--line) ${className}`} />;
-};
+import Skeleton from '../../components/common/Skeleton';
 
 const SectionHeaderSkeleton = () => {
-  return <SkeletonBlock className="h-6 w-28" />;
+  return <Skeleton className="h-6 w-28" />;
 };
 
 const DateNavigatorSkeleton = () => {
@@ -20,7 +18,7 @@ const FoodInputSkeleton = () => {
       <SectionHeaderSkeleton />
 
       <div className="flex min-h-0 flex-1 items-center py-5">
-        <SkeletonBlock className="h-40 w-full" />
+        <Skeleton className="h-40 w-full" />
       </div>
     </section>
   );
@@ -32,10 +30,10 @@ const NutritionSkeleton = () => {
       <SectionHeaderSkeleton />
 
       <div className="mt-5 grid min-h-0 flex-1 grid-cols-[minmax(0,2fr)_minmax(80px,1fr)] items-center rounded-lg border border-(--line) px-8">
-        <SkeletonBlock className="h-24 w-[75%]" />
+        <Skeleton className="h-24 w-[75%]" />
 
         <div className="flex justify-center">
-          <SkeletonBlock className="aspect-square w-24 rounded-full md:w-32" />
+          <Skeleton className="aspect-square w-24 rounded-full md:w-32" />
         </div>
       </div>
     </section>
@@ -46,11 +44,11 @@ const MealSkeleton = () => {
   return (
     <div className="flex min-h-0 flex-col">
       <div className="flex h-[60px] shrink-0 items-center justify-center border-b border-(--line)">
-        <SkeletonBlock className="h-6 w-32" />
+        <Skeleton className="h-6 w-32" />
       </div>
 
       <div className="min-h-0 flex-1 p-4">
-        <SkeletonBlock className="h-36 w-full" />
+        <Skeleton className="h-36 w-full" />
       </div>
     </div>
   );
