@@ -4,7 +4,9 @@ import type { FoodItem } from '../../../types/types';
 import { calories } from '../../../utils/calculate';
 import EditFoodCard from './EditFoodCard';
 import { useRemoveFood } from '../hooks/useFoodMutations';
-import { showAlert, showConfirm } from '../../../utils/sweetAlert';
+import { showAlert } from '../../../utils/sweetAlert';
+import ConfirmDialog from '../../../components/common/ConfirmDialog';
+import { showToast } from '../../../store/toastStore';
 
 type FoodCardProps = {
   food: FoodItem;
@@ -32,23 +34,19 @@ export default function FoodCard({ food }: FoodCardProps) {
   const totalCalories = calories(food.carbs, food.protein, food.fat);
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   // 삭제 mutation
   const { mutate: removeFood, isPending } = useRemoveFood(food.userId);
 
-  // 삭제 버튼 클릭 시 실행되는 함수
-  const handleDeleteFood = async () => {
-    const isConfirmed = await showConfirm({
-      title: '음식을 삭제할까요?',
-      text: '삭제한 음식 기록은 되돌릴 수 없습니다.',
-      icon: 'warning',
-      confirmButtonText: '삭제',
-      cancelButtonText: '취소',
-    });
-
-    if (!isConfirmed) return;
+  // 확인 창에서 '삭제'를 눌렀을 때 실행되는 함수
+  const handleDeleteFood = () => {
+    setIsDeleteConfirmOpen(false);
 
     removeFood(food.id, {
+      onSuccess: () => {
+        showToast(`${food.foodName} 기록을 삭제했어요`);
+      },
       onError: () => {
         showAlert({
           title: '음식 삭제 실패',
@@ -90,7 +88,7 @@ export default function FoodCard({ food }: FoodCardProps) {
 
           <button
             type="button"
-            onClick={handleDeleteFood}
+            onClick={() => setIsDeleteConfirmOpen(true)}
             disabled={isPending}
             aria-label={`${food.foodName} 삭제`}
             className={actionButtonClassName}
@@ -112,6 +110,22 @@ export default function FoodCard({ food }: FoodCardProps) {
           </li>
         ))}
       </ul>
+
+      <ConfirmDialog
+        open={isDeleteConfirmOpen}
+        title="이 기록을 삭제할까요?"
+        description="삭제한 기록은 되돌릴 수 없어요."
+        confirmLabel="삭제"
+        onConfirm={handleDeleteFood}
+        onCancel={() => setIsDeleteConfirmOpen(false)}
+      >
+        <dl className="mt-3.5 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1.5 rounded-lg bg-(--skel) px-3.5 py-3 text-sm">
+          <dt className="text-(--ink-2)">음식</dt>
+          <dd className="m-0 text-right break-all">{food.foodName}</dd>
+          <dt className="text-(--ink-2)">칼로리</dt>
+          <dd className="m-0 text-right tabular-nums">{formatNumber(totalCalories)} kcal</dd>
+        </dl>
+      </ConfirmDialog>
     </article>
   );
 }
