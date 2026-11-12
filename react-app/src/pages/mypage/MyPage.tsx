@@ -1,10 +1,13 @@
 import type { ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useAuthStore } from '../../store/authStore';
 import { logoutApi } from '../../service/UserService';
 import { useThemeStore, type ThemePreference } from '../../store/themeStore';
 import SegmentedControl from '../../components/common/SegmentedControl';
+import GoalSection from '../../features/goals/components/GoalSection';
+import { useRecordedDayCount } from '../../features/foods/hooks/useRecordedDayCount';
+import ChangePasswordForm from './ChangePasswordForm';
 
 const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
   { value: 'system', label: '시스템' },
@@ -48,6 +51,8 @@ export default function MyPage() {
   const themePreference = useThemeStore(state => state.preference);
   const setThemePreference = useThemeStore(state => state.setPreference);
 
+  const { data: recordedDayCount } = useRecordedDayCount(user?.id);
+
   const email = user?.email ?? '';
   const joinedAt = user?.created_at ? format(new Date(user.created_at), 'yyyy년 M월 d일') : '';
 
@@ -67,15 +72,21 @@ export default function MyPage() {
         <span className="text-sm text-(--ink-2)">{email}</span>
       </div>
 
-      {/* 하루 목표와 AI 주간 리포트 설정은 4단계에서 추가해요. */}
+      {/* AI 주간 리포트 설정은 8단계에서 추가해요. */}
       <div>
-        <SettingSection id="mypage-password" title="비밀번호 변경" description="바꾼 뒤에는 다시 로그인해야 해요." isFirst>
-          <Link
-            to="/change-password"
-            className="inline-flex h-9 w-max items-center rounded-lg border border-(--muted) px-3.5 text-[13px] font-medium text-(--ink) transition-colors duration-150 hover:border-(--ink-2)"
+        {user && (
+          <SettingSection
+            id="mypage-goal"
+            title="하루 목표"
+            description="일일 기록과 월간 기록, 주간 리포트가 이 목표를 기준으로 보여요."
+            isFirst
           >
-            비밀번호 변경하기
-          </Link>
+            <GoalSection userId={user.id} />
+          </SettingSection>
+        )}
+
+        <SettingSection id="mypage-password" title="비밀번호 변경" description="바꾼 뒤에는 다시 로그인해야 해요.">
+          <ChangePasswordForm />
         </SettingSection>
 
         <SettingSection id="mypage-theme" title="화면 테마" description="시스템을 고르면 기기 설정을 따라가요.">
@@ -96,6 +107,12 @@ export default function MyPage() {
               <>
                 <dt className="text-(--ink-2)">가입일</dt>
                 <dd className="m-0 text-(--ink)">{joinedAt}</dd>
+              </>
+            )}
+            {recordedDayCount !== undefined && (
+              <>
+                <dt className="text-(--ink-2)">기록한 날</dt>
+                <dd className="m-0 text-(--ink)">지금까지 {recordedDayCount}일</dd>
               </>
             )}
           </dl>
