@@ -1,5 +1,6 @@
 import { useId, useRef, useState, type FormEvent, type RefObject } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Button from '../../components/common/Button';
 import { logoutApi, reauthenticateApi, resetPasswordApi } from '../../service/UserService';
 import { useAuthStore } from '../../store/authStore';
 import { showToast } from '../../store/toastStore';
@@ -155,13 +156,9 @@ export default function ChangePasswordForm() {
         inputRef={confirmInputRef}
         onChange={setValue('confirm')}
       />
-      <button
-        type="submit"
-        disabled={isPending}
-        className="h-9 w-max cursor-pointer rounded-lg border border-(--muted) bg-transparent px-3.5 text-[13px] font-medium text-(--ink) transition-colors duration-150 hover:border-(--ink-2) disabled:cursor-not-allowed disabled:opacity-50"
-      >
+      <Button type="submit" disabled={isPending} className="w-max">
         {isPending ? '바꾸는 중' : '비밀번호 변경'}
-      </button>
+      </Button>
     </form>
   );
 }

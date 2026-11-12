@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import Button from '../../../components/common/Button';
 import Skeleton from '../../../components/common/Skeleton';
 import Switch from '../../../components/common/Switch';
 import { showToast } from '../../../store/toastStore';
@@ -11,9 +12,6 @@ import GoalEditor from './GoalEditor';
 type GoalSectionProps = {
   userId: UserId;
 };
-
-const buttonClassName =
-  'h-9 w-max cursor-pointer rounded-lg border border-(--muted) bg-transparent px-3.5 text-[13px] font-medium text-(--ink) transition-colors duration-150 hover:border-(--ink-2)';
 
 const SUMMARY_ITEMS = [
   { key: 'kcal', label: '칼로리', unit: 'kcal', border: 'border-(--kcal)' },
@@ -99,9 +97,9 @@ export default function GoalSection({ userId }: GoalSectionProps) {
     return (
       <div role="alert" className="flex flex-col gap-3 text-sm text-(--ink-2)">
         <p className="m-0">목표를 불러오지 못했어요.</p>
-        <button type="button" onClick={() => void refetch()} className={buttonClassName}>
+        <Button onClick={() => void refetch()} className="w-max">
           다시 시도
-        </button>
+        </Button>
       </div>
     );
   }
@@ -141,15 +139,9 @@ export default function GoalSection({ userId }: GoalSectionProps) {
           <p className="m-0 text-[13px] text-(--ink-2)">
             {isEnabled ? describeGoal(savedGoal) : '목표 칼로리 설정이 꺼져 있어요. 켜면 이 목표가 적용돼요.'}
           </p>
-          <button
-            ref={editButtonRef}
-            type="button"
-            disabled={!isEnabled}
-            onClick={() => setIsEditing(true)}
-            className={`${buttonClassName} disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-(--muted)`}
-          >
+          <Button ref={editButtonRef} disabled={!isEnabled} onClick={() => setIsEditing(true)} className="w-max">
             목표 수정
-          </button>
+          </Button>
         </>
       )}
     </>

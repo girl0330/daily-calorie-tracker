@@ -1,4 +1,5 @@
 import { useId, useState, type FormEvent } from 'react';
+import Button from '../../../components/common/Button';
 import SegmentedControl from '../../../components/common/SegmentedControl';
 import type { Goal, GoalMode, NutrientRatio } from '../types';
 import {
@@ -47,9 +48,6 @@ const NUTRIENT_DOT: Record<NutrientKey, string> = {
 const rangeMessage = (min: number, max: number) => `${formatInteger(min)}~${formatInteger(max)} 사이로 입력하세요.`;
 
 const toText = (value: number | undefined) => (value === undefined ? '' : String(value));
-
-const buttonClassName =
-  'h-9 cursor-pointer rounded-lg border border-(--muted) bg-transparent px-3.5 text-[13px] font-medium transition-colors duration-150 hover:border-(--ink-2) disabled:cursor-not-allowed disabled:opacity-50';
 
 type NumberFieldProps = {
   label: string;
@@ -332,12 +330,13 @@ export default function GoalEditor({ goal, isSaving, onSave, onCancel }: GoalEdi
       </div>
 
       <div className="flex flex-wrap gap-2 border-t border-(--line) pt-4">
-        <button type="submit" disabled={isSaving} className={`${buttonClassName} text-(--ink)`}>
+        {/* 저장은 초록으로 채우고, 취소는 테두리 버튼이라 한눈에 구분돼요. */}
+        <Button variant="ok" type="submit" disabled={isSaving}>
           {isSaving ? '저장 중' : '저장'}
-        </button>
-        <button type="button" onClick={onCancel} disabled={isSaving} className={`${buttonClassName} text-(--ink-2)`}>
+        </Button>
+        <Button onClick={onCancel} disabled={isSaving}>
           취소
-        </button>
+        </Button>
       </div>
     </form>
   );

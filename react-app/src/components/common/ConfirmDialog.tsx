@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type MouseEvent, type ReactNode, type SyntheticEvent } from 'react';
+import Button from './Button';
 
 type ConfirmDialogProps = {
   open: boolean;
@@ -11,11 +12,6 @@ type ConfirmDialogProps = {
   isConfirmDisabled?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
-};
-
-const confirmToneClassName = {
-  danger: 'border-(--err) bg-(--err) hover:bg-[color-mix(in_srgb,var(--err)_85%,var(--ink))]',
-  brand: 'border-(--brand) bg-(--brand) hover:bg-(--brand-hover)',
 };
 
 /**
@@ -81,22 +77,12 @@ export default function ConfirmDialog({
 
         <div className="mt-5 flex justify-end gap-2">
           {/* 실수로 확정하지 않도록 처음 포커스는 취소 버튼에 둬요. */}
-          <button
-            type="button"
-            autoFocus
-            onClick={onCancel}
-            className="h-9 cursor-pointer rounded-lg border border-(--muted) bg-transparent px-3.5 text-[13px] font-medium text-(--ink) transition-colors duration-150 hover:border-(--ink-2)"
-          >
+          <Button autoFocus onClick={onCancel}>
             {cancelLabel}
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={isConfirmDisabled}
-            className={`h-9 cursor-pointer rounded-lg border px-3.5 text-[13px] font-bold text-(--bg) transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-35 ${confirmToneClassName[tone]}`}
-          >
+          </Button>
+          <Button variant={tone} onClick={onConfirm} disabled={isConfirmDisabled}>
             {confirmLabel}
-          </button>
+          </Button>
         </div>
       </div>
     </dialog>
