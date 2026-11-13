@@ -1,8 +1,8 @@
-// 음식 입력/수정 폼에서 공통으로 사용하는 문자열 기반 폼 값 타입이다.
+import type { MealType } from '../../../types/types';
+import { calories } from '../../../utils/calculate';
 
-import { getRequiredInputErrorMessage } from '../../../utils/validateCommonInput';
-
-// input value는 화면에서 문자열로 관리되므로, 저장 직전에 숫자로 변환한다.
+// 음식 추가판과 표의 수정 줄이 함께 쓰는 입력 규칙이에요.
+// 입력칸은 글자(string)로 들고 있다가, 저장할 때 숫자로 바꿔요.
 export type FoodFormValues = {
   foodName: string;
   carbs: string;
@@ -10,71 +10,66 @@ export type FoodFormValues = {
   fat: string;
 };
 
-export type ParsedFoodFormValues = {
-  foodName: string;
-  carbs: number;
-  protein: number;
-  fat: number;
+export type FoodField = keyof FoodFormValues;
+export type FoodFormErrors = Partial<Record<FoodField, string>>;
+
+// 화면에 놓인 순서예요. 저장에 실패하면 이 순서로 첫 번째 틀린 칸을 찾아요.
+export const FOOD_FIELDS: FoodField[] = ['foodName', 'carbs', 'protein', 'fat'];
+
+export const EMPTY_FOOD_FORM: FoodFormValues = { foodName: '', carbs: '', protein: '', fat: '' };
+
+export const MEAL_OPTIONS: { value: MealType; label: string }[] = [
+  { value: 'breakfast', label: '아침' },
+  { value: 'lunch', label: '점심' },
+  { value: 'dinner', label: '저녁' },
+];
+
+export const MEAL_LABEL: Record<MealType, string> = { breakfast: '아침', lunch: '점심', dinner: '저녁' };
+
+// 추가판의 시간대 기본값: 11시 전은 아침, 16시 전은 점심, 그 뒤는 저녁이에요.
+export const getMealByTime = (date: Date = new Date()): MealType => {
+  const hour = date.getHours();
+  if (hour < 11) return 'breakfast';
+  if (hour < 16) return 'lunch';
+  return 'dinner';
 };
 
-// 입력 중 허용할 영양소 값 패턴.
-// 예: '', '1', '1.', '1.2', '1.23' 허용
-// 예: '1.234', 'abc', '-1' 불가
-const nutrientSavePattern = /^\d+(\.\d{1})?$/;
-const numberRegex = /^-?\d+(\.\d+)?$/;
+const NUMBER_PATTERN = /^\d+(\.\d+)?$/;
+const ONE_DECIMAL_PATTERN = /^\d+(\.\d)?$/;
 
-const nutrientFields: Array<keyof Pick<FoodFormValues, 'carbs' | 'protein' | 'fat'>> = ['carbs', 'protein', 'fat'];
-
-// 유효성 검사
-export const validateFoodForm = (form: FoodFormValues): string | null => {
-  const errorMessage = getRequiredInputErrorMessage([
-    {
-      value: form.foodName,
-      rules: [{ type: 'required', message: '음식 이름을 입력해주세요.' }],
-    },
-    {
-      value: form.carbs,
-      rules: [
-        { type: 'required', message: '탄수화물(carbs) 값을 입력해주세요.' },
-        { type: 'pattern', regex: numberRegex, message: '숫자만 입력할 수 있습니다.' },
-        { type: 'minNumber', min: 0, message: '0 이상이어야 합니다.' },
-        { type: 'pattern', regex: nutrientSavePattern, message: '소수점 1자리까지 입력할 수 있습니다.' },
-      ],
-    },
-    {
-      value: form.protein,
-      rules: [
-        { type: 'required', message: '단백질(protein) 값을 입력해주세요.' },
-        { type: 'pattern', regex: numberRegex, message: '숫자만 입력할 수 있습니다.' },
-        { type: 'minNumber', min: 0, message: '0 이상이어야 합니다.' },
-        { type: 'pattern', regex: nutrientSavePattern, message: '소수점 1자리까지 입력할 수 있습니다.' },
-      ],
-    },
-    {
-      value: form.fat,
-      rules: [
-        { type: 'required', message: '지방(fat) 값을 입력해주세요.' },
-        { type: 'pattern', regex: numberRegex, message: '숫자만 입력할 수 있습니다.' },
-        { type: 'minNumber', min: 0, message: '0 이상이어야 합니다.' },
-        { type: 'pattern', regex: nutrientSavePattern, message: '소수점 1자리까지 입력할 수 있습니다.' },
-      ],
-    },
-  ]);
-
-  return errorMessage;
+const validateNutrient = (value: string): string | undefined => {
+  const text = value.trim();
+  if (!text) return '입력해 주세요.';
+  if (!NUMBER_PATTERN.test(text)) return '0 이상 숫자만 돼요.';
+  if (!ONE_DECIMAL_PATTERN.test(text)) return '소수점 한 자리까지 돼요.';
+  return undefined;
 };
 
-// 검증을 통과한 문자열 폼 값을 API에 전달하기 좋은 형태로 변환한다.
-export const parseFoodForm = (form: FoodFormValues): ParsedFoodFormValues => {
-  return {
-    foodName: form.foodName.trim(),
-    carbs: Number(form.carbs),
-    protein: Number(form.protein),
-    fat: Number(form.fat),
-  };
+// 칸마다 오류 문구를 돌려줘요. 빈 객체면 저장해도 돼요.
+export const validateFoodForm = (form: FoodFormValues): FoodFormErrors => {
+  const errors: FoodFormErrors = {};
+
+  if (!form.foodName.trim()) errors.foodName = '음식 이름을 입력해 주세요.';
+
+  (['carbs', 'protein', 'fat'] as const).forEach(field => {
+    const error = validateNutrient(form[field]);
+    if (error) errors[field] = error;
+  });
+
+  return errors;
 };
 
-// 숫자 기반 음식 데이터를 수정 폼에서 사용할 문자열 값으로 변환한다.
+export const getFirstInvalidField = (errors: FoodFormErrors) => FOOD_FIELDS.find(field => errors[field]);
+
+// 검사를 통과한 글자 값을 저장할 숫자로 바꿔요.
+export const parseFoodForm = (form: FoodFormValues) => ({
+  foodName: form.foodName.trim(),
+  carbs: Number(form.carbs),
+  protein: Number(form.protein),
+  fat: Number(form.fat),
+});
+
+// 저장된 숫자 값을 수정 칸에 넣을 글자로 바꿔요.
 export const toFoodFormValues = ({
   foodName,
   carbs,
@@ -85,37 +80,13 @@ export const toFoodFormValues = ({
   carbs: number;
   protein: number;
   fat: number;
-}): FoodFormValues => {
-  return {
-    foodName,
-    carbs: String(carbs),
-    protein: String(protein),
-    fat: String(fat),
-  };
-};
+}): FoodFormValues => ({
+  foodName,
+  carbs: String(carbs),
+  protein: String(protein),
+  fat: String(fat),
+});
 
-// 입력 중 비어 있는 값은 미리보기 계산에서 0으로 취급한다.
-export const getPreviewNutrients = (form: FoodFormValues) => {
-  return nutrientFields.reduce(
-    (acc, field) => {
-      acc[field] = Number(form[field]) || 0;
-      return acc;
-    },
-    { carbs: 0, protein: 0, fat: 0 }
-  );
-};
-
-// 입력 중 허용할 영양소 값 패턴이다.
-// 예: '', '1', '1.', '1.2', '1.23' 허용
-// 예: '1.234', 'abc', '-1' 불가
-// const nutrientInputPattern = /^\d*(\.\d{0,2})?$/;
-
-// 저장 시점에 허용할 최종 영양소 값 패턴이다.
-// 예: '1', '1.2', '1.23' 허용
-// 예: '', '.', '1.' 불가
-
-// input에서 값이 바뀔 때 사용할 검사 함수이다.
-// 입력 중에는 빈 문자열이나 '1.' 같은 중간 상태도 허용한다.
-// export const isValidNutrientInput = (value: string): boolean => {
-//   return nutrientInputPattern.test(value);
-// };
+// 입력하는 동안 보여 줄 kcal. 아직 비었거나 잘못된 칸은 0으로 셈해요.
+export const getPreviewKcal = (form: FoodFormValues) =>
+  calories(Number(form.carbs) || 0, Number(form.protein) || 0, Number(form.fat) || 0);
