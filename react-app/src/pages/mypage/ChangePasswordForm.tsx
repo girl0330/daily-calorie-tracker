@@ -1,6 +1,7 @@
-import { useId, useRef, useState, type FormEvent, type RefObject } from 'react';
+import { useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
+import TextField from '../../components/common/TextField';
 import { logoutApi, reauthenticateApi, resetPasswordApi } from '../../service/UserService';
 import { useAuthStore } from '../../store/authStore';
 import { showToast } from '../../store/toastStore';
@@ -25,46 +26,6 @@ const validate = (current: string, next: string, confirm: string): PasswordError
   return errors;
 };
 
-type PasswordInputProps = {
-  label: string;
-  value: string;
-  placeholder: string;
-  autoComplete: string;
-  error?: string;
-  hint?: string;
-  inputRef: RefObject<HTMLInputElement | null>;
-  onChange: (value: string) => void;
-};
-
-function PasswordInput({ label, value, placeholder, autoComplete, error, hint, inputRef, onChange }: PasswordInputProps) {
-  const messageId = useId();
-  const message = error ?? hint;
-
-  return (
-    <label className="flex flex-col gap-1.5 text-[13px] text-(--ink-2)">
-      {label}
-      <input
-        ref={inputRef}
-        type="password"
-        value={value}
-        placeholder={placeholder}
-        autoComplete={autoComplete}
-        aria-invalid={!!error}
-        aria-describedby={message ? messageId : undefined}
-        onChange={event => onChange(event.target.value)}
-        className={`h-11 w-full rounded-lg border bg-(--surface) px-3 text-[15px] text-(--ink) ${
-          error ? 'border-(--err)' : 'border-(--muted)'
-        }`}
-      />
-      {message && (
-        <span id={messageId} className={`text-xs ${error ? 'text-(--err)' : 'text-(--muted)'}`}>
-          {message}
-        </span>
-      )}
-    </label>
-  );
-}
-
 // 마이페이지 '비밀번호 변경' 칸. 바꾸면 로그아웃하고 로그인 화면으로 보내요.
 export default function ChangePasswordForm() {
   const navigate = useNavigate();
@@ -84,7 +45,10 @@ export default function ChangePasswordForm() {
     ref.current?.focus();
   };
 
-  const setValue = (field: PasswordField) => (value: string) => setValues(prev => ({ ...prev, [field]: value }));
+  const handleChange = (field: PasswordField) => (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setValues(prev => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -128,33 +92,36 @@ export default function ChangePasswordForm() {
 
   return (
     <form noValidate onSubmit={handleSubmit} className="flex max-w-100 flex-col gap-3.5">
-      <PasswordInput
+      <TextField
+        type="password"
         label="현재 비밀번호"
         value={values.current}
         placeholder="현재 비밀번호를 입력하세요."
         autoComplete="current-password"
         error={errors.current}
-        inputRef={currentInputRef}
-        onChange={setValue('current')}
+        ref={currentInputRef}
+        onChange={handleChange('current')}
       />
-      <PasswordInput
+      <TextField
+        type="password"
         label="새 비밀번호"
         value={values.next}
         placeholder="새 비밀번호를 입력하세요."
         autoComplete="new-password"
         error={errors.next}
         hint={NEW_PASSWORD_HINT}
-        inputRef={nextInputRef}
-        onChange={setValue('next')}
+        ref={nextInputRef}
+        onChange={handleChange('next')}
       />
-      <PasswordInput
+      <TextField
+        type="password"
         label="새 비밀번호 확인"
         value={values.confirm}
         placeholder="새 비밀번호를 한 번 더 입력하세요."
         autoComplete="new-password"
         error={errors.confirm}
-        inputRef={confirmInputRef}
-        onChange={setValue('confirm')}
+        ref={confirmInputRef}
+        onChange={handleChange('confirm')}
       />
       <Button type="submit" disabled={isPending} className="w-max">
         {isPending ? '바꾸는 중' : '비밀번호 변경'}

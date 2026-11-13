@@ -5,7 +5,8 @@ import Switch from '../../../components/common/Switch';
 import { showToast } from '../../../store/toastStore';
 import type { UserId } from '../../../types/types';
 import { useGoalSettings, useSaveGoalSettings } from '../hooks/useGoalSettings';
-import { STANDARD_GOAL, formatInteger, isSameGoal } from '../utils/goalCalc';
+import { formatInteger } from '../../../utils/formatNumber';
+import { STANDARD_GOAL, isSameGoal } from '../utils/goalCalc';
 import type { Goal } from '../types';
 import GoalEditor from './GoalEditor';
 
@@ -22,7 +23,7 @@ const SUMMARY_ITEMS = [
 
 const describeGoal = (goal: Goal) => {
   if (isSameGoal(goal, STANDARD_GOAL)) {
-    return '성인 하루 영양성분 기준치(식약처)로 시작했어요. 목표 수정에서 바꿀 수 있어요.';
+    return '식약처 1일 영양성분 기준치(탄 324g·단 55g·지 54g)로 시작했어요. 칼로리는 이 g을 합한 값이에요.';
   }
 
   if (goal.mode === 'nut') return '영양소로 설정했어요. 칼로리는 탄·단·지에서 계산한 값이에요.';
