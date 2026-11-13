@@ -1,11 +1,12 @@
 import type { Goal, GoalSettings, NutrientRatio } from '../types';
 
 /**
- * 기본 목표: 식약처 '1일 영양성분 기준치'(성인, 2,000kcal 기준).
+ * 기본 목표: 식약처 '1일 영양성분 기준치'의 탄 324g·단 55g·지 54g.
  * 식품 영양표시의 %가 이 값을 기준으로 해요. 목표 설정을 처음 켜면 이 값으로 시작해요.
+ * 칼로리는 이 g을 합한 값(1,296 + 220 + 486)이라 2,000이 아니라 2,002예요.
  */
 export const STANDARD_GOAL: Goal = {
-  kcal: 2000,
+  kcal: 2002,
   carbs: 324,
   protein: 55,
   fat: 54,
