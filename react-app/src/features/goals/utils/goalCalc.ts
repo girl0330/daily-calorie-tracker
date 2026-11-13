@@ -68,10 +68,6 @@ export const kcalFromGrams = (carbs: number, protein: number, fat: number) =>
 export const isSameRatio = (a: NutrientRatio, b: NutrientRatio) =>
   a.carbs === b.carbs && a.protein === b.protein && a.fat === b.fat;
 
-// 목표는 정수라서 소수점 없이 쉼표만 넣어요. (utils/formatNumber는 항상 소수 첫째 자리까지 보여요)
-const integerFormatter = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 0 });
-export const formatInteger = (value: number) => integerFormatter.format(value);
-
 // 입력칸 글자 → 숫자. '1,500'처럼 쉼표가 있어도 읽고, 비어 있거나 숫자가 아니면 null
 export const parseNumberInput = (value: string): number | null => {
   const trimmed = value.replaceAll(',', '').trim();

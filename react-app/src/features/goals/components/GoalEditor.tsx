@@ -1,6 +1,7 @@
-import { useId, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import Button from '../../../components/common/Button';
 import SegmentedControl from '../../../components/common/SegmentedControl';
+import TextField from '../../../components/common/TextField';
 import type { Goal, GoalMode, NutrientRatio } from '../types';
 import {
   ADULT_ENERGY_REFERENCES,
@@ -12,9 +13,9 @@ import {
   gramsFromKcal,
   isSameRatio,
   kcalFromGrams,
-  formatInteger,
   parseNumberInput,
 } from '../utils/goalCalc';
+import { formatInteger } from '../../../utils/formatNumber';
 import RatioSlider from './RatioSlider';
 
 type GoalEditorProps = {
@@ -48,45 +49,6 @@ const NUTRIENT_DOT: Record<NutrientKey, string> = {
 const rangeMessage = (min: number, max: number) => `${formatInteger(min)}~${formatInteger(max)} 사이로 입력하세요.`;
 
 const toText = (value: number | undefined) => (value === undefined ? '' : String(value));
-
-type NumberFieldProps = {
-  label: string;
-  unit: string;
-  value: string;
-  placeholder: string;
-  error?: string;
-  autoFocus?: boolean;
-  onChange: (value: string) => void;
-};
-
-// 시안의 .fld: 라벨, 오른쪽 정렬 숫자 입력칸, 아래 오류 문구
-function NumberField({ label, unit, value, placeholder, error, autoFocus, onChange }: NumberFieldProps) {
-  const errorId = useId();
-
-  return (
-    <label className="flex min-w-0 flex-col gap-1.5 text-[13px] text-(--ink-2)">
-      {label} ({unit})
-      <input
-        type="text"
-        inputMode="numeric"
-        value={value}
-        placeholder={`예: ${placeholder}`}
-        autoFocus={autoFocus}
-        aria-invalid={!!error}
-        aria-describedby={error ? errorId : undefined}
-        onChange={event => onChange(event.target.value)}
-        className={`h-11 w-full rounded-lg border bg-(--surface) px-3 text-right text-[15px] text-(--ink) tabular-nums ${
-          error ? 'border-(--err)' : 'border-(--muted)'
-        }`}
-      />
-      {error && (
-        <span id={errorId} className="text-xs text-(--err)">
-          {error}
-        </span>
-      )}
-    </label>
-  );
-}
 
 export default function GoalEditor({ goal, isSaving, onSave, onCancel }: GoalEditorProps) {
   // 수정 창은 항상 '영양소로 정하기' 탭으로 열어요. 저장된 탄·단·지 g이 그대로 보여요.
@@ -190,14 +152,15 @@ export default function GoalEditor({ goal, isSaving, onSave, onCancel }: GoalEdi
       {mode === 'kcal' ? (
         <>
           <div className="grid grid-cols-[minmax(0,200px)]">
-            <NumberField
-              label="하루 칼로리"
-              unit="kcal"
+            <TextField
+              label="하루 칼로리 (kcal)"
+              inputMode="numeric"
+              align="right"
               value={kcalText}
-              placeholder="1,500"
+              placeholder="예: 1,500"
               error={errors.kcal}
               autoFocus
-              onChange={setKcalText}
+              onChange={event => setKcalText(event.target.value)}
             />
           </div>
 
@@ -266,15 +229,19 @@ export default function GoalEditor({ goal, isSaving, onSave, onCancel }: GoalEdi
         <>
           <div className="grid grid-cols-3 gap-3">
             {NUTRIENTS.map(({ key, label, placeholder }, index) => (
-              <NumberField
+              <TextField
                 key={key}
-                label={label}
-                unit="g"
+                label={`${label} (g)`}
+                inputMode="numeric"
+                align="right"
                 value={gramTexts[key]}
-                placeholder={placeholder}
+                placeholder={`예: ${placeholder}`}
                 error={errors[key]}
                 autoFocus={index === 0}
-                onChange={value => setGramTexts(prev => ({ ...prev, [key]: value }))}
+                onChange={event => {
+                  const { value } = event.target;
+                  setGramTexts(prev => ({ ...prev, [key]: value }));
+                }}
               />
             ))}
           </div>

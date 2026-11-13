@@ -5,7 +5,8 @@ import Switch from '../../../components/common/Switch';
 import { showToast } from '../../../store/toastStore';
 import type { UserId } from '../../../types/types';
 import { useGoalSettings, useSaveGoalSettings } from '../hooks/useGoalSettings';
-import { STANDARD_GOAL, formatInteger, isSameGoal } from '../utils/goalCalc';
+import { formatInteger } from '../../../utils/formatNumber';
+import { STANDARD_GOAL, isSameGoal } from '../utils/goalCalc';
 import type { Goal } from '../types';
 import GoalEditor from './GoalEditor';
 
