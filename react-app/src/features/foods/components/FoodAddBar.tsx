@@ -10,6 +10,7 @@ import {
   EMPTY_FOOD_FORM,
   MEAL_LABEL,
   MEAL_OPTIONS,
+  acceptsFieldInput,
   getFirstInvalidField,
   getPreviewKcal,
   parseFoodForm,
@@ -129,6 +130,7 @@ export default function FoodAddBar({ userId, recordDate, meal, onMealChange, inp
 
   // 고치기 시작한 칸의 오류 문구는 바로 지워요. 다시 검사하는 건 '추가'를 누를 때예요.
   const setField = (field: FoodField, value: string) => {
+    if (!acceptsFieldInput(field, value)) return;
     setForm(prev => ({ ...prev, [field]: value }));
     setErrors(prev => ({ ...prev, [field]: undefined }));
   };
@@ -198,7 +200,7 @@ export default function FoodAddBar({ userId, recordDate, meal, onMealChange, inp
               value={form.foodName}
               error={errors.foodName}
               onChange={event => setField('foodName', event.target.value)}
-              className="flex-[1_1_220px] md:flex-[1_1_140px]"
+              className="flex-[1_1_100%] md:flex-[1_1_140px]"
             />
             {NUTRIENT_FIELDS.map(({ key, label }) => (
               <TextField
@@ -213,7 +215,7 @@ export default function FoodAddBar({ userId, recordDate, meal, onMealChange, inp
                 placeholder="0"
                 error={errors[key]}
                 onChange={event => setField(key, event.target.value)}
-                className="flex-[1_1_80px] md:w-24 md:flex-none"
+                className="flex-[1_1_30%] md:w-24 md:flex-none"
               />
             ))}
             <div className="flex flex-col gap-1.5">
@@ -228,7 +230,7 @@ export default function FoodAddBar({ userId, recordDate, meal, onMealChange, inp
                 추가
               </span>
               <div className="flex items-center gap-2">
-                <span className="mr-1 text-sm whitespace-nowrap text-(--ink-2)">
+                <span className="mr-1 inline-block min-w-28 text-right text-sm whitespace-nowrap text-(--ink-2)">
                   <b className="text-[17px] text-(--ink) tabular-nums">{formatInteger(getPreviewKcal(form))}</b> kcal
                 </span>
                 <Button size="lg" onClick={close}>
@@ -236,7 +238,7 @@ export default function FoodAddBar({ userId, recordDate, meal, onMealChange, inp
                 </Button>
                 {/* 저장 중에도 disabled로 만들지 않아요. 포커스가 body로 날아가서, 클릭만 handleAdd에서 무시해요. */}
                 <Button size="lg" variant="brand" type="submit" className="whitespace-nowrap">
-                  {isPending ? '추가하는 중' : `${MEAL_LABEL[meal]}에 추가`}
+                  {isPending ? '추가하는 중' : '추가'}
                 </Button>
               </div>
             </div>

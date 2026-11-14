@@ -37,11 +37,22 @@ export const getMealByTime = (date: Date = new Date()): MealType => {
 const NUMBER_PATTERN = /^\d+(\.\d+)?$/;
 const ONE_DECIMAL_PATTERN = /^\d+(\.\d)?$/;
 
+/** 한 음식의 탄·단·지는 각각 999.9g까지예요. 그래서 kcal도 많아야 1만 7천 정도로 끝나요. */
+export const NUTRIENT_MAX = 999.9;
+
+/**
+ * 영양소 칸에 이 글자를 받아도 되는지. 소수점 앞이 네 자리 이상이면 받지 않아요.
+ * 입력이 막히니 kcal 숫자가 끝없이 길어지지 않아요. 음식 이름 칸은 늘 받아요.
+ */
+export const acceptsFieldInput = (field: FoodField, value: string) =>
+  field === 'foodName' || !/\d{4,}/.test(value.trim().split('.')[0]);
+
 const validateNutrient = (value: string): string | undefined => {
   const text = value.trim();
   if (!text) return '입력해 주세요.';
   if (!NUMBER_PATTERN.test(text)) return '0 이상 숫자만 돼요.';
   if (!ONE_DECIMAL_PATTERN.test(text)) return '소수점 한 자리까지 돼요.';
+  if (Number(text) > NUTRIENT_MAX) return `${NUTRIENT_MAX}g까지 돼요.`;
   return undefined;
 };
 

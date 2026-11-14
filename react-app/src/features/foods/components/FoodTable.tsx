@@ -1,4 +1,12 @@
-import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
+} from 'react';
 import ConfirmDialog from '../../../components/common/ConfirmDialog';
 import { showToast } from '../../../store/toastStore';
 import type { FoodItem, MealType, UserId } from '../../../types/types';
@@ -6,9 +14,11 @@ import { calories } from '../../../utils/calculate';
 import { formatGram, formatInteger } from '../../../utils/formatNumber';
 import type { DailyTotals } from '../../tracker/components/daily/DailyStats';
 import { useRemoveFood, useUpdateFood } from '../hooks/useFoodMutations';
+import { useMealDrag, type MealDragMode } from '../hooks/useMealDrag';
 import {
   MEAL_LABEL,
   MEAL_OPTIONS,
+  acceptsFieldInput,
   getFirstInvalidField,
   getPreviewKcal,
   parseFoodForm,
@@ -57,6 +67,12 @@ const iconProps = {
 
 const sortByCreated = (a: FoodItem, b: FoodItem) => (a.createdAt < b.createdAt ? -1 : 1);
 
+// 모바일(md 아래)에서만 줄을 꾹 눌러 옮길 수 있어요.
+const MOBILE_QUERY = '(max-width: 767.98px)';
+
+// 놓을 시간대의 줄을 칠해요.
+const DROP_CLASS_NAME = 'bg-(--brand-soft) shadow-[inset_3px_0_0_var(--brand)]';
+
 export default function FoodTable({
   userId,
   foods,
@@ -91,27 +107,85 @@ export default function FoodTable({
     }
   });
 
+  // 수정 중인 줄을 끌어서 옮긴 시간대. ✓를 눌러야 저장되고, ✕를 누르면 버려져요.
+  const [draftMeal, setDraftMeal] = useState<{ id: number; meal: MealType } | null>(null);
+  const mealOf = (food: FoodItem) =>
+    food.id === editingId && draftMeal?.id === food.id ? draftMeal.meal : food.mealType;
+
   const groups = MEAL_OPTIONS.map(({ value, label }) => ({
     meal: value,
     label,
-    foods: foods.filter(food => food.mealType === value).sort(sortByCreated),
+    foods: foods.filter(food => mealOf(food) === value).sort(sortByCreated),
   }));
 
   const isLocked = editingId !== null;
 
+  const tableRef = useRef<HTMLDivElement>(null);
+
+  // 모바일에서 꾹 눌러 옮기면 바로 저장해요.
+  const moveFood = (food: FoodItem, meal: MealType) => {
+    updateFood(
+      {
+        id: food.id,
+        userId,
+        mealType: meal,
+        recordDate: food.recordDate,
+        foodName: food.foodName,
+        carbs: food.carbs,
+        protein: food.protein,
+        fat: food.fat,
+      },
+      {
+        onSuccess: updated => {
+          showToast(`${MEAL_LABEL[meal]}으로 옮겼어요`);
+          onEdited(updated);
+        },
+        onError: () => showToast('옮기지 못했어요. 다시 시도해 주세요.'),
+      },
+    );
+  };
+
+  // 수정 중인 줄의 시간대만 바꿔요. 줄이 다른 시간대로 옮겨진 뒤에도 손잡이에 포커스를 둬요.
+  const changeDraftMeal = (id: number, meal: MealType) => {
+    pendingFocusRef.current = `grip-${id}`;
+    setDraftMeal({ id, meal });
+  };
+
+  const handleDrop = (id: number, mode: MealDragMode, to: MealType) => {
+    if (mode === 'edit') {
+      changeDraftMeal(id, to);
+      return;
+    }
+    const food = foods.find(item => item.id === id);
+    if (food) moveFood(food, to);
+  };
+
+  const { drag, begin } = useMealDrag({ tableRef, onDrop: handleDrop });
+
+  const handleRowPointerDown = (event: ReactPointerEvent<HTMLDivElement>, food: FoodItem) => {
+    if (isLocked || isUpdating || !window.matchMedia(MOBILE_QUERY).matches) return;
+    if ((event.target as HTMLElement).closest('button')) return;
+    begin(event, event.currentTarget, food.id, food.mealType, 'press');
+  };
+
+  const dropClassName = (meal: MealType) =>
+    drag && drag.over === meal && drag.over !== drag.from ? DROP_CLASS_NAME : '';
+
   const finishEditing = (food: FoodItem) => {
     pendingFocusRef.current = `edit-${food.id}`;
+    setDraftMeal(null);
     onEditingChange(null);
   };
 
   const handleSave = (food: FoodItem, values: FoodFormValues) => {
     if (isUpdating) return;
 
+    const meal = mealOf(food);
     updateFood(
-      { id: food.id, userId, mealType: food.mealType, recordDate: food.recordDate, ...parseFoodForm(values) },
+      { id: food.id, userId, mealType: meal, recordDate: food.recordDate, ...parseFoodForm(values) },
       {
         onSuccess: updated => {
-          showToast('수정했어요');
+          showToast(meal === food.mealType ? '수정했어요' : `수정하고 ${MEAL_LABEL[meal]}으로 옮겼어요`);
           finishEditing(food);
           onEdited(updated);
         },
@@ -140,7 +214,7 @@ export default function FoodTable({
 
   return (
     <>
-      <div role="table" aria-label="시간대별 음식 기록" className="tabular-nums">
+      <div ref={tableRef} role="table" aria-label="시간대별 음식 기록" className="tabular-nums">
         <div role="row" className={`${ROW} min-h-10 border-b-(--ink) text-[13px] text-(--ink-2)`}>
           <span role="columnheader">시간대</span>
           <span role="columnheader">음식</span>
@@ -161,10 +235,14 @@ export default function FoodTable({
           </span>
         </div>
 
-        {groups.map(({ meal, label, foods: mealFoods }) => {
+        {/*
+          flatMap으로 모든 줄을 한 목록에 둬요. 수정 중인 줄이 다른 시간대로 옮겨져도
+          React가 같은 줄로 알아봐서 입력하던 값이 그대로 남아요.
+        */}
+        {groups.flatMap(({ meal, label, foods: mealFoods }) => {
           if (mealFoods.length === 0) {
             return (
-              <div key={meal} role="row" className={`${ROW} border-b-(--line)`}>
+              <div key={`empty-${meal}`} role="row" data-meal={meal} className={`${ROW} border-b-(--line) ${dropClassName(meal)}`}>
                 <span role="cell" className="font-bold">
                   {label}
                 </span>
@@ -201,8 +279,15 @@ export default function FoodTable({
                 <FoodEditRow
                   key={food.id}
                   food={food}
-                  mealLabel={isFirst ? label : ''}
+                  meal={meal}
                   isLast={isLast}
+                  isDragging={drag?.id === food.id}
+                  gripRef={registerButton(`grip-${food.id}`)}
+                  onGripPointerDown={(event, row) => {
+                    event.preventDefault();
+                    begin(event, row, food.id, meal, 'edit');
+                  }}
+                  onMealChange={next => changeDraftMeal(food.id, next)}
                   onSave={values => handleSave(food, values)}
                   onCancel={() => finishEditing(food)}
                 />
@@ -213,9 +298,13 @@ export default function FoodTable({
               <div
                 key={food.id}
                 role="row"
-                className={`${ROW} max-md:py-2 ${isLast ? 'border-b-(--line)' : ''} ${
-                  food.id === highlightId ? 'animate-row-flash motion-reduce:animate-none' : ''
-                }`}
+                data-meal={meal}
+                onPointerDown={event => handleRowPointerDown(event, food)}
+                className={`${ROW} max-md:py-2 max-md:select-none max-md:[-webkit-touch-callout:none] ${
+                  isLast ? 'border-b-(--line)' : ''
+                } ${food.id === highlightId ? 'animate-row-flash motion-reduce:animate-none' : ''} ${
+                  drag?.id === food.id ? 'opacity-35' : ''
+                } ${dropClassName(meal)}`}
               >
                 <span role="cell" className="font-bold">
                   {isFirst ? label : ''}
@@ -348,9 +437,14 @@ function Amount({ value, unit }: { value: string; unit: string }) {
 
 type FoodEditRowProps = {
   food: FoodItem;
-  /** 시간대의 첫 줄일 때만 시간대 이름을 보여요. */
-  mealLabel: string;
+  /** 지금 놓인 시간대. 끌어서 옮겼으면 옮긴 시간대예요. */
+  meal: MealType;
   isLast: boolean;
+  /** 이 줄을 끄는 중이면 흐리게 하고 시간대 글씨를 숨겨요. */
+  isDragging: boolean;
+  gripRef: (element: HTMLButtonElement | null) => void;
+  onGripPointerDown: (event: ReactPointerEvent<HTMLButtonElement>, row: HTMLElement) => void;
+  onMealChange: (meal: MealType) => void;
   onSave: (values: FoodFormValues) => void;
   onCancel: () => void;
 };
@@ -365,7 +459,17 @@ const underlineInputClassName =
   'h-7 w-full rounded-none border-0 border-b bg-transparent px-0.5 text-[15px] text-(--ink) focus-visible:border-b-2 focus-visible:border-(--brand) focus-visible:outline-none md:h-7.5';
 
 // 시안의 .editrow: 줄 안에서 바로 고치는 칸. 모바일은 탄·단·지 칸을 둘째 줄로 내려요.
-function FoodEditRow({ food, mealLabel, isLast, onSave, onCancel }: FoodEditRowProps) {
+function FoodEditRow({
+  food,
+  meal,
+  isLast,
+  isDragging,
+  gripRef,
+  onGripPointerDown,
+  onMealChange,
+  onSave,
+  onCancel,
+}: FoodEditRowProps) {
   const errorId = useId();
   const [form, setForm] = useState<FoodFormValues>(() => toFoodFormValues(food));
   const [errors, setErrors] = useState<FoodFormErrors>({});
@@ -404,6 +508,7 @@ function FoodEditRow({ food, mealLabel, isLast, onSave, onCancel }: FoodEditRowP
     'aria-describedby': errors[field] ? errorId : undefined,
     onChange: (event: { target: { value: string } }) => {
       const { value } = event.target;
+      if (!acceptsFieldInput(field, value)) return;
       setForm(prev => ({ ...prev, [field]: value }));
       // 고치기 시작한 칸의 오류는 바로 지워요.
       setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -412,20 +517,66 @@ function FoodEditRow({ food, mealLabel, isLast, onSave, onCancel }: FoodEditRowP
 
   const borderClassName = (field: FoodField) => (errors[field] ? 'border-(--err)' : 'border-(--muted)');
 
+  const mealLabel = MEAL_LABEL[meal];
+
+  // 손잡이에서 위·아래 화살표 키로도 시간대를 바꿔요. 맨 위·맨 아래에서는 멈춰요.
+  const handleGripKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+    event.preventDefault();
+    const index = MEAL_OPTIONS.findIndex(({ value }) => value === meal) + (event.key === 'ArrowDown' ? 1 : -1);
+    const next = MEAL_OPTIONS[index];
+    if (next) onMealChange(next.value);
+  };
+
   return (
     <form
       role="row"
       noValidate
       autoComplete="off"
       aria-label={`${food.foodName} 수정`}
+      data-meal={meal}
       onSubmit={handleSubmit}
       onKeyDown={handleKeyDown}
       className={`grid min-h-13 items-center gap-y-0.5 border-b shadow-[inset_3px_0_0_var(--brand)] *:px-2 max-md:py-2 ${COLUMNS} ${
         isLast ? 'border-(--line)' : 'border-(--line-soft)'
-      }`}
+      } ${isDragging ? 'opacity-35' : ''}`}
     >
       <span role="cell" className="font-bold">
-        {mealLabel}
+        {/* 모바일은 줄을 꾹 눌러 옮기므로 손잡이 없이 시간대 이름만 보여요. */}
+        <span className="whitespace-nowrap md:hidden">{mealLabel}</span>
+        {/* 시간대 손잡이(태블릿·데스크톱): 끌어서 다른 시간대에 놓거나 위·아래 화살표 키로 바꿔요. */}
+        <button
+          ref={gripRef}
+          type="button"
+          title="끌어서 시간대 바꾸기"
+          aria-label={`시간대 ${mealLabel}. 끌거나 위아래 화살표 키로 바꿀 수 있어요`}
+          onPointerDown={event => {
+            const row = event.currentTarget.closest('form');
+            if (row) onGripPointerDown(event, row);
+          }}
+          onKeyDown={handleGripKeyDown}
+          className="group -ml-2 inline-flex cursor-grab whitespace-nowrap max-md:hidden touch-none items-center gap-1.5 rounded-md px-2 py-1 font-bold text-(--ink) transition-colors duration-150 select-none hover:bg-[color-mix(in_srgb,var(--brand)_14%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--brand)_14%,transparent)] motion-reduce:transition-none"
+        >
+          <svg
+            width="10"
+            height="16"
+            viewBox="0 0 10 16"
+            fill="currentColor"
+            aria-hidden="true"
+            className="shrink-0 text-(--faint) transition-colors duration-150 group-hover:text-(--brand) group-focus-visible:text-(--brand) motion-reduce:transition-none"
+          >
+            <circle cx="2.5" cy="3" r="1.4" />
+            <circle cx="7.5" cy="3" r="1.4" />
+            <circle cx="2.5" cy="8" r="1.4" />
+            <circle cx="7.5" cy="8" r="1.4" />
+            <circle cx="2.5" cy="13" r="1.4" />
+            <circle cx="7.5" cy="13" r="1.4" />
+          </svg>
+          {/* 끄는 동안에는 시간대 글씨를 숨겨요(끄는 사본에서도 data-drag-hide로 숨겨요). */}
+          <span data-drag-hide className={isDragging ? 'invisible' : ''}>
+            {mealLabel}
+          </span>
+        </button>
       </span>
       <span role="cell" className="min-w-0">
         <input
@@ -440,7 +591,8 @@ function FoodEditRow({ food, mealLabel, isLast, onSave, onCancel }: FoodEditRowP
       {/* 데스크톱은 칸 3개로 펼치고, 모바일은 둘째 줄에 '탄 [ ] g'처럼 나란히 둬요. */}
       <span className="contents max-md:col-span-3 max-md:col-start-2 max-md:row-start-2 max-md:flex max-md:gap-4">
         {NUTRIENT_INPUTS.map(({ key, short, label }) => (
-          <span key={key} role="cell" className="max-md:!px-0">
+          // 데스크톱은 칸 왼쪽을 넓게 비워 탄·단·지 밑줄이 이어져 보이지 않게 해요.
+          <span key={key} role="cell" className="max-md:!px-0 md:!pl-7">
             <label className="flex items-center gap-1 text-xs text-(--ink-2)">
               <span aria-hidden="true" className="md:hidden">
                 {short}
