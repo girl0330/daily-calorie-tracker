@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { Goal } from '../../../goals/types';
 import { formatInteger } from '../../../../utils/formatNumber';
-import { NUTRIENTS } from '../../utils/monthlyCalendar';
+import { NUTRIENTS } from '../../utils/nutrients';
 
 type MonthlyGoalProps = {
   /** 목표 설정이 꺼져 있으면 null. 그때는 '목표 설정하기' 안내를 보여 줘요. */
