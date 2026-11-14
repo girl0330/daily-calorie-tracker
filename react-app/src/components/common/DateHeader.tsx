@@ -10,6 +10,8 @@ type DateHeaderProps = {
   currentLabel: string;
   prevLabel: string;
   nextLabel: string;
+  /** 더 갈 곳이 없을 때(월간에서 이번 달) 다음 버튼을 흐리게 하고 눌러도 아무 일도 없게 해요. */
+  isNextDisabled?: boolean;
   onPrev: () => void;
   onNext: () => void;
   onCurrent: () => void;
@@ -38,10 +40,17 @@ export default function DateHeader({
   currentLabel,
   prevLabel,
   nextLabel,
+  isNextDisabled = false,
   onPrev,
   onNext,
   onCurrent,
 }: DateHeaderProps) {
+  // disabled 대신 aria-disabled를 써요. 다음 버튼을 눌러 이번 달에 닿는 순간 disabled가 되면
+  // 브라우저가 포커스를 빼앗아 body로 보내서, 키보드로 쓰던 사람이 위치를 잃어요.
+  const handleNext = () => {
+    if (!isNextDisabled) onNext();
+  };
+
   return (
     <div className="flex items-center gap-2 md:mt-5 md:gap-4">
       <button type="button" onClick={onPrev} aria-label={prevLabel} className={navButtonClassName}>
@@ -80,7 +89,13 @@ export default function DateHeader({
         </span>
       </div>
 
-      <button type="button" onClick={onNext} aria-label={nextLabel} className={navButtonClassName}>
+      <button
+        type="button"
+        onClick={handleNext}
+        aria-label={nextLabel}
+        aria-disabled={isNextDisabled || undefined}
+        className={`${navButtonClassName} aria-disabled:cursor-default aria-disabled:opacity-30 aria-disabled:hover:bg-transparent`}
+      >
         <svg {...arrowProps}>
           <path d="M9 6l6 6-6 6" />
         </svg>
