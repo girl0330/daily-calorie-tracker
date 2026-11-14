@@ -1,6 +1,7 @@
 import type { MealType } from '../../../../types/types';
 import { formatGram, formatInteger } from '../../../../utils/formatNumber';
-import { NUTRIENTS, type DaySummary } from '../../utils/monthlyCalendar';
+import { type DaySummary } from '../../utils/monthlyCalendar';
+import { NUTRIENTS } from '../../utils/nutrients';
 
 type DaySheetContentProps = {
   /** 기록이 없는 날이면 null */

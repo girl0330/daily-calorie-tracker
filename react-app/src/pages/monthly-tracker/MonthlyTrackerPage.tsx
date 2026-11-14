@@ -12,7 +12,8 @@ import { getActiveGoal } from '../../features/goals/utils/goalCalc';
 import DaySheetContent from '../../features/tracker/components/monthly/DaySheetContent';
 import MonthlyCalendar from '../../features/tracker/components/monthly/MonthlyCalendar';
 import MonthlyGoal from '../../features/tracker/components/monthly/MonthlyGoal';
-import { NUTRIENTS, summarizeByDate } from '../../features/tracker/utils/monthlyCalendar';
+import { summarizeByDate } from '../../features/tracker/utils/monthlyCalendar';
+import { NUTRIENTS } from '../../features/tracker/utils/nutrients';
 import { useAuthStore } from '../../store/authStore';
 import { toRecordDate } from '../../utils/date';
 

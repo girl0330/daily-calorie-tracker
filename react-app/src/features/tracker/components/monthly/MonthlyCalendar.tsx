@@ -3,7 +3,8 @@ import { ko } from 'date-fns/locale';
 import Skeleton from '../../../../components/common/Skeleton';
 import { formatGram, formatInteger } from '../../../../utils/formatNumber';
 import { toRecordDate } from '../../../../utils/date';
-import { NUTRIENTS, getMonthGridDates, type DaySummary } from '../../utils/monthlyCalendar';
+import { getMonthGridDates, type DaySummary } from '../../utils/monthlyCalendar';
+import { NUTRIENTS } from '../../utils/nutrients';
 
 type MonthlyCalendarProps = {
   month: Date;

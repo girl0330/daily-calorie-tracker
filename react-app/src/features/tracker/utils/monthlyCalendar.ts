@@ -11,13 +11,6 @@ export type DaySummary = {
   mealKcal: Record<MealType, number>;
 };
 
-// 월간 화면 곳곳(달력 칸, 목표, 바텀시트)에서 같은 순서·색으로 써요.
-export const NUTRIENTS = [
-  { key: 'carbs', label: '탄수화물', short: '탄', dotClassName: 'bg-(--carbs)' },
-  { key: 'protein', label: '단백질', short: '단', dotClassName: 'bg-(--protein)' },
-  { key: 'fat', label: '지방', short: '지', dotClassName: 'bg-(--fat)' },
-] as const;
-
 // 달력은 늘 6줄 × 7칸(42칸)이에요. 달마다 줄 수가 바뀌면 달을 넘길 때 칸 높이가 출렁여서요.
 const GRID_DAYS = 42;
 
