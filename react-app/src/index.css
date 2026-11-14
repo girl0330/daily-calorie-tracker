@@ -20,6 +20,8 @@
   --line: #d9d2cc;
   --line-soft: #ece6e0;
   --skel: #f3eeea;
+  /* 달력에서 이번 달이 아닌 칸의 바탕 */
+  --out: #f7f3ef;
   --track: #ebe4de;
   --bar-empty: #d9d2cc;
   --scrim: rgba(43, 38, 35, 0.35);
@@ -61,6 +63,7 @@
     --line: #45403b;
     --line-soft: #35302c;
     --skel: #35302c;
+    --out: #211e1c;
     --track: #35302c;
     --bar-empty: #45403b;
     --scrim: rgba(0, 0, 0, 0.5);
@@ -88,6 +91,7 @@
   --line: #45403b;
   --line-soft: #35302c;
   --skel: #35302c;
+  --out: #211e1c;
   --track: #35302c;
   --bar-empty: #45403b;
   --scrim: rgba(0, 0, 0, 0.5);
@@ -154,12 +158,20 @@
   }
 }
 
-/* 공통 부품 애니메이션: animate-skeleton, animate-toast-in, animate-row-flash 클래스로 써요. */
+/* 공통 부품 애니메이션: animate-skeleton, animate-toast-in, animate-row-flash, animate-sheet-up 클래스로 써요. */
 @theme {
   --animate-skeleton: skeleton-pulse 1.2s ease-in-out infinite;
   --animate-toast-in: toast-in 0.2s ease;
   /* 방금 추가하거나 고친 표의 줄을 잠깐 밝게 보여 줘요. */
   --animate-row-flash: row-flash 2.4s ease;
+  /* 바텀시트가 아래에서 올라와요. */
+  --animate-sheet-up: sheet-up 0.25s ease;
+
+  @keyframes sheet-up {
+    from {
+      transform: translateY(100%);
+    }
+  }
 
   @keyframes skeleton-pulse {
     50% {

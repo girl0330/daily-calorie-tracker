@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { addDays, format, isToday } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import BottomSheet from '../../components/common/BottomSheet';
 import Button from '../../components/common/Button';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 import DateHeader from '../../components/common/DateHeader';
@@ -17,6 +18,7 @@ export default function ComponentsPreviewPage() {
   const [date, setDate] = useState(() => new Date());
   const [isAutoReport, setIsAutoReport] = useState(true);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const sectionClassName = 'flex flex-col gap-3 border-t border-(--line) pt-5';
 
@@ -64,6 +66,16 @@ export default function ComponentsPreviewPage() {
           }}
           onCancel={() => setIsConfirmOpen(false)}
         />
+      </section>
+
+      <section className={sectionClassName}>
+        <h2 className="m-0 text-base font-bold">바텀시트</h2>
+        <Button className="w-max" onClick={() => setIsSheetOpen(true)}>
+          바텀시트 열기
+        </Button>
+        <BottomSheet open={isSheetOpen} title="11월 3일 화요일" onClose={() => setIsSheetOpen(false)}>
+          <p className="m-0 pt-5 pb-1.5 text-sm text-(--ink-2)">Esc, ✕, 바깥 영역으로 닫혀요.</p>
+        </BottomSheet>
       </section>
 
       <section className={sectionClassName}>
