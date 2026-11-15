@@ -43,7 +43,7 @@ const toFoodName = ({ name, serving }: FoodCandidate) => `${name} ${serving.spli
 
 /**
  * 시안의 .search: 위의 검색 줄 + 아래로 펼쳐지는 판.
- * 검색어를 넣고 'AI 검색'을 누르면 후보를 찾아요. 비워 두고 누르면 바로 직접 입력판을 열어요.
+ * 검색어를 넣고 'AI 검색'을 누르면 후보를 찾아요. 비워 두고 누르면 토스트로 안내만 해요.
  */
 export default function FoodAddBar({
   userId,
@@ -156,8 +156,13 @@ export default function FoodAddBar({
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const text = query.trim();
-    if (text) search(text);
-    else openManual('');
+    // 검색어 없이 누르면 판을 열지 않고 안내만 해요. 직접 입력은 표의 '+ 추가'로 할 수 있어요.
+    if (!text) {
+      showToast("검색어를 입력하거나 '+ 추가'로 직접 입력해 주세요");
+      inputRef.current?.focus();
+      return;
+    }
+    search(text);
   };
 
   // 후보를 고르면 아래 입력칸에 값을 채워요. 포커스는 고른 후보에 그대로 둬요.
