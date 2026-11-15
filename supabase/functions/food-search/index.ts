@@ -83,35 +83,37 @@ const SYSTEM_PROMPT = `너는 한국 사용자가 먹은 음식의 영양 성분
 - kcal은 쓰지 마. 앱이 탄수화물·단백질·지방으로 계산해.
 
 [예시]
-입력: 김밥
+아래 예시는 답의 모양을 보여 주려는 거야. 예시에 나온 음식이 검색되더라도 예시의 숫자를 그대로 쓰지 말고 매번 새로 추정해.
+
+입력: 콩국수
 답: {"status": "ok", "candidates": [
-  {"name": "김밥", "serving": "1줄 (약 230g)", "carbs": 68.5, "protein": 12.3, "fat": 9.8},
-  {"name": "참치김밥", "serving": "1줄 (약 250g)", "carbs": 66.0, "protein": 17.4, "fat": 14.2}
+  {"name": "콩국수", "serving": "1그릇 (약 600g)", "carbs": 80.0, "protein": 25.0, "fat": 15.0},
+  {"name": "검은콩 콩국수", "serving": "1그릇 (약 600g)", "carbs": 78.0, "protein": 27.0, "fat": 16.0}
 ], "suggestions": []}
 
-입력: 닭가슴살 150g
+입력: 연어 100g
 답: {"status": "ok", "candidates": [
-  {"name": "닭가슴살 (삶은 것)", "serving": "150g", "carbs": 0.0, "protein": 34.7, "fat": 1.8},
-  {"name": "닭가슴살 (훈제)", "serving": "150g", "carbs": 2.3, "protein": 33.0, "fat": 3.0}
+  {"name": "연어 (생것)", "serving": "100g", "carbs": 0.0, "protein": 20.0, "fat": 13.0},
+  {"name": "연어 (구운 것)", "serving": "100g", "carbs": 0.0, "protein": 25.0, "fat": 12.0}
 ], "suggestions": []}
 
-입력: 빵
-답: {"status": "too_broad", "candidates": [], "suggestions": ["식빵 2장", "단팥빵", "크루아상"]}
+입력: 떡
+답: {"status": "too_broad", "candidates": [], "suggestions": ["가래떡 1줄", "꿀떡 5개", "인절미 3조각"]}
 
 입력: 책상
 답: {"status": "not_food", "candidates": [], "suggestions": []}
 
-입력: 김밥 50kg
+입력: 붕어빵 20kg
 답: {"status": "not_food", "candidates": [], "suggestions": []}
 
-입력: 스타벅스 카페라테
+입력: 스타벅스 자몽 허니 블랙 티
 답: {"status": "ok", "candidates": [
-  {"name": "스타벅스 카페라테", "serving": "1잔 (톨, 355ml)", "carbs": 15.0, "protein": 10.0, "fat": 7.0}
+  {"name": "스타벅스 자몽 허니 블랙 티", "serving": "1잔 (톨, 355ml)", "carbs": 31.0, "protein": 0.0, "fat": 0.0}
 ], "suggestions": []}
 
-입력: ○○분식 떡볶이
+입력: ○○분식 쫄면
 답: {"status": "ok", "candidates": [
-  {"name": "○○분식 떡볶이", "serving": "1인분 (일반 기준, 약 300g)", "carbs": 95.0, "protein": 10.0, "fat": 5.0}
+  {"name": "○○분식 쫄면", "serving": "1인분 (일반 기준, 약 400g)", "carbs": 100.0, "protein": 12.0, "fat": 8.0}
 ], "suggestions": []}`;
 
 // 답 모양. strict 모드라 모든 칸이 필수예요. 쓸 일이 없는 칸은 빈 배열로 와요.
