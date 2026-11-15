@@ -287,7 +287,7 @@ export default function FoodAddBar({
               <div role="status">
                 <strong>‘{searchedQuery}’에 맞는 음식을 찾지 못했어요</strong>
                 <span className="block text-[13px] text-(--ink-2)">
-                  음식 이름과 양을 조금 더 구체적으로 적어 주세요. 예: 김밥 1줄
+                  음식 이름과 양을 확인해 주세요.
                 </span>
               </div>
               <Button onClick={() => openManual(searchedQuery)}>직접 입력</Button>

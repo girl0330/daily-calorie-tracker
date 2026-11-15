@@ -28,7 +28,7 @@ export default function FoodSearchResults({ results, selectedIndex, onPick, onMa
         후보 {results.length}개를 찾았어요
       </p>
       <div className="flex items-center justify-between gap-3 py-1.5 pl-3 text-xs text-(--ink-2)">
-        <span>AI 추천 결과 · 하나를 고르세요</span>
+        <span className="min-w-0">AI 추천 결과는 정확하지 않을 수 있어요 · 하나를 고르세요</span>
         <button
           type="button"
           onClick={onManual}
