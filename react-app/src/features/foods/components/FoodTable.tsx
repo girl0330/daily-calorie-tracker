@@ -13,9 +13,10 @@ import type { FoodItem, MealType, UserId } from '../../../types/types';
 import { calories } from '../../../utils/calculate';
 import { formatGram, formatInteger } from '../../../utils/formatNumber';
 import type { DailyTotals } from '../../tracker/components/daily/DailyStats';
-import { useRemoveFood, useUpdateFood } from '../hooks/useFoodMutations';
+import { useCreateFood, useRemoveFood, useUpdateFood } from '../hooks/useFoodMutations';
 import { useMealDrag, type MealDragMode } from '../hooks/useMealDrag';
 import {
+  EMPTY_FOOD_FORM,
   MEAL_LABEL,
   MEAL_OPTIONS,
   acceptsFieldInput,
@@ -40,15 +41,25 @@ type FoodTableProps = {
   /** 방금 추가하거나 고친 줄. 잠깐 반짝여요. */
   highlightId: number | null;
   onEdited: (food: FoodItem) => void;
-  /** 빈 시간대의 '+ 추가' */
-  onAddHere: (meal: MealType) => void;
+  /** 표에서 새로 추가할 때 기록할 날짜 */
+  recordDate: string;
+  /**
+   * 빈 시간대의 '+ 추가'로 연 새 줄의 시간대. 없으면 null.
+   * 페이지가 들고 있어서, 추가 중에는 날짜를 못 바꾸게 막아요.
+   */
+  addingMeal: MealType | null;
+  onAddingChange: (meal: MealType | null) => void;
+  onAdded: (food: FoodItem) => void;
 };
+
+/** 새로 추가하는 줄의 id. 진짜 음식 id는 양수라 겹치지 않아요. 끌기에서 이 줄을 알아볼 때 써요. */
+const NEW_ROW_ID = -1;
 
 // 시안의 .tr: 데스크톱 7칸(시간대, 음식, 탄, 단, 지, kcal, 작업), 모바일 4칸(시간대, 음식, kcal, 작업)
 const COLUMNS = 'grid-cols-[56px_minmax(0,1fr)_56px_84px] md:grid-cols-[90px_minmax(0,1fr)_100px_100px_100px_100px_96px]';
 const ROW = `grid min-h-13 items-center border-b border-(--line-soft) *:px-2 ${COLUMNS}`;
 
-const LOCKED_TITLE = '수정 중인 줄을 저장하거나 취소한 뒤에 쓸 수 있어요';
+const LOCKED_TITLE = '작성 중인 줄을 저장하거나 취소한 뒤에 쓸 수 있어요';
 
 const iconButtonClassName =
   'inline-flex size-10 cursor-pointer items-center justify-center rounded-lg text-(--ink-2) transition-colors duration-150 hover:bg-(--skel) disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent';
@@ -81,9 +92,13 @@ export default function FoodTable({
   onEditingChange,
   highlightId,
   onEdited,
-  onAddHere,
+  recordDate,
+  addingMeal,
+  onAddingChange,
+  onAdded,
 }: FoodTableProps) {
   const { mutate: updateFood, isPending: isUpdating } = useUpdateFood(userId);
+  const { mutate: createFood, isPending: isCreating } = useCreateFood(userId);
   const { mutate: removeFood } = useRemoveFood(userId);
   const [deleteTarget, setDeleteTarget] = useState<FoodItem | null>(null);
 
@@ -118,7 +133,7 @@ export default function FoodTable({
     foods: foods.filter(food => mealOf(food) === value).sort(sortByCreated),
   }));
 
-  const isLocked = editingId !== null;
+  const isLocked = editingId !== null || addingMeal !== null;
 
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -152,6 +167,11 @@ export default function FoodTable({
   };
 
   const handleDrop = (id: number, mode: MealDragMode, to: MealType) => {
+    if (id === NEW_ROW_ID) {
+      pendingFocusRef.current = `grip-${NEW_ROW_ID}`;
+      onAddingChange(to);
+      return;
+    }
     if (mode === 'edit') {
       changeDraftMeal(id, to);
       return;
@@ -190,6 +210,32 @@ export default function FoodTable({
           onEdited(updated);
         },
         onError: () => showToast('수정하지 못했어요. 다시 시도해 주세요.'),
+      },
+    );
+  };
+
+  // '+ 추가'로 연 새 줄: 처음 누른 '+ 추가'의 시간대. 취소하면 그 버튼으로 포커스를 돌려줘요.
+  const addOriginRef = useRef<MealType | null>(null);
+
+  const cancelAdding = () => {
+    // 시간대를 옮긴 뒤 취소해도, 처음 누른 '+ 추가'로 돌아가요. 그 시간대는 다시 비어서 버튼이 있어요.
+    pendingFocusRef.current = addOriginRef.current ? `add-${addOriginRef.current}` : null;
+    onAddingChange(null);
+  };
+
+  const handleCreate = (meal: MealType, values: FoodFormValues) => {
+    if (isCreating) return;
+
+    createFood(
+      { userId, mealType: meal, recordDate, ...parseFoodForm(values) },
+      {
+        onSuccess: food => {
+          showToast(`${MEAL_LABEL[food.mealType]}에 ${food.foodName} 추가됨`);
+          pendingFocusRef.current = `edit-${food.id}`;
+          onAddingChange(null);
+          onAdded(food);
+        },
+        onError: () => showToast('음식을 추가하지 못했어요. 다시 시도해 주세요.'),
       },
     );
   };
@@ -240,7 +286,32 @@ export default function FoodTable({
           React가 같은 줄로 알아봐서 입력하던 값이 그대로 남아요.
         */}
         {groups.flatMap(({ meal, label, foods: mealFoods }) => {
+          // '+ 추가'로 연 새 줄. key가 늘 같아서 시간대를 옮겨도 입력하던 값이 남아요.
+          const newRow =
+            addingMeal === meal ? (
+              <FoodEditRow
+                key="new-row"
+                initialValues={EMPTY_FOOD_FORM}
+                rowLabel={`${label}에 음식 추가`}
+                meal={meal}
+                isLast
+                isDragging={drag?.id === NEW_ROW_ID}
+                gripRef={registerButton(`grip-${NEW_ROW_ID}`)}
+                onGripPointerDown={(event, row) => {
+                  event.preventDefault();
+                  begin(event, row, NEW_ROW_ID, meal, 'edit');
+                }}
+                onMealChange={next => {
+                  pendingFocusRef.current = `grip-${NEW_ROW_ID}`;
+                  onAddingChange(next);
+                }}
+                onSave={values => handleCreate(meal, values)}
+                onCancel={cancelAdding}
+              />
+            ) : null;
+
           if (mealFoods.length === 0) {
+            if (newRow) return [newRow];
             return (
               <div key={`empty-${meal}`} role="row" data-meal={meal} className={`${ROW} border-b-(--line) ${dropClassName(meal)}`}>
                 <span role="cell" className="font-bold">
@@ -260,7 +331,10 @@ export default function FoodTable({
                     disabled={isLocked}
                     title={isLocked ? LOCKED_TITLE : undefined}
                     aria-label={`${label}에 음식 추가`}
-                    onClick={() => onAddHere(meal)}
+                    onClick={() => {
+                      addOriginRef.current = meal;
+                      onAddingChange(meal);
+                    }}
                     className="h-9 cursor-pointer rounded-lg px-3 text-[13px] font-bold text-(--brand) transition-colors duration-150 hover:bg-(--skel) disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
                   >
                     + 추가
@@ -270,15 +344,17 @@ export default function FoodTable({
             );
           }
 
-          return mealFoods.map((food, index) => {
+          const foodRows = mealFoods.map((food, index) => {
             const isFirst = index === 0;
-            const isLast = index === mealFoods.length - 1;
+            // 새 줄이 아래에 붙으면 그 새 줄이 시간대의 마지막 줄이에요.
+            const isLast = index === mealFoods.length - 1 && !newRow;
 
             if (food.id === editingId) {
               return (
                 <FoodEditRow
                   key={food.id}
-                  food={food}
+                  initialValues={toFoodFormValues(food)}
+                  rowLabel={`${food.foodName} 수정`}
                   meal={meal}
                   isLast={isLast}
                   isDragging={drag?.id === food.id}
@@ -362,6 +438,8 @@ export default function FoodTable({
               </div>
             );
           });
+
+          return newRow ? [...foodRows, newRow] : foodRows;
         })}
 
         {/* 하루 합계. 모바일은 3칸(합계, 탄·단·지, kcal)으로 줄여요. */}
@@ -436,7 +514,10 @@ function Amount({ value, unit }: { value: string; unit: string }) {
 }
 
 type FoodEditRowProps = {
-  food: FoodItem;
+  /** 칸에 처음 넣을 값. 새로 추가하는 줄이면 빈 값이에요. */
+  initialValues: FoodFormValues;
+  /** 화면 읽기 프로그램이 읽을 줄 이름. 예) 김밥 수정, 아침에 음식 추가 */
+  rowLabel: string;
   /** 지금 놓인 시간대. 끌어서 옮겼으면 옮긴 시간대예요. */
   meal: MealType;
   isLast: boolean;
@@ -460,7 +541,8 @@ const underlineInputClassName =
 
 // 시안의 .editrow: 줄 안에서 바로 고치는 칸. 모바일은 탄·단·지 칸을 둘째 줄로 내려요.
 function FoodEditRow({
-  food,
+  initialValues,
+  rowLabel,
   meal,
   isLast,
   isDragging,
@@ -471,7 +553,7 @@ function FoodEditRow({
   onCancel,
 }: FoodEditRowProps) {
   const errorId = useId();
-  const [form, setForm] = useState<FoodFormValues>(() => toFoodFormValues(food));
+  const [form, setForm] = useState<FoodFormValues>(initialValues);
   const [errors, setErrors] = useState<FoodFormErrors>({});
   const inputRefs = useRef<Partial<Record<FoodField, HTMLInputElement | null>>>({});
 
@@ -533,7 +615,7 @@ function FoodEditRow({
       role="row"
       noValidate
       autoComplete="off"
-      aria-label={`${food.foodName} 수정`}
+      aria-label={rowLabel}
       data-meal={meal}
       onSubmit={handleSubmit}
       onKeyDown={handleKeyDown}
