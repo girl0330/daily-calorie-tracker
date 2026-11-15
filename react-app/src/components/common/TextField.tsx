@@ -8,6 +8,20 @@ type TextFieldProps = ComponentProps<'input'> & {
   hint?: string;
   /** 숫자 칸은 오른쪽 정렬해요. */
   align?: 'left' | 'right';
+  /** box: 테두리 상자(기본) / line: 밑줄만 있는 칸(음식 입력판) */
+  variant?: 'box' | 'line';
+};
+
+const variantClassName = {
+  box: {
+    label: 'text-[13px]',
+    input: 'h-11 rounded-lg border bg-(--surface) px-3',
+  },
+  line: {
+    label: 'text-xs',
+    input:
+      'h-9 rounded-none border-0 border-b bg-transparent px-0.5 focus-visible:border-b-2 focus-visible:border-(--brand) focus-visible:outline-none',
+  },
 };
 
 /**
@@ -15,7 +29,16 @@ type TextFieldProps = ComponentProps<'input'> & {
  * value, onChange, inputMode, autoFocus, ref 같은 input 속성은 그대로 넘어가요.
  * className은 바깥 묶음(라벨·칸·문구를 감싸는 div)에 붙어서 폭이나 flex 크기를 정할 때 써요.
  */
-export default function TextField({ id, label, error, hint, align = 'left', className = '', ...inputProps }: TextFieldProps) {
+export default function TextField({
+  id,
+  label,
+  error,
+  hint,
+  align = 'left',
+  variant = 'box',
+  className = '',
+  ...inputProps
+}: TextFieldProps) {
   const autoId = useId();
   const inputId = id ?? autoId;
   const messageId = `${inputId}-message`;
@@ -24,7 +47,7 @@ export default function TextField({ id, label, error, hint, align = 'left', clas
   // 문구를 라벨 밖에 둬요. 라벨 안에 있으면 칸 이름에 오류 문구까지 섞여서 화면 읽기 프로그램이 두 번 읽어요.
   return (
     <div className={`flex min-w-0 flex-col gap-1.5 ${className}`}>
-      <label htmlFor={inputId} className="text-[13px] text-(--ink-2)">
+      <label htmlFor={inputId} className={`text-(--ink-2) ${variantClassName[variant].label}`}>
         {label}
       </label>
       <input
@@ -33,7 +56,7 @@ export default function TextField({ id, label, error, hint, align = 'left', clas
         id={inputId}
         aria-invalid={!!error}
         aria-describedby={message ? messageId : undefined}
-        className={`h-11 w-full rounded-lg border bg-(--surface) px-3 text-[15px] text-(--ink) placeholder:text-(--muted) ${
+        className={`w-full text-[15px] text-(--ink) placeholder:text-(--muted) ${variantClassName[variant].input} ${
           align === 'right' ? 'text-right tabular-nums' : ''
         } ${error ? 'border-(--err)' : 'border-(--muted)'}`}
       />

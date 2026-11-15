@@ -43,6 +43,8 @@ export default function DailyTrackerPage() {
   const [addMeal, setAddMeal] = useState<MealType>(() => getMealByTime());
   const [highlight, setHighlight] = useState<Highlight | null>(null);
   const addInputRef = useRef<HTMLInputElement>(null);
+  // 표의 '+ 추가'로 연 새 줄의 시간대. 추가 중에도 날짜를 못 바꾸게 페이지가 들고 있어요.
+  const [addingMeal, setAddingMeal] = useState<MealType | null>(null);
 
   useEffect(() => {
     if (!highlight) return;
@@ -62,15 +64,12 @@ export default function DailyTrackerPage() {
       showToast('수정 중인 기록을 저장(✓)하거나 취소(✕)한 뒤에 날짜를 바꿀 수 있어요');
       return;
     }
+    if (addingMeal !== null) {
+      showToast('추가 중인 기록을 저장(✓)하거나 취소(✕)한 뒤에 날짜를 바꿀 수 있어요');
+      return;
+    }
     setHighlight(null);
     setSearchParams({ date: toRecordDate(date) });
-  };
-
-  // 빈 시간대의 '+ 추가': 그 시간대를 고르고 입력 줄로 포커스를 옮겨요.
-  const handleAddHere = (meal: MealType) => {
-    setAddMeal(meal);
-    addInputRef.current?.focus();
-    addInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   const handleAdded = (food: FoodItem) => setHighlight({ id: food.id, delta: toTotals(food) });
@@ -133,7 +132,10 @@ export default function DailyTrackerPage() {
             onEditingChange={setEditingId}
             highlightId={highlight?.id ?? null}
             onEdited={handleEdited}
-            onAddHere={handleAddHere}
+            recordDate={recordDate}
+            addingMeal={addingMeal}
+            onAddingChange={setAddingMeal}
+            onAdded={handleAdded}
           />
         </>
       )}
