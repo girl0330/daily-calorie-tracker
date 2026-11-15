@@ -3,7 +3,8 @@ import Button from '../../../components/common/Button';
 import { showToast } from '../../../store/toastStore';
 import type { FoodItem, MealType, UserId } from '../../../types/types';
 import { useCreateFood } from '../hooks/useFoodMutations';
-import { searchFoodsApi, type FoodCandidate } from '../services/FoodSearchService';
+import { DailyLimitError, searchFoodsApi, type FoodCandidate } from '../services/FoodSearchService';
+import { topicParticle } from '../../../utils/korean';
 import {
   EMPTY_FOOD_FORM,
   MEAL_LABEL,
@@ -32,9 +33,10 @@ type FoodAddBarProps = {
 /**
  * 아래 판의 상태.
  * idle: 닫힘 / loading: 찾는 중 / results: 후보 목록(고르면 아래에 입력칸) / notfound: 못 찾음
+ * broad: '빵'처럼 넓은 검색어라 더 자세한 검색어 예시를 보여 줌 / limit: 하루 AI 검색 횟수를 다 씀
  * error: 검색 실패 / manual: 직접 입력
  */
-type Phase = 'idle' | 'loading' | 'results' | 'notfound' | 'error' | 'manual';
+type Phase = 'idle' | 'loading' | 'results' | 'notfound' | 'broad' | 'limit' | 'error' | 'manual';
 
 // 후보의 양에서 괄호 앞부분만 이름 뒤에 붙여요. 예) 김밥 + '1줄 (약 230g)' → '김밥 1줄'
 const toFoodName = ({ name, serving }: FoodCandidate) => `${name} ${serving.split(' (')[0]}`.trim();
@@ -63,6 +65,10 @@ export default function FoodAddBar({
   const [phase, setPhase] = useState<Phase>('idle');
   const [searchedQuery, setSearchedQuery] = useState('');
   const [results, setResults] = useState<FoodCandidate[]>([]);
+  // 넓은 검색어일 때 AI가 준 더 자세한 검색어 예시
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  // 하루 AI 검색 횟수(함수가 알려 줘요)
+  const [dailyLimit, setDailyLimit] = useState(50);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [form, setForm] = useState<FoodFormValues>(EMPTY_FOOD_FORM);
   const [errors, setErrors] = useState<FoodFormErrors>({});
@@ -122,14 +128,29 @@ export default function FoodAddBar({
     setPhase('loading');
 
     searchFoodsApi(text)
-      .then(found => {
+      .then(result => {
         if (id !== searchIdRef.current) return;
-        setResults(found);
-        setPhase(found.length > 0 ? 'results' : 'notfound');
+        setResults(result.candidates);
+        setSuggestions(result.suggestions);
+        if (result.status === 'ok' && result.candidates.length > 0) setPhase('results');
+        else if (result.status === 'too_broad' && result.suggestions.length > 0) setPhase('broad');
+        else setPhase('notfound');
       })
-      .catch(() => {
-        if (id === searchIdRef.current) setPhase('error');
+      .catch((error: unknown) => {
+        if (id !== searchIdRef.current) return;
+        if (error instanceof DailyLimitError) {
+          setDailyLimit(error.limit);
+          setPhase('limit');
+        } else {
+          setPhase('error');
+        }
       });
+  };
+
+  // 넓은 검색어 화면의 예시를 누르면 그 말로 바로 다시 찾아요.
+  const searchSuggestion = (text: string) => {
+    setQuery(text);
+    search(text);
   };
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
@@ -286,8 +307,46 @@ export default function FoodAddBar({
             <div className="flex flex-wrap items-center justify-between gap-4 px-3 py-5">
               <div role="status">
                 <strong>‘{searchedQuery}’에 맞는 음식을 찾지 못했어요</strong>
-                <span className="block text-[13px] text-(--ink-2)">
+                <span className="block text-[13px] break-keep text-(--ink-2)">
                   음식 이름과 양을 확인해 주세요.
+                </span>
+              </div>
+              <Button onClick={() => openManual(searchedQuery)}>직접 입력</Button>
+            </div>
+          )}
+
+          {phase === 'broad' && (
+            <div className="flex flex-wrap items-center justify-between gap-4 px-3 py-5">
+              <div role="status" className="min-w-0">
+                <strong>
+                  ‘{searchedQuery}’{topicParticle(searchedQuery)} 종류가 많아요
+                </strong>
+                <span className="block text-[13px] break-keep text-(--ink-2)">
+                  조금 더 자세히 적어 주세요. 예시를 누르면 바로 다시 찾아요.
+                </span>
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {suggestions.map(suggestion => (
+                    <button
+                      key={suggestion}
+                      type="button"
+                      onClick={() => searchSuggestion(suggestion)}
+                      className="h-8 cursor-pointer rounded-full border border-(--line) bg-(--surface) px-3 text-[13px] whitespace-nowrap text-(--ink) transition-colors duration-150 hover:border-(--brand) hover:bg-(--brand-soft) focus-visible:border-(--brand) focus-visible:bg-(--brand-soft)"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <Button onClick={() => openManual(searchedQuery)}>직접 입력</Button>
+            </div>
+          )}
+
+          {phase === 'limit' && (
+            <div className="flex flex-wrap items-center justify-between gap-4 px-3 py-5">
+              <div role="status">
+                <strong>오늘 AI 검색을 모두 썼어요</strong>
+                <span className="block text-[13px] break-keep text-(--ink-2)">
+                  AI 검색은 하루 {dailyLimit}번까지 쓸 수 있어요. 내일 다시 쓰거나 값을 직접 입력해 주세요.
                 </span>
               </div>
               <Button onClick={() => openManual(searchedQuery)}>직접 입력</Button>
@@ -298,7 +357,7 @@ export default function FoodAddBar({
             <div role="alert" className="flex flex-wrap items-center justify-between gap-4 rounded-lg bg-(--err-soft) px-3 py-5">
               <div>
                 <strong className="text-(--err)">AI 검색에 실패했어요</strong>
-                <span className="block text-[13px] text-(--ink-2)">잠시 후 다시 시도하거나 값을 직접 입력할 수 있어요.</span>
+                <span className="block text-[13px] break-keep text-(--ink-2)">잠시 후 다시 시도하거나 값을 직접 입력할 수 있어요.</span>
               </div>
               <div className="flex gap-2">
                 <Button variant="brand" onClick={() => search(searchedQuery)}>
