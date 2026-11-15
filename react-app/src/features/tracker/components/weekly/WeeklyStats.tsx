@@ -1,5 +1,6 @@
 import type { Goal } from '../../../goals/types';
 import { formatInteger } from '../../../../utils/formatNumber';
+import { topicParticle } from '../../../../utils/korean';
 import type { WeekDay, WeeklyReport } from '../../utils/weeklyReport';
 
 type WeeklyStatsProps = {
@@ -11,8 +12,6 @@ type WeeklyStatsProps = {
 
 const WEEKDAYS = ['월', '화', '수', '목', '금', '토', '일'];
 
-// 받침이 있으면 '은', 없으면 '는'. 예) 목은, 토는
-const topicParticle = (word: string) => ((word.charCodeAt(word.length - 1) - 0xac00) % 28 ? '은' : '는');
 
 type Cell = { label: string; value: number; unit: string; note: string; overDays?: { weekday: string; over: number }[] };
 
