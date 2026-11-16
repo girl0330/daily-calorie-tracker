@@ -38,6 +38,9 @@ export default function GoalSection({ userId }: GoalSectionProps) {
   const { data: settings, isLoading, isError, refetch } = useGoalSettings(userId);
   const { mutate: saveSettings, isPending: isSaving, variables: pendingSettings } = useSaveGoalSettings(userId);
   const [isEditing, setIsEditing] = useState(false);
+  // 방금 칼로리 탭에서 입력한 칼로리. 저장된 칼로리(g 합계)와 다르면 저장 후 화면에 차이를 알려 줘요.
+  // DB에는 저장하지 않아서, 페이지를 새로 열면 사라져요.
+  const [enteredKcal, setEnteredKcal] = useState<number | null>(null);
 
   // 목표 수정 화면을 닫은 뒤 '목표 수정' 버튼으로 포커스를 돌려줘요.
   // 버튼이 화면에 다시 붙는 순간(콜백 ref) 깃발을 보고 포커스를 줘요.
@@ -58,6 +61,7 @@ export default function GoalSection({ userId }: GoalSectionProps) {
   const isEnabled = isSaving && pendingSettings ? pendingSettings.isEnabled : (settings?.isEnabled ?? false);
   // 처음 켤 때는 기본 목표(식약처 기준치)로 시작해요.
   const savedGoal = settings?.goal ?? STANDARD_GOAL;
+  const kcalRoundingGap = enteredKcal !== null ? savedGoal.kcal - enteredKcal : 0;
 
   const handleToggle = (nextEnabled: boolean) => {
     // 저장 중에는 스위치를 disabled로 만들지 않고 클릭만 무시해요.
@@ -70,11 +74,17 @@ export default function GoalSection({ userId }: GoalSectionProps) {
     );
   };
 
-  const handleSave = (nextGoal: Goal) => {
+  const openEditor = () => {
+    setEnteredKcal(null);
+    setIsEditing(true);
+  };
+
+  const handleSave = (nextGoal: Goal, nextEnteredKcal: number | null) => {
     saveSettings(
       { isEnabled: true, goal: nextGoal },
       {
         onSuccess: () => {
+          setEnteredKcal(nextEnteredKcal);
           closeEditor();
           showToast('목표를 저장했어요.');
         },
@@ -140,7 +150,16 @@ export default function GoalSection({ userId }: GoalSectionProps) {
           <p className="m-0 text-[13px] text-(--ink-2)">
             {isEnabled ? describeGoal(savedGoal) : '목표 칼로리 설정이 꺼져 있어요. 켜면 이 목표가 적용돼요.'}
           </p>
-          <Button ref={editButtonRef} disabled={!isEnabled} onClick={() => setIsEditing(true)} className="w-max">
+          {isEnabled && kcalRoundingGap !== 0 && (
+            <p role="status" className="m-0 -mt-1 text-[13px] text-(--ink-2)">
+              g은 1g 단위로 반올림해서, 목표 칼로리는 이 g을 합한{' '}
+              <b className="text-(--ink) tabular-nums">{formatInteger(savedGoal.kcal)}kcal</b>로 저장돼요.
+              <br />
+              입력한 {formatInteger(enteredKcal!)}kcal보다 {formatInteger(Math.abs(kcalRoundingGap))}kcal{' '}
+              {kcalRoundingGap > 0 ? '많아요' : '적어요'}.
+            </p>
+          )}
+          <Button ref={editButtonRef} disabled={!isEnabled} onClick={openEditor} className="w-max">
             목표 수정
           </Button>
         </>

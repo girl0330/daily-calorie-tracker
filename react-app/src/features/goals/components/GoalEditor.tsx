@@ -21,7 +21,8 @@ import RatioSlider from './RatioSlider';
 type GoalEditorProps = {
   goal: Goal | null;
   isSaving: boolean;
-  onSave: (goal: Goal) => void;
+  /** enteredKcal: 칼로리 탭에서 입력한 칼로리. 저장된 칼로리(g 합계)와 다르면 저장 후 화면에서 알려 줘요. */
+  onSave: (goal: Goal, enteredKcal: number | null) => void;
   onCancel: () => void;
 };
 
@@ -128,7 +129,7 @@ export default function GoalEditor({ goal, isSaving, onSave, onCancel }: GoalEdi
         return;
       }
 
-      onSave({ kcal: kcalFromSuggested, ...suggestedGrams, mode: 'kcal', ratio });
+      onSave({ kcal: kcalFromSuggested, ...suggestedGrams, mode: 'kcal', ratio }, roundedKcal);
       return;
     }
 
@@ -150,7 +151,7 @@ export default function GoalEditor({ goal, isSaving, onSave, onCancel }: GoalEdi
     const carbs = Math.round(grams.carbs!);
     const protein = Math.round(grams.protein!);
     const fat = Math.round(grams.fat!);
-    onSave({ kcal: kcalFromGrams(carbs, protein, fat), carbs, protein, fat, mode: 'nut', ratio: null });
+    onSave({ kcal: kcalFromGrams(carbs, protein, fat), carbs, protein, fat, mode: 'nut', ratio: null }, null);
   };
 
   return (
