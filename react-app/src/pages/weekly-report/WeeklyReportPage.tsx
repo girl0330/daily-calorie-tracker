@@ -79,7 +79,7 @@ export default function WeeklyReportPage() {
 
       {isError ? (
         <div role="alert" className="flex flex-col items-start gap-3 text-sm text-(--ink-2)">
-          <p className="m-0">주간 기록을 불러오지 못했어요.</p>
+          <p className="m-0">주간 리포트를 불러오지 못했어요.</p>
           <Button onClick={() => void refetch()} disabled={isFetching}>
             다시 시도
           </Button>

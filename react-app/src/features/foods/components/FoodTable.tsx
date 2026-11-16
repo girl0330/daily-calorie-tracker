@@ -59,7 +59,7 @@ const NEW_ROW_ID = -1;
 const COLUMNS = 'grid-cols-[56px_minmax(0,1fr)_56px_84px] md:grid-cols-[90px_minmax(0,1fr)_100px_100px_100px_100px_96px]';
 const ROW = `grid min-h-13 items-center border-b border-(--line-soft) *:px-2 ${COLUMNS}`;
 
-const LOCKED_TITLE = '작성 중인 줄을 저장하거나 취소한 뒤에 쓸 수 있어요';
+const LOCKED_TITLE = '작성 중인 기록을 저장하거나 취소한 뒤에 쓸 수 있어요';
 
 const iconButtonClassName =
   'inline-flex size-10 cursor-pointer items-center justify-center rounded-lg text-(--ink-2) transition-colors duration-150 hover:bg-(--skel) disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent';

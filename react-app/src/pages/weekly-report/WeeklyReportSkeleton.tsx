@@ -8,7 +8,7 @@ export default function WeeklyReportSkeleton() {
   return (
     <div aria-busy="true" className="flex flex-col gap-5 md:gap-7">
       <span role="status" className="sr-only">
-        주간 기록을 불러오는 중이에요
+        주간 리포트를 불러오는 중이에요
       </span>
 
       {/* 4칸 요약 */}

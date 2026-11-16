@@ -34,7 +34,7 @@ export default function FoodSearchResults({ results, selectedIndex, onPick, onMa
           onClick={onManual}
           className="h-8 cursor-pointer rounded-lg px-3 text-[13px] font-bold whitespace-nowrap text-(--brand) transition-colors duration-150 hover:bg-(--skel)"
         >
-          직접 입력하기
+          직접 입력
         </button>
       </div>
 
