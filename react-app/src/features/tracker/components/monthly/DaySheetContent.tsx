@@ -42,7 +42,7 @@ export default function DaySheetContent({ day, onOpenDaily }: DaySheetContentPro
             ))}
           </dl>
 
-          <h3 className={`${captionClassName} font-normal`}>식사별 칼로리</h3>
+          <h3 className={`${captionClassName} font-normal`}>시간대별 칼로리</h3>
           <ul className="m-0 flex list-none flex-col gap-3 p-0 pt-1.5">
             {MEALS.map(({ key, label }) => {
               const kcal = day.mealKcal[key];

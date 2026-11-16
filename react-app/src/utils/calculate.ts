@@ -18,7 +18,7 @@ const KCAL_PER_GRAM = {
   fat: 9,
 } as const;
 
-// 식사 유형별 영양소 섭취량(g) 집계
+// 시간대별 영양소 섭취량(g) 집계
 export const nutrientsByMeal = (foods: FoodItem[]) => {
   const result = foods.reduce(
     (sum, cur) => {
