@@ -4,7 +4,7 @@ const STAT_COUNT = 4;
 // 줄마다 음식 이름 길이를 조금씩 달리해서 진짜 표처럼 보이게 해요.
 const ROW_NAME_WIDTHS = ['w-[55%]', 'w-[40%]', 'w-[62%]', 'w-[48%]'];
 
-// 일일 기록을 불러오는 동안 보여 주는 뼈대. 날짜 헤더는 바로 그려서 여기에는 없어요.
+// 일일 기록을 불러오는 동안 보여 주는 스켈레톤. 날짜 헤더는 바로 그려서 여기에는 없어요.
 export default function DailyTrackerSkeleton() {
   return (
     <div aria-busy="true" className="flex flex-col gap-4.5 md:gap-6.5">

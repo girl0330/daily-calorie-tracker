@@ -18,7 +18,7 @@ import { calories, totalNutrients } from '../../utils/calculate';
 import { parseRecordDate, toRecordDate } from '../../utils/date';
 import DailyTrackerSkeleton from './DailyTrackerSkeleton';
 
-// 방금 추가하거나 고친 줄. 줄은 반짝이고, 추가했을 때만 요약 칸에 '+N 방금 추가'가 떠요.
+// 방금 추가하거나 고친 줄. 줄은 반짝이고, 추가했을 때만 4칸 요약에 '+N 방금 추가'가 떠요.
 type Highlight = { id: number; delta: DailyTotals | null };
 
 const HIGHLIGHT_MS = 2600;

@@ -80,7 +80,7 @@ export const parseFoodForm = (form: FoodFormValues) => ({
   fat: Number(form.fat),
 });
 
-// 저장된 숫자 값을 수정 칸에 넣을 글자로 바꿔요.
+// 저장된 숫자 값을 수정 줄의 칸에 넣을 글자로 바꿔요.
 export const toFoodFormValues = ({
   foodName,
   carbs,

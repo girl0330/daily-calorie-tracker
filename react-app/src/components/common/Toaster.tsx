@@ -16,7 +16,7 @@ export default function Toaster() {
   }, [toast, hideToast]);
 
   return (
-    // 알림 영역은 항상 그려 둬야 화면 낭독기가 새 메시지를 읽어 줘요.
+    // 알림 영역은 항상 그려 둬야 화면 읽기 프로그램이 새 메시지를 읽어 줘요.
     <div
       role="status"
       aria-live="polite"

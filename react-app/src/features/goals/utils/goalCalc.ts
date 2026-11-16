@@ -68,7 +68,7 @@ export const kcalFromGrams = (carbs: number, protein: number, fat: number) =>
 export const isSameRatio = (a: NutrientRatio, b: NutrientRatio) =>
   a.carbs === b.carbs && a.protein === b.protein && a.fat === b.fat;
 
-// 입력칸 글자 → 숫자. '1,500'처럼 쉼표가 있어도 읽고, 비어 있거나 숫자가 아니면 null
+// 칸에 넣은 글자 → 숫자. '1,500'처럼 쉼표가 있어도 읽고, 비어 있거나 숫자가 아니면 null
 export const parseNumberInput = (value: string): number | null => {
   const trimmed = value.replaceAll(',', '').trim();
   if (trimmed === '') return null;

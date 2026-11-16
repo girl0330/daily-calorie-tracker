@@ -39,7 +39,7 @@ export default function GoalSection({ userId }: GoalSectionProps) {
   const { mutate: saveSettings, isPending: isSaving, variables: pendingSettings } = useSaveGoalSettings(userId);
   const [isEditing, setIsEditing] = useState(false);
 
-  // 편집을 닫은 뒤 '목표 수정' 버튼으로 포커스를 돌려줘요.
+  // 목표 수정 화면을 닫은 뒤 '목표 수정' 버튼으로 포커스를 돌려줘요.
   // 버튼이 화면에 다시 붙는 순간(콜백 ref) 깃발을 보고 포커스를 줘요.
   const shouldRestoreFocusRef = useRef(false);
   const editButtonRef = (button: HTMLButtonElement | null) => {

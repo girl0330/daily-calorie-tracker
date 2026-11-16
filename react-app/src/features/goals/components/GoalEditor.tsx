@@ -51,7 +51,7 @@ const rangeMessage = (min: number, max: number) => `${formatInteger(min)}~${form
 const toText = (value: number | undefined) => (value === undefined ? '' : String(value));
 
 export default function GoalEditor({ goal, isSaving, onSave, onCancel }: GoalEditorProps) {
-  // 수정 창은 항상 '영양소로 정하기' 탭으로 열어요. 저장된 탄·단·지 g이 그대로 보여요.
+  // 목표 수정 화면은 항상 '영양소로 정하기' 탭으로 열어요. 저장된 탄·단·지 g이 그대로 보여요.
   const [mode, setMode] = useState<GoalMode>('nut');
   const [ratio, setRatio] = useState<NutrientRatio>(goal?.ratio ?? DEFAULT_RATIO);
   const [kcalText, setKcalText] = useState(toText(goal?.kcal));
@@ -103,7 +103,7 @@ export default function GoalEditor({ goal, isSaving, onSave, onCancel }: GoalEdi
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // 입력칸은 화면 순서대로예요: 칼로리 방식은 [칼로리], 영양소 방식은 [탄, 단, 지].
+    // 칸은 화면 순서대로예요: 칼로리 방식은 [칼로리], 영양소 방식은 [탄, 단, 지].
     const inputs = event.currentTarget.querySelectorAll('input');
 
     if (mode === 'kcal') {
@@ -280,7 +280,7 @@ export default function GoalEditor({ goal, isSaving, onSave, onCancel }: GoalEdi
         </>
       )}
 
-      {/* 목표를 정할 때 참고하는 성인 남녀 하루 필요 칼로리. 입력칸 아래 작은 안내로 보여요. */}
+      {/* 목표를 정할 때 참고하는 성인 남녀 하루 필요 칼로리. 칸 아래 작은 안내로 보여요. */}
       <div className="flex flex-col gap-1 border-l-2 border-(--line) pl-3 text-xs text-(--ink-2)">
         <p className="m-0 flex flex-wrap gap-x-3 gap-y-0.5">
           <span>참고 · 성인 하루 필요 칼로리 (19~49세)</span>
