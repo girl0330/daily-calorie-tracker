@@ -3,7 +3,7 @@ import Button from '../../../components/common/Button';
 import { showToast } from '../../../store/toastStore';
 import type { FoodItem, MealType, UserId } from '../../../types/types';
 import { useCreateFood } from '../hooks/useFoodMutations';
-import { DailyLimitError, searchFoodsApi, type FoodCandidate } from '../services/FoodSearchService';
+import { searchFoodsApi, type FoodCandidate } from '../services/FoodSearchService';
 import { topicParticle } from '../../../utils/korean';
 import {
   EMPTY_FOOD_FORM,
@@ -33,17 +33,17 @@ type FoodAddBarProps = {
 /**
  * 검색판의 상태.
  * idle: 닫힘 / loading: 찾는 중 / results: 후보 목록(고르면 아래에 입력칸) / notfound: 못 찾음
- * broad: '빵'처럼 넓은 검색어라 더 자세한 검색어 예시를 보여 줌 / limit: 하루 AI 검색 횟수를 다 씀
+ * broad: '빵'처럼 넓은 검색어라 더 자세한 검색어 예시를 보여 줌
  * error: 검색 실패 / manual: 직접 입력(후보 없이 입력칸만)
  */
-type Phase = 'idle' | 'loading' | 'results' | 'notfound' | 'broad' | 'limit' | 'error' | 'manual';
+type Phase = 'idle' | 'loading' | 'results' | 'notfound' | 'broad' | 'error' | 'manual';
 
 // 후보의 양에서 괄호 앞부분만 이름 뒤에 붙여요. 예) 김밥 + '1줄 (약 230g)' → '김밥 1줄'
 const toFoodName = ({ name, serving }: FoodCandidate) => `${name} ${serving.split(' (')[0]}`.trim();
 
 /**
  * 시안의 .search: 검색창 + 그 아래로 펼쳐지는 검색판.
- * 검색판에는 상황에 따라 찾는 중·후보 목록·안내(못 찾음·넓은 검색어·한도·오류)·입력칸이 나와요.
+ * 검색판에는 상황에 따라 찾는 중·후보 목록·안내(못 찾음·넓은 검색어·오류)·입력칸이 나와요.
  * 검색어를 넣고 'AI 검색'을 누르면 후보를 찾아요. 비워 두고 누르면 검색판을 열지 않고 토스트로 안내만 해요.
  * 표의 '+ 추가'는 이 검색판이 아니라 표 안에 새 줄을 열어요(FoodTable).
  */
@@ -69,8 +69,6 @@ export default function FoodAddBar({
   const [results, setResults] = useState<FoodCandidate[]>([]);
   // 넓은 검색어일 때 AI가 준 더 자세한 검색어 예시
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  // 하루 AI 검색 횟수(함수가 알려 줘요)
-  const [dailyLimit, setDailyLimit] = useState(50);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [form, setForm] = useState<FoodFormValues>(EMPTY_FOOD_FORM);
   const [errors, setErrors] = useState<FoodFormErrors>({});
@@ -138,14 +136,9 @@ export default function FoodAddBar({
         else if (result.status === 'too_broad' && result.suggestions.length > 0) setPhase('broad');
         else setPhase('notfound');
       })
-      .catch((error: unknown) => {
+      .catch(() => {
         if (id !== searchIdRef.current) return;
-        if (error instanceof DailyLimitError) {
-          setDailyLimit(error.limit);
-          setPhase('limit');
-        } else {
-          setPhase('error');
-        }
+        setPhase('error');
       });
   };
 
@@ -343,18 +336,6 @@ export default function FoodAddBar({
                     </button>
                   ))}
                 </div>
-              </div>
-              <Button onClick={() => openManual(searchedQuery)}>직접 입력</Button>
-            </div>
-          )}
-
-          {phase === 'limit' && (
-            <div className="flex flex-wrap items-center justify-between gap-4 px-3 py-5">
-              <div role="status">
-                <strong>오늘 AI 검색을 모두 썼어요</strong>
-                <span className="block text-[13px] break-keep text-(--ink-2)">
-                  AI 검색은 하루 {dailyLimit}번까지 쓸 수 있어요. 내일 다시 쓰거나 값을 직접 입력해 주세요.
-                </span>
               </div>
               <Button onClick={() => openManual(searchedQuery)}>직접 입력</Button>
             </div>
