@@ -1,8 +1,8 @@
 import type { MealType } from '../../../types/types';
 import { calories } from '../../../utils/calculate';
 
-// 음식 추가판과 표의 수정 줄이 함께 쓰는 입력 규칙이에요.
-// 입력칸은 글자(string)로 들고 있다가, 저장할 때 숫자로 바꿔요.
+// 검색판의 입력칸과 표의 새 줄·수정 줄이 함께 쓰는 입력 규칙이에요.
+// 각 칸의 값은 글자(string)로 들고 있다가, 저장할 때 숫자로 바꿔요.
 export type FoodFormValues = {
   foodName: string;
   carbs: string;
@@ -26,7 +26,7 @@ export const MEAL_OPTIONS: { value: MealType; label: string }[] = [
 
 export const MEAL_LABEL: Record<MealType, string> = { breakfast: '아침', lunch: '점심', dinner: '저녁' };
 
-// 추가판의 시간대 기본값: 11시 전은 아침, 16시 전은 점심, 그 뒤는 저녁이에요.
+// 입력칸의 시간대 기본값: 11시 전은 아침, 16시 전은 점심, 그 뒤는 저녁이에요.
 export const getMealByTime = (date: Date = new Date()): MealType => {
   const hour = date.getHours();
   if (hour < 11) return 'breakfast';

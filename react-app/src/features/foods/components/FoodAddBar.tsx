@@ -22,19 +22,19 @@ import FoodSearchResults from './FoodSearchResults';
 type FoodAddBarProps = {
   userId: UserId;
   recordDate: string;
-  /** 추가판의 시간대. 표의 '+ 추가'로도 바뀌어서 페이지가 들고 있어요. */
+  /** 입력칸의 시간대. 처음엔 지금 시각에 맞춰 정해지고, 페이지가 들고 있어서 날짜를 바꿔도 그대로예요. */
   meal: MealType;
   onMealChange: (meal: MealType) => void;
-  /** 입력 줄의 칸. 표의 '+ 추가'가 여기로 포커스를 옮겨요. */
+  /** 검색창의 글자 칸. 검색판을 닫거나 빈 검색을 안내할 때 여기로 포커스를 돌려줘요. */
   inputRef: RefObject<HTMLInputElement | null>;
   onAdded: (food: FoodItem) => void;
 };
 
 /**
- * 아래 판의 상태.
+ * 검색판의 상태.
  * idle: 닫힘 / loading: 찾는 중 / results: 후보 목록(고르면 아래에 입력칸) / notfound: 못 찾음
  * broad: '빵'처럼 넓은 검색어라 더 자세한 검색어 예시를 보여 줌 / limit: 하루 AI 검색 횟수를 다 씀
- * error: 검색 실패 / manual: 직접 입력
+ * error: 검색 실패 / manual: 직접 입력(후보 없이 입력칸만)
  */
 type Phase = 'idle' | 'loading' | 'results' | 'notfound' | 'broad' | 'limit' | 'error' | 'manual';
 
@@ -42,8 +42,10 @@ type Phase = 'idle' | 'loading' | 'results' | 'notfound' | 'broad' | 'limit' | '
 const toFoodName = ({ name, serving }: FoodCandidate) => `${name} ${serving.split(' (')[0]}`.trim();
 
 /**
- * 시안의 .search: 위의 검색 줄 + 아래로 펼쳐지는 판.
- * 검색어를 넣고 'AI 검색'을 누르면 후보를 찾아요. 비워 두고 누르면 토스트로 안내만 해요.
+ * 시안의 .search: 검색창 + 그 아래로 펼쳐지는 검색판.
+ * 검색판에는 상황에 따라 찾는 중·후보 목록·안내(못 찾음·넓은 검색어·한도·오류)·입력칸이 나와요.
+ * 검색어를 넣고 'AI 검색'을 누르면 후보를 찾아요. 비워 두고 누르면 검색판을 열지 않고 토스트로 안내만 해요.
+ * 표의 '+ 추가'는 이 검색판이 아니라 표 안에 새 줄을 열어요(FoodTable).
  */
 export default function FoodAddBar({
   userId,
@@ -56,7 +58,7 @@ export default function FoodAddBar({
   const inputId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const fieldRefs = useRef<Partial<Record<FoodField, HTMLInputElement | null>>>({});
-  // 입력판이 화면에 붙은 뒤에 옮길 포커스. 판이 열리는 렌더가 끝나야 칸이 생겨요.
+  // 입력칸이 화면에 붙은 뒤에 옮길 포커스. 검색판이 열리는 렌더가 끝나야 칸이 생겨요.
   const pendingFocusRef = useRef<FoodField | null>(null);
   // 마지막 검색 번호. 늦게 온 예전 검색 결과는 버려요.
   const searchIdRef = useRef(0);
@@ -90,7 +92,7 @@ export default function FoodAddBar({
     setSelectedIndex(null);
   };
 
-  // 판 바깥을 누르면 닫아요.
+  // 검색판 바깥을 누르면 검색판을 닫아요.
   useEffect(() => {
     if (!isOpen) return;
 
@@ -111,7 +113,7 @@ export default function FoodAddBar({
     inputRef.current?.focus();
   };
 
-  // 직접 입력판을 열어요. 이름이 있으면 탄수화물 칸부터 채우게 해요.
+  // 검색판에 후보 없이 입력칸만 열어요(직접 입력). 이름이 있으면 탄수화물 칸부터 채우게 해요.
   const openManual = (foodName: string) => {
     searchIdRef.current += 1;
     setForm({ ...EMPTY_FOOD_FORM, foodName });
@@ -156,7 +158,7 @@ export default function FoodAddBar({
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const text = query.trim();
-    // 검색어 없이 누르면 판을 열지 않고 안내만 해요. 직접 입력은 표의 '+ 추가'로 할 수 있어요.
+    // 검색어 없이 누르면 검색판을 열지 않고 안내만 해요. 직접 입력은 표의 '+ 추가'로 할 수 있어요.
     if (!text) {
       showToast("검색어를 입력하거나 '+ 추가'로 직접 입력해 주세요");
       inputRef.current?.focus();

@@ -27,7 +27,7 @@ export default function DailyTrackerSkeleton() {
         ))}
       </div>
 
-      {/* 음식 입력 줄 */}
+      {/* 검색창 */}
       <Skeleton className="h-14 w-full rounded-xl" />
 
       {/* 시간대별 표 */}

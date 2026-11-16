@@ -8,7 +8,7 @@ type TextFieldProps = ComponentProps<'input'> & {
   hint?: string;
   /** 숫자 칸은 오른쪽 정렬해요. */
   align?: 'left' | 'right';
-  /** box: 테두리 상자(기본) / line: 밑줄만 있는 칸(음식 입력판) */
+  /** box: 테두리 상자(기본) / line: 밑줄만 있는 칸(검색판의 입력칸) */
   variant?: 'box' | 'line';
 };
 

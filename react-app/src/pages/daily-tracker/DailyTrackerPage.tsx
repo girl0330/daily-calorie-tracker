@@ -28,7 +28,7 @@ const toTotals = (nutrients: { carbs: number; protein: number; fat: number }): D
   kcal: calories(nutrients.carbs, nutrients.protein, nutrients.fat),
 });
 
-// 일일 기록: 날짜 헤더 → 4칸 요약 → 음식 입력 줄 → 시간대별 표
+// 일일 기록: 날짜 헤더 → 4칸 요약 → 검색창 → 시간대별 표
 export default function DailyTrackerPage() {
   const userId = useAuthStore(state => state.user?.id);
 
@@ -113,7 +113,7 @@ export default function DailyTrackerPage() {
             </p>
           )}
 
-          {/* 날짜를 바꾸면 key가 바뀌어서 입력 줄과 열린 입력판이 처음 상태로 돌아가요. */}
+          {/* 날짜를 바꾸면 key가 바뀌어서 검색창과 열린 검색판이 처음 상태로 돌아가요. */}
           <FoodAddBar
             key={recordDate}
             userId={userId}
