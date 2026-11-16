@@ -59,7 +59,7 @@ const NEW_ROW_ID = -1;
 const COLUMNS = 'grid-cols-[56px_minmax(0,1fr)_56px_84px] md:grid-cols-[90px_minmax(0,1fr)_100px_100px_100px_100px_96px]';
 const ROW = `grid min-h-13 items-center border-b border-(--line-soft) *:px-2 ${COLUMNS}`;
 
-const LOCKED_TITLE = '작성 중인 줄을 저장하거나 취소한 뒤에 쓸 수 있어요';
+const LOCKED_TITLE = '작성 중인 기록을 저장하거나 취소한 뒤에 쓸 수 있어요';
 
 const iconButtonClassName =
   'inline-flex size-10 cursor-pointer items-center justify-center rounded-lg text-(--ink-2) transition-colors duration-150 hover:bg-(--skel) disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent';
@@ -442,7 +442,7 @@ export default function FoodTable({
           return newRow ? [...foodRows, newRow] : foodRows;
         })}
 
-        {/* 하루 합계. 모바일은 3칸(합계, 탄·단·지, kcal)으로 줄여요. */}
+        {/* 합계 줄. 모바일은 3칸(합계, 탄·단·지, kcal)으로 줄여요. */}
         <div
           role="row"
           className="grid min-h-14 grid-cols-[56px_minmax(0,1fr)_auto] items-center border-t border-(--ink) font-bold *:px-2 md:grid-cols-[90px_minmax(0,1fr)_100px_100px_100px_100px_96px]"
@@ -539,7 +539,7 @@ const NUTRIENT_INPUTS = [
 const underlineInputClassName =
   'h-7 w-full rounded-none border-0 border-b bg-transparent px-0.5 text-[15px] text-(--ink) focus-visible:border-b-2 focus-visible:border-(--brand) focus-visible:outline-none md:h-7.5';
 
-// 시안의 .editrow: 줄 안에서 바로 고치는 칸. 모바일은 탄·단·지 칸을 둘째 줄로 내려요.
+// 시안의 .editrow: 표 안에서 바로 고치는 수정 줄. 모바일은 탄·단·지 칸을 둘째 줄로 내려요.
 function FoodEditRow({
   initialValues,
   rowLabel,

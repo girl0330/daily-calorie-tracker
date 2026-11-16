@@ -77,8 +77,7 @@ export default function MyPage() {
         {user && (
           <SettingSection
             id="mypage-goal"
-            title="하루 목표"
-            description="일일 기록과 월간 기록, 주간 리포트가 이 목표를 기준으로 보여요."
+            title="목표 칼로리 설정"
             isFirst
           >
             <GoalSection userId={user.id} />

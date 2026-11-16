@@ -14,9 +14,9 @@ const linkClassName = 'font-bold text-(--brand) underline underline-offset-3';
 
 // 화면 읽기 프로그램용 한 문장. 눈에 보이는 '탄 324g' 같은 줄임말 대신 읽어요.
 const goalSentence = (goal: Goal) =>
-  `하루 목표 ${formatInteger(goal.kcal)}kcal, ${NUTRIENTS.map(({ key, label }) => `${label} ${formatInteger(goal[key])}g`).join(', ')}`;
+  `목표 칼로리 ${formatInteger(goal.kcal)}kcal, ${NUTRIENTS.map(({ key, label }) => `${label} ${formatInteger(goal[key])}g`).join(', ')}`;
 
-// 시안의 월간 목표: 지금 설정한 하루 목표를 보여 줘요. 달력 칸과 비교하지는 않아요.
+// 시안의 월간 목표: 지금 설정한 목표 칼로리를 보여 줘요. 달력 칸과 비교하지는 않아요.
 export default function MonthlyGoal({ goal, layout }: MonthlyGoalProps) {
   if (layout === 'desktop') {
     // 날짜 줄 높이(76px)를 차지하고 아래쪽, '월' 글자 높이에 맞춰요.
@@ -25,7 +25,7 @@ export default function MonthlyGoal({ goal, layout }: MonthlyGoalProps) {
     if (!goal) {
       return (
         <p className={`${boxClassName} mb-0 items-end gap-1 text-[13px] text-(--ink-2)`}>
-          하루 목표가 꺼져 있어요.
+          목표 칼로리 설정이 꺼져 있어요.
           <Link to="/mypage" className={linkClassName}>
             목표 설정하기
           </Link>
@@ -36,12 +36,13 @@ export default function MonthlyGoal({ goal, layout }: MonthlyGoalProps) {
     return (
       <div className={`${boxClassName} flex-col items-end justify-end gap-0.5`}>
         <p className="sr-only">{goalSentence(goal)}</p>
-        <span aria-hidden="true" className="text-xs text-(--muted)">
-          하루 목표
-        </span>
-        <span aria-hidden="true" className="text-[22px] leading-tight font-bold tracking-[-0.02em]">
-          {formatInteger(goal.kcal)}
-          <small className="ml-[3px] text-[13px] font-normal text-(--ink-2)">kcal</small>
+        {/* 첫 줄: '목표 칼로리'와 숫자를 글자 아랫선에 맞춰 한 줄에 둬요. */}
+        <span aria-hidden="true" className="flex items-baseline gap-2">
+          <span className="text-xs text-(--muted)">목표 칼로리</span>
+          <span className="text-[22px] leading-tight font-bold tracking-[-0.02em]">
+            {formatInteger(goal.kcal)}
+            <small className="ml-[3px] text-[13px] font-normal text-(--ink-2)">kcal</small>
+          </span>
         </span>
         <span aria-hidden="true" className="flex gap-2.5 text-xs text-(--ink-2)">
           {NUTRIENTS.map(({ key, short, dotClassName }) => (
@@ -62,7 +63,7 @@ export default function MonthlyGoal({ goal, layout }: MonthlyGoalProps) {
   if (!goal) {
     return (
       <p className={rowClassName}>
-        하루 목표가 꺼져 있어요.
+        목표 칼로리 설정이 꺼져 있어요.
         <Link to="/mypage" className={linkClassName}>
           목표 설정하기
         </Link>
@@ -74,7 +75,7 @@ export default function MonthlyGoal({ goal, layout }: MonthlyGoalProps) {
     <div className={rowClassName}>
       <p className="sr-only">{goalSentence(goal)}</p>
       <span aria-hidden="true">
-        하루 목표 <b className="text-sm text-(--ink)">{formatInteger(goal.kcal)}</b> kcal
+        목표 칼로리 <b className="text-sm text-(--ink)">{formatInteger(goal.kcal)}</b> kcal
       </span>
       <span aria-hidden="true" className="flex gap-2">
         {NUTRIENTS.map(({ key, short, dotClassName }) => (

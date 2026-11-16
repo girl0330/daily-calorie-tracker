@@ -33,13 +33,13 @@ const describeGoal = (goal: Goal) => {
   return `칼로리로 설정했어요. 탄·단·지는 ${ratioText} 비율로 나눈 값이에요.`;
 };
 
-// 마이페이지 '하루 목표' 칸: 불러오는 중 / 꺼짐(목표를 흐리게) / 켜짐(목표 보기) / 수정 중
+// 마이페이지 '목표 칼로리 설정' 칸: 불러오는 중 / 꺼짐(목표를 흐리게) / 켜짐(목표 보기) / 수정 중
 export default function GoalSection({ userId }: GoalSectionProps) {
   const { data: settings, isLoading, isError, refetch } = useGoalSettings(userId);
   const { mutate: saveSettings, isPending: isSaving, variables: pendingSettings } = useSaveGoalSettings(userId);
   const [isEditing, setIsEditing] = useState(false);
 
-  // 편집을 닫은 뒤 '목표 수정' 버튼으로 포커스를 돌려줘요.
+  // 목표 수정 화면을 닫은 뒤 '목표 수정' 버튼으로 포커스를 돌려줘요.
   // 버튼이 화면에 다시 붙는 순간(콜백 ref) 깃발을 보고 포커스를 줘요.
   const shouldRestoreFocusRef = useRef(false);
   const editButtonRef = (button: HTMLButtonElement | null) => {
@@ -109,12 +109,12 @@ export default function GoalSection({ userId }: GoalSectionProps) {
     <>
       <div className="flex items-center justify-between gap-4 border-b border-(--line) pb-4">
         <div className="min-w-0">
-          <p className="m-0 text-[15px] font-medium text-(--ink)">목표 칼로리 설정</p>
+          <p className="m-0 text-[15px] font-medium text-(--ink)">목표 칼로리</p>
           <p className="m-0 mt-0.5 text-[13px] text-(--ink-2)">
             켜면 일일·월간 기록과 주간 리포트에 남은 칼로리와 달성률이 보여요.
           </p>
         </div>
-        <Switch checked={isEnabled} onChange={handleToggle} label="목표 칼로리 설정" disabled={isEditing} />
+        <Switch checked={isEnabled} onChange={handleToggle} label="목표 칼로리" disabled={isEditing} />
       </div>
 
       {isEditing ? (

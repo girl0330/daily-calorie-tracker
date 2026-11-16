@@ -3,12 +3,12 @@ import Skeleton from '../../components/common/Skeleton';
 // 막대 높이를 조금씩 달리해서 진짜 그래프처럼 보이게 해요.
 const BAR_HEIGHTS = ['h-[45%]', 'h-[70%]', 'h-[55%]', 'h-[80%]', 'h-[40%]', 'h-[60%]', 'h-[30%]'];
 
-// 주간 리포트를 불러오는 동안 보여 주는 뼈대. 날짜 헤더는 바로 그려서 여기에는 없어요.
+// 주간 리포트를 불러오는 동안 보여 주는 스켈레톤. 날짜 헤더는 바로 그려서 여기에는 없어요.
 export default function WeeklyReportSkeleton() {
   return (
     <div aria-busy="true" className="flex flex-col gap-5 md:gap-7">
       <span role="status" className="sr-only">
-        주간 기록을 불러오는 중이에요
+        주간 리포트를 불러오는 중이에요
       </span>
 
       {/* 4칸 요약 */}

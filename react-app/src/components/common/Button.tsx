@@ -17,7 +17,7 @@ const variantClassName: Record<ButtonVariant, string> = {
   brand: 'border-(--brand) bg-(--brand) font-bold text-(--bg) hover:bg-(--brand-hover) disabled:hover:bg-(--brand)',
 };
 
-// sm: 확인 창·마이페이지의 작은 버튼(36px) / lg: 입력 칸 옆에 서는 버튼(44px, 입력칸과 높이가 같아요)
+// sm: 확인 창·마이페이지의 작은 버튼(36px) / lg: 칸 옆에 서는 버튼(44px, 칸과 높이가 같아요)
 const sizeClassName: Record<ButtonSize, string> = {
   sm: 'h-9 rounded-lg px-3.5 text-[13px]',
   lg: 'h-11 rounded-[10px] px-4 text-sm',

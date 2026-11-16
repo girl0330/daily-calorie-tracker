@@ -71,7 +71,7 @@ test('기록이 없어도 7일을 반환하고 비중은 계산 불가로 표시
   assert.ok(report.meals.every(meal => meal.caloriePercentage === null));
 });
 
-test('주 경계 포함, 범위 밖 제외, 날짜별·식사별 합계와 비중을 계산한다', () => {
+test('주 경계 포함, 범위 밖 제외, 날짜별·시간대별 합계와 비중을 계산한다', () => {
   const foods = [
     food(),
     food({ id: 2, mealType: 'lunch', carbs: 20, protein: 10, fat: 4 }),

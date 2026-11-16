@@ -29,7 +29,7 @@ const rowClassName = 'grid items-center gap-3 text-sm';
 const trackClassName = 'h-2 overflow-hidden rounded-full bg-(--track)';
 const valueClassName = 'text-right text-[13px] whitespace-nowrap text-(--ink-2) tabular-nums';
 
-// 시안의 주간 오른쪽 묶음: 영양소 · 칼로리 비율 · 식사별 영양소. 막대에서 날을 고르면 그날 기준으로 바뀌어요.
+// 시안의 주간 오른쪽 묶음: 영양소 · 칼로리 비율 · 시간대별 영양소. 막대에서 날을 고르면 그날 기준으로 바뀌어요.
 export default function WeeklyNutritionPanel({
   report,
   goal,
@@ -129,7 +129,7 @@ export default function WeeklyNutritionPanel({
       </WeeklySection>
 
       <WeeklySection
-        title="식사별 영양소"
+        title="시간대별 영양소"
         caption={selectedDay ? `${dayLabel} 기준` : '이번 주 합계 기준'}
         action={
           <PillTabs

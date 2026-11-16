@@ -17,7 +17,7 @@ const MACROS = [
 ] as const;
 
 /**
- * 시안의 AI 추천 결과 목록(.rhead + .cands).
+ * 시안의 AI 검색 후보 목록(.rhead + .cands).
  * 모든 후보 줄이 같은 칸 폭을 함께 써서(subgrid) 탄·단·지가 세로로 맞고, 칸 사이는 같은 간격이에요.
  * 데스크톱은 이름 옆에 양을, 모바일은 이름 아래에 양을 둬요.
  */
@@ -28,17 +28,17 @@ export default function FoodSearchResults({ results, selectedIndex, onPick, onMa
         후보 {results.length}개를 찾았어요
       </p>
       <div className="flex items-center justify-between gap-3 py-1.5 pl-3 text-xs text-(--ink-2)">
-        <span className="min-w-0">AI 추천 결과는 정확하지 않을 수 있어요 · 하나를 고르세요</span>
+        <span className="min-w-0">AI가 찾은 후보는 정확하지 않을 수 있어요 · 하나를 고르세요</span>
         <button
           type="button"
           onClick={onManual}
           className="h-8 cursor-pointer rounded-lg px-3 text-[13px] font-bold whitespace-nowrap text-(--brand) transition-colors duration-150 hover:bg-(--skel)"
         >
-          직접 입력하기
+          직접 입력
         </button>
       </div>
 
-      <div role="group" aria-label="AI 추천 결과" className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]">
+      <div role="group" aria-label="AI 검색 후보" className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]">
         {results.map((candidate, index) => {
           const isSelected = index === selectedIndex;
           const kcal = calories(candidate.carbs, candidate.protein, candidate.fat);

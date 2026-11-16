@@ -1,7 +1,7 @@
 import type { Goal } from '../../../goals/types';
 import { formatGram, formatInteger } from '../../../../utils/formatNumber';
 
-// 하루 합계. kcal은 탄·단·지에서 계산한 값이에요.
+// 하루 동안 먹은 양을 더한 값(4칸 요약에 보여 줘요). kcal은 탄·단·지에서 계산한 값이에요.
 export type DailyTotals = {
   kcal: number;
   carbs: number;
@@ -24,7 +24,7 @@ const CELLS = [
   { key: 'fat', label: '지방', unit: 'g', bar: 'bg-(--fat)', format: formatGram },
 ] as const;
 
-// 시안의 .stats: 오늘 먹은 칼로리·탄·단·지 4칸. 모바일은 2×2로 나눠요.
+// 시안의 .stats: 4칸 요약(오늘 먹은 칼로리·탄·단·지). 모바일은 2×2로 나눠요.
 export default function DailyStats({ totals, goal, recentDelta }: DailyStatsProps) {
   return (
     <dl className="m-0 grid grid-cols-2 border-t border-b border-t-(--ink) border-b-(--line) md:grid-cols-4">

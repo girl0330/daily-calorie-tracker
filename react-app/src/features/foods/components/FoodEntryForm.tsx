@@ -33,12 +33,12 @@ const NUTRIENT_FIELDS = [
   { key: 'fat', label: '지방 g' },
 ] as const;
 
-// 입력칸 라벨과 같은 높이의 보이지 않는 글자. 모바일은 줄이 넘어가서 맞출 칸이 없으니 빼요.
+// 칸 라벨과 같은 높이의 보이지 않는 글자. 모바일은 줄이 넘어가서 맞출 칸이 없으니 빼요.
 const labelSpacerClassName = 'invisible text-xs max-md:hidden';
 
 /**
  * 시안의 .editor: 음식 이름·탄·단·지 밑줄 칸, 시간대 알약, kcal, 취소·추가.
- * 데스크톱은 한 줄에 두고 모든 것의 세로 가운데를 입력칸(36px)에 맞춰요.
+ * 데스크톱은 한 줄에 두고 모든 것의 세로 가운데를 글자 칸(36px)에 맞춰요.
  * 모바일은 이름 / 탄·단·지 / 시간대 + kcal / 가운데 버튼 순서로 줄을 나눠요.
  * 칸 아래에 오류 문구가 생겨도 칸 아래만 늘어나서 줄이 어긋나지 않게 위쪽 정렬(items-start)을 써요.
  */
@@ -115,7 +115,7 @@ export default function FoodEntryForm({
         </span>
       </div>
 
-      {/* 버튼: 데스크톱은 44px 버튼의 가운데를 입력칸에 맞추려고 4px 올리고, 모바일은 다음 줄 가운데에 둬요. */}
+      {/* 버튼: 데스크톱은 44px 버튼의 가운데를 글자 칸에 맞추려고 4px 올리고, 모바일은 다음 줄 가운데에 둬요. */}
       <div className="flex flex-col gap-1.5 max-md:basis-full">
         <span aria-hidden="true" className={labelSpacerClassName}>
           추가

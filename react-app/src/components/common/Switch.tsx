@@ -5,7 +5,7 @@ type SwitchProps = {
   disabled?: boolean;
 };
 
-// 시안의 .sw: 켜고 끄는 스위치. 화면 낭독기는 "스위치, 켜짐/꺼짐"으로 읽어요.
+// 시안의 .sw: 켜고 끄는 스위치. 화면 읽기 프로그램은 "스위치, 켜짐/꺼짐"으로 읽어요.
 export default function Switch({ checked, onChange, label, disabled = false }: SwitchProps) {
   return (
     <button

@@ -8,7 +8,7 @@ type TextFieldProps = ComponentProps<'input'> & {
   hint?: string;
   /** 숫자 칸은 오른쪽 정렬해요. */
   align?: 'left' | 'right';
-  /** box: 테두리 상자(기본) / line: 밑줄만 있는 칸(음식 입력판) */
+  /** box: 테두리 상자(기본) / line: 밑줄만 있는 칸(검색판의 입력칸) */
   variant?: 'box' | 'line';
 };
 
@@ -25,7 +25,7 @@ const variantClassName = {
 };
 
 /**
- * 시안의 .fld: 위에 라벨, 44px 입력칸, 아래 안내·오류 문구.
+ * 시안의 .fld: 위에 라벨, 44px 칸, 아래 안내·오류 문구.
  * value, onChange, inputMode, autoFocus, ref 같은 input 속성은 그대로 넘어가요.
  * className은 바깥 묶음(라벨·칸·문구를 감싸는 div)에 붙어서 폭이나 flex 크기를 정할 때 써요.
  */

@@ -66,7 +66,7 @@ var report = await inspectWeek();
 
 - **기록이 있는 주:** 일간 화면의 음식 날짜·영양소와 `foods` 표가 같은지 비교한다. 주간 합계는 탄수화물×4 + 단백질×4 + 지방×9 기준이다.
 - **다른 주:** `await inspectWeek(new Date(2026, 9, 19))`로 2026년 10월 19일이 포함된 주를 조회한다. 월은 0부터 시작한다. 실제 기록이 있는 날짜로 바꿔도 된다. 반환 음식의 날짜가 해당 주 안에 있어야 한다.
-- **기록 없는 주:** `recordedDays`와 `totalCalories`는 0, 7일 모두 `hasRecord: false`, 식사별 `caloriePercentage`는 null이어야 한다.
+- **기록 없는 주:** `recordedDays`와 `totalCalories`는 0, 7일 모두 `hasRecord: false`, 시간대별 `caloriePercentage`는 null이어야 한다.
 - **0 kcal 기록:** 실제로 0g 음식이 저장된 날짜가 있다면 칼로리는 0이어도 그날의 `hasRecord`는 true여야 한다.
 - **기록 수정 후:** 기존 일간 화면에서 본인이 확인용 기록을 추가·수정·삭제했다면 `await inspectWeek(같은_기준_날짜)`를 다시 실행해 변경이 반영되는지 확인한다. Console 재조회는 매번 DB를 읽으므로 캐시 무효화 자체를 확인하는 검사는 아니다.
 - **로그인 계정 변경:** 다른 계정으로 로그인한 뒤 다시 실행하면 그 계정의 기록만 조회되어야 한다. 이 부분은 실제 DB의 RLS 설정을 포함한 수동 확인이다.

@@ -7,7 +7,7 @@ export type DaySummary = {
   carbs: number;
   protein: number;
   fat: number;
-  /** 시간대별 kcal (바텀시트의 '식사별 칼로리') */
+  /** 시간대별 kcal (바텀시트의 '시간대별 칼로리') */
   mealKcal: Record<MealType, number>;
 };
 

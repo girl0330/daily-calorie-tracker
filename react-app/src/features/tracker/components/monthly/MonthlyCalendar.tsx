@@ -9,7 +9,7 @@ import { NUTRIENTS } from '../../utils/nutrients';
 type MonthlyCalendarProps = {
   month: Date;
   today: Date;
-  /** 날짜별 합계. 불러오는 중이면 null이고, 칸마다 뼈대(스켈레톤)를 보여 줘요. */
+  /** 날짜별 합계. 불러오는 중이면 null이고, 칸마다 스켈레톤을 보여 줘요. */
   summaries: Map<string, DaySummary> | null;
   onSelectDate: (date: Date) => void;
 };
