@@ -68,14 +68,20 @@ export default function GoalEditor({ goal, isSaving, onSave, onCancel }: GoalEdi
     protein: parseNumberInput(gramTexts.protein),
     fat: parseNumberInput(gramTexts.fat),
   };
-  const hasKcal = kcal !== null && kcal > 0;
-  const suggestedGrams = hasKcal ? gramsFromKcal(kcal, ratio) : null;
+  const roundedKcal = kcal !== null && kcal > 0 ? Math.round(kcal) : null;
+  const suggestedGrams = roundedKcal !== null ? gramsFromKcal(roundedKcal, ratio) : null;
+  // 칼로리로 정해도 실제로 저장되는 칼로리는 반올림한 g을 합한 값이에요. (입력값과 최대 ±8kcal 차이)
+  // 그래야 목표 칼로리와 탄·단·지 g이 항상 같은 값을 가리켜요.
+  const kcalFromSuggested =
+    suggestedGrams !== null ? kcalFromGrams(suggestedGrams.carbs, suggestedGrams.protein, suggestedGrams.fat) : null;
+  const kcalRoundingGap = roundedKcal !== null && kcalFromSuggested !== null ? kcalFromSuggested - roundedKcal : 0;
   const hasAllGrams = grams.carbs !== null && grams.protein !== null && grams.fat !== null;
   const totalKcal = hasAllGrams ? kcalFromGrams(grams.carbs!, grams.protein!, grams.fat!) : null;
   const isTotalOutOfRange = totalKcal !== null && (totalKcal < GOAL_KCAL_MIN || totalKcal > GOAL_KCAL_MAX);
 
   // 계산한 칼로리가 저장된 칼로리와 다르면 차이를 알려 줘요. 같으면 안내를 보여 주지 않아요.
-  // g을 고치지 않았는데도 다르다면, g을 정수로 반올림해서 저장했기 때문이에요.
+  // g을 고치지 않았는데도 다르다면, 예전에 칼로리 탭이 입력값을 그대로 저장했기 때문이에요.
+  // 지금은 칼로리 탭도 g 합계로 저장해서 새로 저장한 목표에는 이 차이가 생기지 않아요.
   const isSavedGrams =
     goal !== null && grams.carbs === goal.carbs && grams.protein === goal.protein && grams.fat === goal.fat;
   const kcalGap = goal !== null && totalKcal !== null ? totalKcal - goal.kcal : 0;
@@ -107,14 +113,22 @@ export default function GoalEditor({ goal, isSaving, onSave, onCancel }: GoalEdi
     const inputs = event.currentTarget.querySelectorAll('input');
 
     if (mode === 'kcal') {
-      if (kcal === null || kcal < GOAL_KCAL_MIN || kcal > GOAL_KCAL_MAX) {
+      // 입력값이 범위 안이어도 g 합계가 범위를 살짝 벗어날 수 있어서(예: 800 → 795) 둘 다 확인해요.
+      if (
+        kcal === null ||
+        kcal < GOAL_KCAL_MIN ||
+        kcal > GOAL_KCAL_MAX ||
+        suggestedGrams === null ||
+        kcalFromSuggested === null ||
+        kcalFromSuggested < GOAL_KCAL_MIN ||
+        kcalFromSuggested > GOAL_KCAL_MAX
+      ) {
         setErrors({ kcal: rangeMessage(GOAL_KCAL_MIN, GOAL_KCAL_MAX) });
         inputs[0]?.focus();
         return;
       }
 
-      const rounded = Math.round(kcal);
-      onSave({ kcal: rounded, ...gramsFromKcal(rounded, ratio), mode: 'kcal', ratio });
+      onSave({ kcal: kcalFromSuggested, ...suggestedGrams, mode: 'kcal', ratio });
       return;
     }
 
@@ -212,6 +226,17 @@ export default function GoalEditor({ goal, isSaving, onSave, onCancel }: GoalEdi
                 </div>
               ))}
             </div>
+
+            {/* 입력한 칼로리와 g 합계가 다를 때만 보여요. 저장 전에 실제로 저장될 칼로리를 알려 줘요. */}
+            {kcalRoundingGap !== 0 && kcalFromSuggested !== null && (
+              <p aria-live="polite" className="m-0 text-xs text-(--ink-2)">
+                g은 1g 단위로 반올림해서, 목표 칼로리는 이 g을 합한{' '}
+                <b className="text-(--ink) tabular-nums">{formatInteger(kcalFromSuggested)}kcal</b>로 저장돼요.
+                <br />
+                입력한 {formatInteger(roundedKcal!)}kcal보다 {formatInteger(Math.abs(kcalRoundingGap))}kcal{' '}
+                {kcalRoundingGap > 0 ? '많아요' : '적어요'}.
+              </p>
+            )}
           </div>
 
           <p className="m-0 text-xs text-(--ink-2)">
@@ -263,12 +288,21 @@ export default function GoalEditor({ goal, isSaving, onSave, onCancel }: GoalEdi
             </small>
             {goal && kcalGap !== 0 && (
               <p className="m-0 mt-1.5 border-t border-(--line) pt-1.5 text-xs text-(--ink-2)">
-                저장된 목표는 {formatInteger(goal.kcal)}kcal예요.{' '}
-                {isSavedGrams
-                  ? `g을 정수로 반올림해서 ${formatInteger(Math.abs(kcalGap))}kcal 차이가 나요.`
-                  : `지금 값과 ${formatInteger(Math.abs(kcalGap))}kcal 차이가 나요.`}
-                <br />
-                이대로 저장하면 {formatInteger(totalKcal!)}kcal로 바뀌어요.
+                {isSavedGrams ? (
+                  <>
+                    저장된 목표 칼로리는 {formatInteger(goal.kcal)}kcal인데, 위 g을 합하면{' '}
+                    {formatInteger(totalKcal!)}kcal예요.
+                    <br />
+                    예전에 g을 1g 단위로 반올림하면서 생긴 {formatInteger(Math.abs(kcalGap))}kcal 차이예요. 저장하면 g
+                    합계({formatInteger(totalKcal!)}kcal)로 맞춰져요.
+                  </>
+                ) : (
+                  <>
+                    저장하면 목표 칼로리가 {formatInteger(goal.kcal)} → {formatInteger(totalKcal!)}kcal로 바뀌어요.
+                    <br />
+                    지금보다 {formatInteger(Math.abs(kcalGap))}kcal {kcalGap > 0 ? '많아요' : '적어요'}.
+                  </>
+                )}
               </p>
             )}
             {isTotalOutOfRange && (

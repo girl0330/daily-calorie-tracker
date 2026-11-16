@@ -30,7 +30,7 @@ const describeGoal = (goal: Goal) => {
 
   const ratio = goal.ratio;
   const ratioText = ratio ? `${ratio.carbs} : ${ratio.protein} : ${ratio.fat}` : '50 : 20 : 30';
-  return `칼로리로 설정했어요. 탄·단·지는 ${ratioText} 비율로 나눈 값이에요.`;
+  return `칼로리로 설정했어요. 탄·단·지는 ${ratioText} 비율로 나눈 값이고, 칼로리는 그 g을 합한 값이에요.`;
 };
 
 // 마이페이지 '목표 칼로리 설정' 칸: 불러오는 중 / 꺼짐(목표를 흐리게) / 켜짐(목표 보기) / 수정 중
