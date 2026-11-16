@@ -100,7 +100,7 @@ export default function WeeklyReportPage() {
             </p>
           )}
 
-          <WeeklyAiCard recordedDays={report.recordedDays} isCurrentWeek={isCurrentWeek} />
+          <WeeklyAiCard userId={userId} report={report} goal={goal} today={today} isCurrentWeek={isCurrentWeek} />
 
           <div className="grid items-start gap-x-12 gap-y-7 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
             <WeeklyCalorieChart

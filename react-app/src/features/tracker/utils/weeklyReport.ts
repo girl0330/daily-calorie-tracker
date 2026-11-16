@@ -85,6 +85,20 @@ export const getWeekOfMonth = (monday: Date) => {
   };
 };
 
+/**
+ * AI 리포트를 만들 때의 기록·목표를 짧은 글자로 남긴 값(서명값).
+ * 리포트에 저장해 두고 지금 값과 다르면 "기록이나 목표가 바뀌었어요"를 보여 줘요.
+ * 하루 칼로리(정수)와 목표만 봐요. 같은 칼로리로 음식 이름만 바꾼 건 바뀐 걸로 치지 않아요.
+ */
+export const getReportSignature = (
+  report: WeeklyReport,
+  goal: { kcal: number; carbs: number; protein: number; fat: number } | null,
+) =>
+  JSON.stringify({
+    goal: goal ? [goal.kcal, goal.carbs, goal.protein, goal.fat] : null,
+    days: report.days.map(day => (day.hasRecord ? Math.round(day.calories) : null)),
+  });
+
 /** 칼로리 중 탄·단·지가 차지하는 비중(%). 합이 100이 되도록 반올림해요. 기록이 없으면 모두 0 */
 export const getCalorieRatio = ({ carbs, protein, fat }: NutrientAmounts) => {
   const kcal = [carbs * 4, protein * 4, fat * 9];
