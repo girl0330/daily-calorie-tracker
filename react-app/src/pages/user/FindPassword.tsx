@@ -1,88 +1,69 @@
-import { useState } from 'react';
-import { showAlert } from '../../utils/sweetAlert';
-import { Link } from 'react-router-dom';
+import { useRef, useState, type FormEvent } from 'react';
+import Button from '../../components/common/Button';
+import TextField from '../../components/common/TextField';
 import { sendPasswordResetEmailApi } from '../../service/UserService';
-import { getRequiredInputErrorMessage } from '../../utils/validateCommonInput';
+import { getEmailError } from '../../utils/authValidation';
+import AuthLayout, { AuthLink, AuthNotice } from './AuthLayout';
 
-const FindPassword = () => {
+/**
+ * 비밀번호 찾기 화면. 가입한 이메일로 비밀번호를 다시 정하는 링크를 보내요.
+ * 그 링크를 누르면 비밀번호 재설정 화면(ResetPassword)이 열려요.
+ */
+export default function FindPassword() {
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState<string>();
+  const [formError, setFormError] = useState('');
+  const [isSent, setIsSent] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
-  // 이메일 패턴 정규식
-  const loginEmailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRef = useRef<HTMLInputElement>(null);
 
-  /**
-   * 입력한 이메일로 비밀번호 재설정 링크를 전송한다.
-   */
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFormError('');
+    setIsSent(false);
 
-    const validationMessage = getRequiredInputErrorMessage([
-      {
-        value: email,
-        rules: [
-          { type: 'required', message: '이메일을 입력해주세요.' },
-          { type: 'pattern', regex: loginEmailPattern, message: '올바른 이메일 형식으로 입력해주세요.' },
-        ],
-      },
-    ]);
-
-    if (validationMessage) {
-      showAlert({
-        title: '비밀번호 재설정 실패',
-        text: validationMessage,
-        icon: 'error',
-      });
-
-      return;
-    }
+    const nextError = getEmailError(email);
+    setEmailError(nextError);
+    if (nextError) return emailRef.current?.focus();
 
     try {
       setIsPending(true);
-
-      await sendPasswordResetEmailApi(email);
-
-      await showAlert({
-        title: '이메일 전송 완료',
-        text: '계정이 존재하는 경우 비밀번호 재설정 링크를 보내드립니다.',
-        icon: 'success',
-      });
+      await sendPasswordResetEmailApi(email.trim());
+      // 가입하지 않은 이메일인지는 알려 주지 않아요(남의 가입 여부를 알아낼 수 없게).
+      setIsSent(true);
+    } catch {
+      setFormError('메일을 보내지 못했어요. 잠시 후 다시 시도해 주세요.');
     } finally {
       setIsPending(false);
     }
   };
 
   return (
-    <main className="min-h-screen px-6 py-10">
-      <div className="mx-auto w-full max-w-[430px] bg-(--surface) p-3">
-        <h1 className="mb-6 text-center text-3xl font-bold">비밀번호 재설정</h1>
+    <AuthLayout
+      title="비밀번호 찾기"
+      description="가입한 이메일로 비밀번호를 다시 정하는 링크를 보내요."
+      footer={<AuthLink to="/login">로그인으로 돌아가기</AuthLink>}
+    >
+      <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+        <TextField
+          ref={emailRef}
+          type="email"
+          label="이메일"
+          value={email}
+          placeholder="name@example.com"
+          autoComplete="email"
+          error={emailError}
+          onChange={event => setEmail(event.target.value)}
+        />
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            placeholder="가입한 이메일을 입력해주세요."
-            className="w-full rounded-md border border-(--line) px-4 py-3 outline-none"
-          />
+        {isSent && <AuthNotice tone="ok">메일을 보냈어요. 가입한 이메일이면 곧 링크가 도착해요.</AuthNotice>}
+        {formError && <AuthNotice tone="error">{formError}</AuthNotice>}
 
-          <button
-            type="submit"
-            disabled={isPending}
-            className="w-full rounded-md bg-(--brand) py-3 text-(--on-brand) disabled:opacity-60"
-          >
-            {isPending ? '전송 중...' : '재설정 링크 보내기'}
-          </button>
-        </form>
-
-        <div className="mt-6 text-center">
-          <Link to="/login" className="text-sm text-(--muted) hover:text-(--ink)">
-            로그인으로 돌아가기
-          </Link>
-        </div>
-      </div>
-    </main>
+        <Button type="submit" variant="brand" size="lg" disabled={isPending} className="mt-1 w-full">
+          {isPending ? '보내는 중…' : '링크 보내기'}
+        </Button>
+      </form>
+    </AuthLayout>
   );
-};
-
-export default FindPassword;
+}

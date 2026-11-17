@@ -1,139 +1,96 @@
-import { useState } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Button from '../../components/common/Button';
+import TextField from '../../components/common/TextField';
 import { signUpApi } from '../../service/UserService';
-import { Link, useNavigate } from 'react-router-dom';
-import { showAlert } from '../../utils/sweetAlert';
-import { getRequiredInputErrorMessage } from '../../utils/validateCommonInput';
+import { showToast } from '../../store/toastStore';
+import { getEmailError, isValidNewPassword, NEW_PASSWORD_HINT } from '../../utils/authValidation';
+import AuthLayout, { AuthLink, AuthNotice } from './AuthLayout';
 
-const SignUp = () => {
+type SignUpErrors = { email?: string; password?: string };
+
+/** 회원가입 화면. 가입하면 바로 로그인된 채로 일일 기록으로 가요. */
+export default function SignUp() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<SignUpErrors>({});
+  const [formError, setFormError] = useState('');
+  const [isPending, setIsPending] = useState(false);
 
-  const loginEmailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFormError('');
 
-    const validationMessage = getRequiredInputErrorMessage([
-      {
-        value: email,
-        rules: [
-          { type: 'required', message: '이메일을 입력해주세요.' },
-          { type: 'pattern', regex: loginEmailPattern, message: '올바른 이메일 형식으로 입력해주세요.' },
-        ],
-      },
-      {
-        value: password,
-        rules: [
-          { type: 'required', message: '비밀번호를 입력해주세요.' },
-          { type: 'minLength', min: 8, message: '비밀번호는 최소 8자리 이상이어야 합니다.' },
-        ],
-      },
-    ]);
-
-    // 유효성 검사에 걸리면 즉시 경고창을 띄우고 함수 종료됨
-    if (validationMessage) {
-      showAlert({
-        title: '회원가입 실패',
-        text: validationMessage,
-        icon: 'error',
-      });
-
-      return;
-    }
+    const nextErrors: SignUpErrors = {
+      email: getEmailError(email),
+      password: !password ? '비밀번호를 입력하세요.' : isValidNewPassword(password) ? undefined : NEW_PASSWORD_HINT,
+    };
+    setErrors(nextErrors);
+    if (nextErrors.email) return emailRef.current?.focus();
+    if (nextErrors.password) return passwordRef.current?.focus();
 
     try {
-      await signUpApi(email, password);
-
-      await showAlert({
-        title: '회원가입 성공',
-        text: '바로 메인페이지로 이동 됩니다',
-        icon: 'success',
-      });
-
+      setIsPending(true);
+      await signUpApi(email.trim(), password);
+      showToast('가입했어요. 오늘 먹은 것부터 기록해 보세요.');
       navigate('/', { replace: true });
     } catch (error) {
-      console.error('회원가입 실패:', error);
-
-      const apiErrorMessage =
+      setIsPending(false);
+      setFormError(
         error instanceof Error && error.message === 'User already registered'
-          ? '이미 존재하는 계정입니다.'
-          : '회원가입 중 알 수 없는 오류가 발생했습니다.';
-
-      showAlert({
-        title: '회원가입 실패',
-        text: apiErrorMessage,
-        icon: 'error',
-      });
+          ? '이미 가입한 이메일이에요. 로그인해 주세요.'
+          : '가입하지 못했어요. 잠시 후 다시 시도해 주세요.'
+      );
     }
   };
 
   return (
-    <main className="min-h-screen px-6 py-10">
-      <div className="mx-auto w-full max-w-[430px] bg-(--surface) p-3">
-        {/* 상단 로고/배너 영역 */}
-        <div className="mb-10 flex justify-center">
-          <div className="flex h-[110px] items-center justify-center rounded-md text-4xl"> 계정만들기 </div>
-        </div>
-        {/* 이메일 폼 */}
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <div className="space-y-2">
-            <label htmlFor="email" className="block text-[15px] font-medium text-(--muted)">
-              이메일
-            </label>
+    <AuthLayout
+      title="회원가입"
+      description="이메일과 비밀번호만 있으면 바로 시작해요."
+      footer={
+        <span>
+          이미 계정이 있나요?{' '}
+          <AuthLink to="/login" strong>
+            로그인
+          </AuthLink>
+        </span>
+      }
+    >
+      <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+        <TextField
+          ref={emailRef}
+          type="email"
+          label="이메일"
+          value={email}
+          placeholder="name@example.com"
+          autoComplete="email"
+          error={errors.email}
+          onChange={event => setEmail(event.target.value)}
+        />
+        <TextField
+          ref={passwordRef}
+          type="password"
+          label="비밀번호"
+          value={password}
+          placeholder="비밀번호를 입력하세요."
+          autoComplete="new-password"
+          hint={NEW_PASSWORD_HINT}
+          error={errors.password}
+          onChange={event => setPassword(event.target.value)}
+        />
 
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="이메일 주소를 입력하세요."
-              className="h-12 w-full rounded-2xl border border-(--line) bg-(--surface) px-5 text-[18px] text-(--ink) transition outline-none focus:border-(--brand) focus:ring-4 focus:ring-(--brand-soft)"
-            />
+        {formError && <AuthNotice tone="error">{formError}</AuthNotice>}
 
-            <label htmlFor="password" className="block text-[15px] font-medium text-(--muted)">
-              비밀번호
-            </label>
-
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="비밀번호를 입력하세요."
-              className="h-12 w-full rounded-2xl border border-(--line) bg-(--surface) px-5 text-[18px] text-(--ink) transition outline-none focus:border-(--brand) focus:ring-4 focus:ring-(--brand-soft)"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="text-l mt-6 h-12 w-full cursor-pointer rounded-2xl bg-(--brand) font-semibold text-(--on-brand) transition hover:bg-(--brand-hover) active:scale-[0.99]"
-          >
-            회원가입
-          </button>
-        </form>
-        {/* 구분선 */}
-        <div className="my-12 flex items-center gap-4">
-          <div className="h-px flex-1 bg-(--line)" />
-          <Link
-            to="/login"
-            className="shrink-0 cursor-pointer text-[17px] text-(--muted) hover:font-bold hover:text-(--ink-2)"
-          >
-            Login
-          </Link>
-          <div className="h-px flex-1 bg-(--line)" />
-        </div>
-
-        {/* 나중에 추가 예정*/}
-
-        {/* <div className="grid grid-cols-2 gap-4">
-          <button className="h-14 border">카카오톡</button>
-          <button className="h-14 border">구글</button>
-        </div> */}
-      </div>
-    </main>
+        <Button type="submit" variant="brand" size="lg" disabled={isPending} className="mt-1 w-full">
+          {isPending ? '가입하는 중…' : '가입하기'}
+        </Button>
+      </form>
+    </AuthLayout>
   );
-};
-
-export default SignUp;
+}
