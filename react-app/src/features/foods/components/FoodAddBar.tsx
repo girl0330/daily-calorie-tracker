@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent, type RefObject } from 'react';
 import Button from '../../../components/common/Button';
+import Skeleton from '../../../components/common/Skeleton';
 import { showToast } from '../../../store/toastStore';
 import type { FoodItem, MealType, UserId } from '../../../types/types';
 import { useCreateFood } from '../hooks/useFoodMutations';
@@ -273,14 +274,15 @@ export default function FoodAddBar({
           onChange={event => setQuery(event.target.value)}
           className="h-11 min-w-0 flex-1 bg-transparent text-base text-(--ink) placeholder:text-(--muted) focus-visible:outline-none"
         />
-        {/* 시안의 .go 버튼 색은 라이트·다크 모두 같은 고정값이에요. */}
-        <button
+        <Button
           type="submit"
+          variant="go"
+          size="custom"
           aria-expanded={isOpen}
-          className="h-8.5 shrink-0 cursor-pointer rounded-lg bg-[#dbc0a7] px-3.5 text-[13px] font-bold whitespace-nowrap text-[#2b2623] transition-colors duration-150 hover:bg-[#cfae90]"
+          className="h-8.5 shrink-0 rounded-lg px-3.5 text-[13px] whitespace-nowrap"
         >
           AI 검색
-        </button>
+        </Button>
       </form>
 
       {isOpen && (
@@ -288,13 +290,10 @@ export default function FoodAddBar({
           {phase === 'loading' && (
             <div role="status" className="px-1 pb-1">
               <p className="m-0 px-2 pt-1.5 text-[13px] font-medium text-(--ok)">‘{searchedQuery}’ 영양 정보를 찾는 중…</p>
-              {[0, 150, 300].map(delay => (
-                <div
-                  key={delay}
-                  className="mt-1.5 h-12 animate-skeleton rounded-lg bg-(--skel) motion-reduce:animate-none"
-                  style={{ animationDelay: `${delay}ms` }}
-                />
-              ))}
+              {/* 세 줄이 조금씩 늦게 깜빡여요(0·150·300ms). */}
+              <Skeleton className="mt-1.5 h-12 rounded-lg" />
+              <Skeleton className="mt-1.5 h-12 rounded-lg [animation-delay:150ms]" />
+              <Skeleton className="mt-1.5 h-12 rounded-lg [animation-delay:300ms]" />
             </div>
           )}
 

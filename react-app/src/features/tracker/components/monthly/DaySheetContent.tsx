@@ -1,3 +1,4 @@
+import Button from '../../../../components/common/Button';
 import type { MealType } from '../../../../types/types';
 import { formatGram, formatInteger } from '../../../../utils/formatNumber';
 import { type DaySummary } from '../../utils/monthlyCalendar';
@@ -66,14 +67,14 @@ export default function DaySheetContent({ day, onOpenDaily }: DaySheetContentPro
         <p className="m-0 pt-5 pb-1.5 text-sm text-(--ink-2)">이날은 기록이 없어요.</p>
       )}
 
-      {/* 시안의 .go 버튼 색은 라이트·다크 모두 같은 고정값이에요. */}
-      <button
-        type="button"
+      <Button
+        variant="go"
+        size="custom"
         onClick={onOpenDaily}
-        className="mt-5.5 flex h-12 w-full cursor-pointer items-center justify-center rounded-[9px] bg-[#dbc0a7] text-[15px] font-bold whitespace-nowrap text-[#2b2623] transition-colors duration-150 hover:bg-[#cfae90] focus-visible:outline-offset-3"
+        className="mt-5.5 flex h-12 w-full items-center justify-center rounded-[9px] text-[15px] whitespace-nowrap focus-visible:outline-offset-3"
       >
         {day ? '일일 기록에서 자세히 보기' : '일일 기록에서 기록하기'}
-      </button>
+      </Button>
     </>
   );
 }

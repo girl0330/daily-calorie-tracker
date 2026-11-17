@@ -179,6 +179,34 @@
   }
 }
 
+/* '살펴보고 있어요...'처럼 글자 뒤 점이 하나씩 늘어나요. 움직임을 줄이는 설정이면 점 세 개로 멈춰 있어요. */
+.loading-dots::after {
+  content: '';
+  animation: loading-dots 1.2s steps(4) infinite;
+}
+
+@keyframes loading-dots {
+  0% {
+    content: '';
+  }
+  25% {
+    content: '.';
+  }
+  50% {
+    content: '..';
+  }
+  75% {
+    content: '...';
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-dots::after {
+    content: '...';
+    animation: none;
+  }
+}
+
 body {
   background: var(--bg);
   color: var(--ink);
