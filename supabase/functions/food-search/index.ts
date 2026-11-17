@@ -2,9 +2,14 @@
 // - 돌려주는 모양: { status: 'ok' | 'too_broad' | 'not_food', candidates: [...], suggestions: [...] }
 // - 로그인한 사용자만 부를 수 있어요(Authorization 헤더의 토큰을 Supabase에 확인해요).
 // - 지금은 하루 횟수 제한이 없어요. 앱을 다 만든 뒤 다시 걸 거예요(ai_usage 표, use_ai_quota 함수는 DB에 남아 있어요).
+// - 같은 검색어(정리한 뒤 똑같은 것)를 30일 안에 찾은 적이 있으면 OpenAI를 부르지 않고 저장된 결과를 돌려줘요
+//   (food_search_cache 표). 모든 사용자가 함께 쓰는 표라서 이 함수만 서버 전용 키로 읽고 써요.
 // - OpenAI 키와 모델 이름은 Supabase Secrets(OPENAI_API_KEY, OPENAI_MODEL)에서만 읽어요.
 // - 앱은 supabase.functions.invoke('food-search', { body: { query } })로 불러요.
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { getUserClient } from '../_shared/auth.ts';
+import { corsHeaders, json } from '../_shared/http.ts';
+import { askOpenAiJson, OpenAiError, openAiErrorStatus } from '../_shared/openai.ts';
 
 type Candidate = {
   name: string;
@@ -30,17 +35,13 @@ const MAX_SUGGESTIONS = 4;
 /** 앱의 입력 상한과 같아요(한 음식의 탄·단·지는 각각 999.9g까지). */
 const NUTRIENT_MAX = 999.9;
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
-const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
+/**
+ * 검색 지시문(SYSTEM_PROMPT)·답 모양의 번호. 지시문이나 답 모양을 고치면 1 올려요.
+ * 저장된 결과는 같은 번호일 때만 써서, 예전 지시문으로 찾은 결과가 나오지 않아요.
+ */
+const PROMPT_VERSION = 1;
+/** 저장된 결과를 쓰는 기간. 지나면 다음 검색 때 AI로 다시 찾아 덮어써요. */
+const CACHE_DAYS = 30;
 
 // AI에게 주는 지시. 입력은 사용자가 친 검색어 한 줄이에요. 예시의 숫자는 형식을 보여 주는 대략값이에요.
 const SYSTEM_PROMPT = `너는 한국 사용자가 먹은 음식의 영양 성분을 추정하는 도우미야.
@@ -184,61 +185,88 @@ const toSearchResult = (raw: unknown): SearchResult => {
   return { status: 'not_food', candidates: [], suggestions: [] };
 };
 
+/**
+ * 검색어를 저장·비교용으로 정리해요. 앞뒤 공백을 지우고, 사이 공백은 하나로, 한글은 NFC로, 영어는 소문자로.
+ * 예) '  김밥   1줄 ' → '김밥 1줄', 'Starbucks 라테' → 'starbucks 라테'
+ */
+const normalizeQuery = (query: string) => query.normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase();
+
+/**
+ * 저장된 결과 표(food_search_cache)를 다루는 클라이언트. 서버 전용 키라서 RLS를 건너뛰어요.
+ * 그래서 이 표 말고 다른 표에는 쓰지 않아요(사용자 기록은 로그인 토큰 클라이언트로만 다뤄요).
+ */
+const cacheClient = () =>
+  createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '', {
+    auth: { persistSession: false },
+  });
+
+/** 30일 안에 같은 지시문 번호로 저장된 결과가 있으면 돌려줘요. 없거나 읽기에 실패하면 null이에요. */
+const readCache = async (queryKey: string): Promise<SearchResult | null> => {
+  const since = new Date(Date.now() - CACHE_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  const { data, error } = await cacheClient()
+    .from('food_search_cache')
+    .select('result')
+    .eq('query_key', queryKey)
+    .eq('prompt_version', PROMPT_VERSION)
+    .gte('created_at', since)
+    .maybeSingle();
+
+  // 읽기에 실패해도 검색은 계속해요(AI로 찾아요).
+  if (error) console.error('cache_read_error', error);
+  // 저장된 값도 한 번 더 정리해서 돌려줘요.
+  return data ? toSearchResult(data.result) : null;
+};
+
+/** 결과를 저장해요. 같은 검색어·번호가 있으면 덮어쓰고 저장한 때도 지금으로 바꿔요. 실패해도 검색 결과는 그대로 보내요. */
+const writeCache = async (queryKey: string, result: SearchResult) => {
+  const { error } = await cacheClient()
+    .from('food_search_cache')
+    .upsert(
+      { query_key: queryKey, prompt_version: PROMPT_VERSION, result, created_at: new Date().toISOString() },
+      { onConflict: 'query_key,prompt_version' },
+    );
+  if (error) console.error('cache_write_error', error);
+};
+
 Deno.serve(async request => {
   if (request.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
 
   // 1) 로그인한 사용자인지 확인해요.
-  const token = request.headers.get('Authorization')?.replace('Bearer ', '') ?? '';
-  const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_ANON_KEY') ?? '', {
-    global: { headers: { Authorization: `Bearer ${token}` } },
-  });
-  const { data: userData, error: userError } = await supabase.auth.getUser(token);
-  if (userError || !userData.user) return json({ error: 'unauthorized' }, 401);
+  const auth = await getUserClient(request);
+  if ('response' in auth) return auth.response;
 
-  // 2) 검색어를 확인해요.
+  // 2) 검색어를 확인하고 정리해요.
   let query = '';
   try {
     const body = await request.json();
-    query = typeof body?.query === 'string' ? body.query.trim() : '';
+    query = typeof body?.query === 'string' ? normalizeQuery(body.query) : '';
   } catch {
     return json({ error: 'invalid_body' }, 400);
   }
   if (!query || query.length > MAX_QUERY_LENGTH) return json({ error: 'invalid_query' }, 400);
 
-  const apiKey = Deno.env.get('OPENAI_API_KEY');
-  const model = Deno.env.get('OPENAI_MODEL');
-  if (!apiKey || !model) return json({ error: 'not_configured' }, 500);
+  // 3) 같은 검색어로 찾은 결과가 있으면 OpenAI를 부르지 않고 그대로 돌려줘요.
+  const cached = await readCache(query);
+  if (cached) return json(cached);
 
-  // 3) OpenAI에 정해진 모양(JSON 스키마)으로 답하게 해요.
-  const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user', content: query },
-      ],
-      response_format: {
-        type: 'json_schema',
-        json_schema: { name: 'food_candidates', strict: true, schema: RESPONSE_SCHEMA },
-      },
-    }),
-  });
-
-  if (!openaiResponse.ok) {
-    // 키·결제 문제 등을 로그로 남겨요(대시보드의 함수 로그에서 볼 수 있어요). 앱에는 자세한 이유를 보내지 않아요.
-    console.error('openai_error', openaiResponse.status, await openaiResponse.text());
-    return json({ error: 'upstream_failed' }, 502);
-  }
-
+  // 4) OpenAI에 정해진 모양(JSON 스키마)으로 답하게 해요.
+  let result: SearchResult;
   try {
-    const completion = await openaiResponse.json();
-    const content = completion?.choices?.[0]?.message?.content ?? '';
-    return json(toSearchResult(JSON.parse(content)));
+    result = toSearchResult(
+      await askOpenAiJson({
+        systemPrompt: SYSTEM_PROMPT,
+        userContent: query,
+        schemaName: 'food_candidates',
+        schema: RESPONSE_SCHEMA,
+      }),
+    );
   } catch (error) {
-    console.error('parse_error', error);
-    return json({ error: 'bad_upstream_response' }, 502);
+    if (error instanceof OpenAiError) return json({ error: error.code }, openAiErrorStatus(error));
+    throw error;
   }
+
+  // 5) 정리한 결과(ok, too_broad, not_food)를 저장하고 돌려줘요. 오류는 위에서 이미 끝나서 저장되지 않아요.
+  await writeCache(query, result);
+  return json(result);
 });
