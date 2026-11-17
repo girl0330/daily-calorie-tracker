@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Button from '../../../../components/common/Button';
+import Skeleton from '../../../../components/common/Skeleton';
 import type { Goal } from '../../../goals/types';
 import type { UserId } from '../../../../types/types';
 import { useCreateWeeklyAiReport, useWeeklyAiReport } from '../../hooks/useWeeklyAiReport';
@@ -20,28 +21,31 @@ const COLUMNS = [
   { key: 'next', title: '다음에 해볼 것', dot: 'bg-(--brand)' },
 ] as const;
 
-// AI가 만드는 동안·처음 불러오는 동안 보여 주는 줄. 카드 배경보다 조금 진한 색이에요.
-const SKELETON_LINE = 'block h-3.5 rounded-md bg-[color-mix(in_srgb,var(--brand)_14%,var(--surface))] animate-skeleton';
+// AI가 만드는 동안·처음 불러오는 동안 보여 주는 회색 줄의 색. 카드 배경보다 조금 진해요.
+const SKELETON_COLOR = 'bg-[color-mix(in_srgb,var(--brand)_14%,var(--surface))]';
 
+// 카드 맨 위 제목 줄(높이 36px). 완성 화면은 오른쪽에 '다시 만들기' 버튼이 있어서 바깥 div로 한 번 더 감싸요.
 function SparkTitle({ note }: { note?: string }) {
   return (
-    <h2 id="weekly-ai-title" className="m-0 flex flex-wrap items-center gap-x-2 text-[15px] font-bold text-(--brand)">
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" />
-        <path d="M19 15l.7 2.3L22 18l-2.3.7L19 21l-.7-2.3L16 18l2.3-.7z" />
-      </svg>
-      AI 주간 리포트
-      {note && <small className="text-[13px] font-normal text-(--ink-2)">{note}</small>}
-    </h2>
+    <div className="flex min-h-9 items-center">
+      <h2 id="weekly-ai-title" className="m-0 flex flex-wrap items-center gap-x-2 text-[15px] font-bold text-(--brand)">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" />
+          <path d="M19 15l.7 2.3L22 18l-2.3.7L19 21l-.7-2.3L16 18l2.3-.7z" />
+        </svg>
+        AI 주간 리포트
+        {note && <small className="text-[13px] font-normal text-(--ink-2)">{note}</small>}
+      </h2>
+    </div>
   );
 }
 
@@ -73,36 +77,30 @@ export default function WeeklyAiCard({ userId, report, goal, today, isCurrentWee
     >
       {state === 'loading' && (
         <>
-          <div className="flex min-h-9 items-center">
-            <SparkTitle />
-          </div>
-          <span className={`${SKELETON_LINE} h-5.5! w-[70%]`} />
-          <span className={`${SKELETON_LINE} w-[92%]`} />
-          <span className={`${SKELETON_LINE} w-[84%]`} />
+          <SparkTitle />
+          <Skeleton className={`h-5.5 w-[70%] ${SKELETON_COLOR}`} />
+          <Skeleton className={`h-3.5 w-[92%] ${SKELETON_COLOR}`} />
+          <Skeleton className={`h-3.5 w-[84%] ${SKELETON_COLOR}`} />
         </>
       )}
 
       {state === 'creating' && (
         <>
-          <div className="flex min-h-9 items-center">
-            <SparkTitle />
-          </div>
+          <SparkTitle />
           <p className="m-0 text-base font-bold">
             기록 {report.recordedDays}일을 살펴보고 있어요
             <span className="loading-dots" aria-hidden="true" />
           </p>
-          <span className={`${SKELETON_LINE} h-5.5! w-[70%]`} />
-          <span className={`${SKELETON_LINE} w-[92%]`} />
-          <span className={`${SKELETON_LINE} w-[84%]`} />
-          <span className={`${SKELETON_LINE} w-[60%]`} />
+          <Skeleton className={`h-5.5 w-[70%] ${SKELETON_COLOR}`} />
+          <Skeleton className={`h-3.5 w-[92%] ${SKELETON_COLOR}`} />
+          <Skeleton className={`h-3.5 w-[84%] ${SKELETON_COLOR}`} />
+          <Skeleton className={`h-3.5 w-[60%] ${SKELETON_COLOR}`} />
         </>
       )}
 
       {state === 'error' && (
         <>
-          <div className="flex min-h-9 items-center">
-            <SparkTitle />
-          </div>
+          <SparkTitle />
           <p className="m-0 text-[17px] leading-normal font-bold tracking-[-0.01em] text-(--err) md:text-xl">
             리포트를 만들지 못했어요.
           </p>
@@ -193,9 +191,7 @@ export default function WeeklyAiCard({ userId, report, goal, today, isCurrentWee
 
       {state === 'empty' && (
         <>
-          <div className="flex min-h-9 items-center">
-            <SparkTitle note={isCurrentWeek ? '이번 주 중간 점검' : undefined} />
-          </div>
+          <SparkTitle note={isCurrentWeek ? '이번 주 중간 점검' : undefined} />
           <p className="m-0 max-w-[44em] text-[17px] leading-normal font-bold tracking-[-0.01em] break-keep md:text-xl">
             {hasRecord
               ? `${isCurrentWeek ? '지금까지' : '이 주에'} 기록한 ${report.recordedDays}일로 리포트를 만들 수 있어요.`
@@ -207,14 +203,14 @@ export default function WeeklyAiCard({ userId, report, goal, today, isCurrentWee
 
           {hasRecord && (
             <div>
-              {/* 시안의 .ai-go 버튼 색은 라이트·다크 모두 같은 고정값이에요. */}
-              <button
-                type="button"
+              <Button
+                variant="go"
+                size="custom"
                 onClick={create}
-                className="h-10.5 cursor-pointer rounded-[9px] bg-[#dbc0a7] px-4.5 text-sm font-bold whitespace-nowrap text-[#2b2623] transition-colors duration-150 hover:bg-[#cfae90]"
+                className="h-10.5 rounded-[9px] px-4.5 text-sm whitespace-nowrap"
               >
                 리포트 만들기
-              </button>
+              </Button>
             </div>
           )}
         </>
