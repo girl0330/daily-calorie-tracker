@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { logoutApi, resetPasswordApi } from '../../service/UserService';
+import { resetPasswordApi } from '../../service/UserService';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../../store/authStore';
+import { useLogout } from '../../hooks/useLogout';
 import { showAlert } from '../../utils/sweetAlert';
 import { getRequiredInputErrorMessage } from '../../utils/validateCommonInput';
 
@@ -9,7 +9,7 @@ const ResetPassword = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const clearUser = useAuthStore(state => state.clearUser);
+  const logout = useLogout();
 
   // 1. 상태 분리: 새 비밀번호와 비밀번호 확인을 따로 관리합니다.
   const [password, setPassword] = useState('');
@@ -61,9 +61,7 @@ const ResetPassword = () => {
         icon: 'success',
       });
 
-      await logoutApi();
-      clearUser();
-      navigate('/login', { replace: true });
+      await logout();
     } catch (error) {
       showAlert({
         title: '변경 실패',

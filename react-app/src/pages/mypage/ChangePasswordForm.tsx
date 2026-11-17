@@ -1,8 +1,8 @@
 import { useRef, useState, type ChangeEvent, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
 import TextField from '../../components/common/TextField';
-import { logoutApi, reauthenticateApi, resetPasswordApi } from '../../service/UserService';
+import { useLogout } from '../../hooks/useLogout';
+import { reauthenticateApi, resetPasswordApi } from '../../service/UserService';
 import { useAuthStore } from '../../store/authStore';
 import { showToast } from '../../store/toastStore';
 
@@ -28,9 +28,8 @@ const validate = (current: string, next: string, confirm: string): PasswordError
 
 // 마이페이지 '비밀번호 변경' 칸. 바꾸면 로그아웃하고 로그인 화면으로 보내요.
 export default function ChangePasswordForm() {
-  const navigate = useNavigate();
   const email = useAuthStore(state => state.user?.email);
-  const clearUser = useAuthStore(state => state.clearUser);
+  const logout = useLogout();
 
   const [values, setValues] = useState<Record<PasswordField, string>>({ current: '', next: '', confirm: '' });
   const [errors, setErrors] = useState<PasswordErrors>({});
@@ -80,10 +79,7 @@ export default function ChangePasswordForm() {
 
     try {
       await resetPasswordApi(values.next);
-      await logoutApi();
-      clearUser();
-      showToast('비밀번호를 바꿨어요. 새 비밀번호로 다시 로그인해 주세요.');
-      navigate('/login', { replace: true });
+      await logout('비밀번호를 바꿨어요. 새 비밀번호로 다시 로그인해 주세요.');
     } catch {
       setIsPending(false);
       showToast('비밀번호를 바꾸지 못했어요. 잠시 후 다시 시도해 주세요.');

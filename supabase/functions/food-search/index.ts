@@ -6,8 +6,7 @@
 //   (food_search_cache 표). 모든 사용자가 함께 쓰는 표라서 이 함수만 서버 전용 키로 읽고 써요.
 // - OpenAI 키와 모델 이름은 Supabase Secrets(OPENAI_API_KEY, OPENAI_MODEL)에서만 읽어요.
 // - 앱은 supabase.functions.invoke('food-search', { body: { query } })로 불러요.
-import { createClient } from 'npm:@supabase/supabase-js@2';
-import { getUserClient } from '../_shared/auth.ts';
+import { getServiceClient, getUserClient } from '../_shared/auth.ts';
 import { corsHeaders, json } from '../_shared/http.ts';
 import { askOpenAiJson, OpenAiError, openAiErrorStatus } from '../_shared/openai.ts';
 
@@ -191,19 +190,10 @@ const toSearchResult = (raw: unknown): SearchResult => {
  */
 const normalizeQuery = (query: string) => query.normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase();
 
-/**
- * 저장된 결과 표(food_search_cache)를 다루는 클라이언트. 서버 전용 키라서 RLS를 건너뛰어요.
- * 그래서 이 표 말고 다른 표에는 쓰지 않아요(사용자 기록은 로그인 토큰 클라이언트로만 다뤄요).
- */
-const cacheClient = () =>
-  createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '', {
-    auth: { persistSession: false },
-  });
-
 /** 30일 안에 같은 지시문 번호로 저장된 결과가 있으면 돌려줘요. 없거나 읽기에 실패하면 null이에요. */
 const readCache = async (queryKey: string): Promise<SearchResult | null> => {
   const since = new Date(Date.now() - CACHE_DAYS * 24 * 60 * 60 * 1000).toISOString();
-  const { data, error } = await cacheClient()
+  const { data, error } = await getServiceClient()
     .from('food_search_cache')
     .select('result')
     .eq('query_key', queryKey)
@@ -219,7 +209,7 @@ const readCache = async (queryKey: string): Promise<SearchResult | null> => {
 
 /** 결과를 저장해요. 같은 검색어·번호가 있으면 덮어쓰고 저장한 때도 지금으로 바꿔요. 실패해도 검색 결과는 그대로 보내요. */
 const writeCache = async (queryKey: string, result: SearchResult) => {
-  const { error } = await cacheClient()
+  const { error } = await getServiceClient()
     .from('food_search_cache')
     .upsert(
       { query_key: queryKey, prompt_version: PROMPT_VERSION, result, created_at: new Date().toISOString() },
