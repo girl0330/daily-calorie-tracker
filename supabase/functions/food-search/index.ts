@@ -1,7 +1,7 @@
 // AI 음식 검색: 검색어를 받아 OpenAI에게 영양 정보 후보를 물어보고, 정해진 모양으로 돌려줘요.
 // - 돌려주는 모양: { status: 'ok' | 'too_broad' | 'not_food', candidates: [...], suggestions: [...] }
 // - 로그인한 사용자만 부를 수 있어요(Authorization 헤더의 토큰을 Supabase에 확인해요).
-// - 한 사람이 하루 50번까지만 쓸 수 있어요(ai_usage 표, use_ai_quota 함수). 넘으면 429예요.
+// - 지금은 하루 횟수 제한이 없어요. 앱을 다 만든 뒤 다시 걸 거예요(ai_usage 표, use_ai_quota 함수는 DB에 남아 있어요).
 // - OpenAI 키와 모델 이름은 Supabase Secrets(OPENAI_API_KEY, OPENAI_MODEL)에서만 읽어요.
 // - 앱은 supabase.functions.invoke('food-search', { body: { query } })로 불러요.
 import { createClient } from 'npm:@supabase/supabase-js@2';
@@ -25,8 +25,6 @@ type SearchResult = {
 };
 
 const MAX_QUERY_LENGTH = 50;
-/** 한 사람이 하루(한국 시간)에 AI 검색을 쓸 수 있는 횟수. ai_usage 표와 use_ai_quota 함수로 세요. */
-const DAILY_LIMIT = 50;
 const MAX_CANDIDATES = 3;
 const MAX_SUGGESTIONS = 4;
 /** 앱의 입력 상한과 같아요(한 음식의 탄·단·지는 각각 999.9g까지). */
@@ -192,7 +190,6 @@ Deno.serve(async request => {
 
   // 1) 로그인한 사용자인지 확인해요.
   const token = request.headers.get('Authorization')?.replace('Bearer ', '') ?? '';
-  // 사용자의 토큰을 붙인 클라이언트라서, 아래 횟수 세기(rpc)도 그 사용자 본인으로 실행돼요.
   const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_ANON_KEY') ?? '', {
     global: { headers: { Authorization: `Bearer ${token}` } },
   });
@@ -213,19 +210,7 @@ Deno.serve(async request => {
   const model = Deno.env.get('OPENAI_MODEL');
   if (!apiKey || !model) return json({ error: 'not_configured' }, 500);
 
-  // 3) 오늘 횟수를 1 늘려요. 이미 50번을 썼으면 OpenAI를 부르지 않고 429로 알려요.
-  //    올바른 검색어만 세고, OpenAI가 실패해도 한 번으로 셉니다.
-  const { data: isAllowed, error: quotaError } = await supabase.rpc('use_ai_quota', {
-    p_kind: 'food_search',
-    p_limit: DAILY_LIMIT,
-  });
-  if (quotaError) {
-    console.error('quota_error', quotaError);
-    return json({ error: 'quota_check_failed' }, 500);
-  }
-  if (!isAllowed) return json({ error: 'daily_limit', limit: DAILY_LIMIT }, 429);
-
-  // 4) OpenAI에 정해진 모양(JSON 스키마)으로 답하게 해요.
+  // 3) OpenAI에 정해진 모양(JSON 스키마)으로 답하게 해요.
   const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
