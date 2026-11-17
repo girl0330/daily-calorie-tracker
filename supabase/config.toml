@@ -428,3 +428,7 @@ enabled = true
 # AI 음식 검색. 로그인한 사용자의 토큰이 있어야 불러요(함수 안에서도 한 번 더 확인해요).
 [functions.food-search]
 verify_jwt = true
+
+# AI 주간 리포트. 로그인한 사용자의 토큰이 있어야 불러요(함수 안에서도 한 번 더 확인해요).
+[functions.weekly-report]
+verify_jwt = true
