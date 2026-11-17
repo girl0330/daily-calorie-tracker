@@ -11,7 +11,6 @@ type WeeklyAiCardProps = {
   userId: UserId;
   report: WeeklyReport;
   goal: Goal | null;
-  today: Date;
   isCurrentWeek: boolean;
 };
 
@@ -53,7 +52,7 @@ function SparkTitle({ note }: { note?: string }) {
  * 시안의 AI 주간 리포트 카드. 다섯 가지 화면이 있어요.
  * 처음(리포트 만들기) / 만드는 중 / 완성 / 바뀜 안내(만든 뒤 기록이나 목표가 바뀜) / 오류(다시 시도)
  */
-export default function WeeklyAiCard({ userId, report, goal, today, isCurrentWeek }: WeeklyAiCardProps) {
+export default function WeeklyAiCard({ userId, report, goal, isCurrentWeek }: WeeklyAiCardProps) {
   const { data: saved, isLoading } = useWeeklyAiReport(userId, report.startDate);
   const { mutate: createReport, isPending, isError, variables } = useCreateWeeklyAiReport(userId);
 
@@ -63,7 +62,7 @@ export default function WeeklyAiCard({ userId, report, goal, today, isCurrentWee
   const isFailed = isError && isThisWeek && !isPending;
 
   const hasRecord = report.recordedDays > 0;
-  const create = () => createReport({ report, goal, today });
+  const create = () => createReport({ report, goal });
 
   const isStale = !!saved && saved.signature !== getReportSignature(report, goal);
   const state = isLoading ? 'loading' : isCreating ? 'creating' : isFailed ? 'error' : saved ? 'done' : 'empty';
