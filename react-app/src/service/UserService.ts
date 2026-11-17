@@ -82,3 +82,12 @@ export const resetPasswordApi = async (password: string) => {
 export const logoutApi = async () => {
   await supabase.auth.signOut();
 };
+
+/**
+ * 회원 탈퇴. Edge Function 'delete-account'가 로그인한 본인의 계정을 지워요(supabase/functions/delete-account).
+ * 음식 기록·목표·리포트는 DB가 계정과 함께 지워요. 끝나면 부르는 쪽에서 로그아웃해요.
+ */
+export const deleteAccountApi = async () => {
+  const { error } = await supabase.functions.invoke('delete-account', { method: 'POST' });
+  if (error) throw error;
+};

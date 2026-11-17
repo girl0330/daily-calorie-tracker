@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useAuthStore } from '../../store/authStore';
-import { logoutApi } from '../../service/UserService';
+import { useLogout } from '../../hooks/useLogout';
 import { useThemeStore, type ThemePreference } from '../../store/themeStore';
 import SegmentedControl from '../../components/common/SegmentedControl';
 import GoalSection from '../../features/goals/components/GoalSection';
 import { useRecordedDayCount } from '../../features/foods/hooks/useRecordedDayCount';
 import ChangePasswordForm from './ChangePasswordForm';
+import WithdrawButton from './WithdrawButton';
 
 const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
   { value: 'system', label: '시스템' },
@@ -45,9 +45,8 @@ function SettingSection({ id, title, description, isFirst = false, children }: S
 }
 
 export default function MyPage() {
-  const navigate = useNavigate();
   const user = useAuthStore(state => state.user);
-  const clearUser = useAuthStore(state => state.clearUser);
+  const logout = useLogout();
   const themePreference = useThemeStore(state => state.preference);
   const setThemePreference = useThemeStore(state => state.setPreference);
 
@@ -55,13 +54,6 @@ export default function MyPage() {
 
   const email = user?.email ?? '';
   const joinedAt = user?.created_at ? format(new Date(user.created_at), 'yyyy년 M월 d일') : '';
-
-  const handleLogout = async () => {
-    await logoutApi();
-
-    clearUser();
-    navigate('/login', { replace: true });
-  };
 
   return (
     <div className="mx-auto flex w-full max-w-300 flex-col gap-5 px-4 pt-5 pb-12 md:gap-7 md:px-6 md:pt-8">
@@ -72,14 +64,9 @@ export default function MyPage() {
         <span className="text-sm text-(--ink-2)">{email}</span>
       </div>
 
-      {/* AI 주간 리포트 설정은 8단계에서 추가해요. */}
       <div>
         {user && (
-          <SettingSection
-            id="mypage-goal"
-            title="목표 칼로리 설정"
-            isFirst
-          >
+          <SettingSection id="mypage-goal" title="목표 칼로리 설정" isFirst>
             <GoalSection userId={user.id} />
           </SettingSection>
         )}
@@ -119,11 +106,12 @@ export default function MyPage() {
           <div className="flex items-center gap-5">
             <button
               type="button"
-              onClick={handleLogout}
+              onClick={() => logout()}
               className="h-9 w-max cursor-pointer text-left text-sm text-(--ink-2) hover:underline hover:underline-offset-3"
             >
               로그아웃
             </button>
+            <WithdrawButton recordedDayCount={recordedDayCount} />
           </div>
         </SettingSection>
       </div>

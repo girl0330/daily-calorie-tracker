@@ -19,3 +19,13 @@ export const getUserClient = async (
 
   return { supabase, user: data.user };
 };
+
+/**
+ * 서버 전용 키(service-role)를 쓰는 Supabase 클라이언트. RLS를 건너뛰는 만능 열쇠예요.
+ * 꼭 필요한 곳에만 써요: 검색 결과 저장 표(food-search), 계정 지우기(delete-account).
+ * 사용자 기록을 읽고 쓰는 데는 쓰지 않아요(그건 getUserClient로 본인으로서 다뤄요).
+ */
+export const getServiceClient = () =>
+  createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '', {
+    auth: { persistSession: false },
+  });
