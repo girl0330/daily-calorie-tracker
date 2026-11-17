@@ -1,146 +1,101 @@
-import { useState } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Button from '../../components/common/Button';
+import TextField from '../../components/common/TextField';
 import { loginApi } from '../../service/UserService';
-import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import { showAlert } from '../../utils/sweetAlert';
-import { getRequiredInputErrorMessage } from '../../utils/validateCommonInput';
+import { getEmailError } from '../../utils/authValidation';
+import AuthLayout, { AuthLink, AuthNotice } from './AuthLayout';
 
-const Login = () => {
+type LoginErrors = { email?: string; password?: string };
+
+/** 로그인 화면. 로그인하지 않은 채로 앱을 열거나, 로그아웃·탈퇴하면 이 화면으로 와요. */
+export default function Login() {
   const navigate = useNavigate();
-
   const setUser = useAuthStore(state => state.setUser);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<LoginErrors>({});
+  // 서버에서 실패했을 때(비밀번호가 틀림 등) 폼 안에 보여 줄 문구
+  const [formError, setFormError] = useState('');
   const [isPending, setIsPending] = useState(false);
 
-  // 이메일 패턴 정규식
-  const loginEmailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFormError('');
 
-    const validationMessage = getRequiredInputErrorMessage([
-      {
-        value: email,
-        rules: [
-          { type: 'required', message: '이메일을 입력해주세요.' },
-          { type: 'pattern', regex: loginEmailPattern, message: '올바른 이메일 형식으로 입력해주세요.' },
-        ],
-      },
-      {
-        value: password,
-        rules: [
-          { type: 'required', message: '비밀번호를 입력해주세요.' },
-          { type: 'minLength', min: 8, message: '비밀번호는 최소 8자리 이상이어야 합니다.' },
-        ],
-      },
-    ]);
-
-    // 유효성 검사에 걸리면 즉시 경고창을 띄우고 함수 종료됨
-    if (validationMessage) {
-      showAlert({
-        title: '로그인 실패',
-        text: validationMessage,
-        icon: 'error',
-      });
-
-      return;
-    }
+    // 이미 가입한 사람의 예전 비밀번호도 들어와야 해서, 비밀번호는 비어 있는지만 봐요.
+    const nextErrors: LoginErrors = {
+      email: getEmailError(email),
+      password: password ? undefined : '비밀번호를 입력하세요.',
+    };
+    setErrors(nextErrors);
+    if (nextErrors.email) return emailRef.current?.focus();
+    if (nextErrors.password) return passwordRef.current?.focus();
 
     try {
       setIsPending(true);
-      const data = await loginApi(email, password);
+      const data = await loginApi(email.trim(), password);
       setUser(data.user);
-
       navigate('/', { replace: true });
     } catch (error) {
-      const apiErrorMessage =
-        error instanceof Error && error.message === 'Invalid login credentials'
-          ? '이메일 또는 비밀번호를 확인하시고 다시 입력해주세요.'
-          : '로그인 중 알 수 없는 오류가 발생했습니다.';
-
-      showAlert({
-        title: '로그인 실패',
-        text: apiErrorMessage,
-        icon: 'error',
-      });
-    } finally {
       setIsPending(false);
+      setFormError(
+        error instanceof Error && error.message === 'Invalid login credentials'
+          ? '이메일이나 비밀번호가 맞지 않아요.'
+          : '로그인하지 못했어요. 잠시 후 다시 시도해 주세요.'
+      );
     }
   };
 
   return (
-    <main className="min-h-screen px-6 py-10">
-      <div className="mx-auto w-full max-w-[430px] bg-(--surface) p-3">
-        {/* 상단 로고/배너 영역 */}
-        <div className="mb-10 flex justify-center">
-          <div className="flex h-[110px] items-center justify-center rounded-md text-4xl"> 로그인 </div>
-        </div>
-        {/* 이메일 폼 */}
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <div className="space-y-2">
-            <label htmlFor="email" className="block text-[15px] font-medium text-(--muted)">
-              이메일
-            </label>
+    <AuthLayout
+      title="로그인"
+      description="기록을 이어가려면 로그인해 주세요."
+      footer={
+        <>
+          <AuthLink to="/find-password">비밀번호를 잊었어요</AuthLink>
+          <span>
+            계정이 없나요?{' '}
+            <AuthLink to="/sign-up" strong>
+              회원가입
+            </AuthLink>
+          </span>
+        </>
+      }
+    >
+      <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+        <TextField
+          ref={emailRef}
+          type="email"
+          label="이메일"
+          value={email}
+          placeholder="name@example.com"
+          autoComplete="email"
+          error={errors.email}
+          onChange={event => setEmail(event.target.value)}
+        />
+        <TextField
+          ref={passwordRef}
+          type="password"
+          label="비밀번호"
+          value={password}
+          placeholder="비밀번호를 입력하세요."
+          autoComplete="current-password"
+          error={errors.password}
+          onChange={event => setPassword(event.target.value)}
+        />
 
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="이메일 주소를 입력하세요."
-              className="h-12 w-full rounded-2xl border border-(--line) bg-(--surface) px-5 text-[18px] text-(--ink) transition outline-none focus:border-(--brand) focus:ring-4 focus:ring-(--brand-soft)"
-            />
+        {formError && <AuthNotice tone="error">{formError}</AuthNotice>}
 
-            <label htmlFor="password" className="block text-[15px] font-medium text-(--muted)">
-              비밀번호
-            </label>
-
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="비밀번호를 입력하세요."
-              className="h-12 w-full rounded-2xl border border-(--line) bg-(--surface) px-5 text-[18px] text-(--ink) transition outline-none focus:border-(--brand) focus:ring-4 focus:ring-(--brand-soft)"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={isPending}
-            className="text-l mt-6 h-12 w-full rounded-2xl bg-(--brand) font-semibold text-(--on-brand) transition hover:bg-(--brand-hover) active:scale-[0.99]"
-          >
-            {isPending ? '로그인 중...' : '로그인'}
-          </button>
-        </form>
-        <button
-          onClick={() => navigate('/find-password')}
-          className="mt-6 h-12 w-full rounded-2xl border border-(--muted) bg-(--surface) font-semibold transition hover:bg-(--skel) active:scale-[0.99]"
-        >
-          비밀번호 찾기
-        </button>
-        {/* 구분선 */}
-        <div className="my-12 flex items-center gap-4">
-          <div className="h-px flex-1 bg-(--line)" />
-          <Link
-            to="/sign-up"
-            className="shrink-0 cursor-pointer text-[17px] text-(--muted) hover:font-bold hover:text-(--ink-2)"
-          >
-            Sign up
-          </Link>
-          <div className="h-px flex-1 bg-(--line)" />
-        </div>
-
-        {/* 나중에 추가 예정*/}
-        {/* <div className="grid grid-cols-2 gap-4">
-          <button className="h-14 border">카카오톡</button>
-          <button className="h-14 border">구글</button>
-        </div> */}
-      </div>
-    </main>
+        <Button type="submit" variant="brand" size="lg" disabled={isPending} className="mt-1 w-full">
+          {isPending ? '로그인하는 중…' : '로그인'}
+        </Button>
+      </form>
+    </AuthLayout>
   );
-};
-
-export default Login;
+}

@@ -5,11 +5,10 @@ import { useLogout } from '../../hooks/useLogout';
 import { reauthenticateApi, resetPasswordApi } from '../../service/UserService';
 import { useAuthStore } from '../../store/authStore';
 import { showToast } from '../../store/toastStore';
+import { isValidNewPassword, NEW_PASSWORD_HINT } from '../../utils/authValidation';
 
 type PasswordField = 'current' | 'next' | 'confirm';
 type PasswordErrors = Partial<Record<PasswordField, string>>;
-
-const NEW_PASSWORD_HINT = '8자 이상, 영문과 숫자를 섞어 주세요.';
 
 const validate = (current: string, next: string, confirm: string): PasswordErrors => {
   const errors: PasswordErrors = {};
@@ -17,7 +16,7 @@ const validate = (current: string, next: string, confirm: string): PasswordError
   if (!current) errors.current = '현재 비밀번호를 입력하세요.';
 
   if (!next) errors.next = '새 비밀번호를 입력하세요.';
-  else if (next.length < 8 || !/[a-zA-Z]/.test(next) || !/\d/.test(next)) errors.next = NEW_PASSWORD_HINT;
+  else if (!isValidNewPassword(next)) errors.next = NEW_PASSWORD_HINT;
   else if (next === current) errors.next = '현재 비밀번호와 다르게 정해 주세요.';
 
   if (!confirm) errors.confirm = '새 비밀번호를 한 번 더 입력하세요.';
