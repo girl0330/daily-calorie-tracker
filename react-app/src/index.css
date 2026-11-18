@@ -3,7 +3,7 @@
 /*
  * 디자인 토큰 (2026-11-08 확정 시안 기준)
  * - 라이트가 기본, 시스템 다크 모드를 따라가고 <html data-theme="light|dark">로 직접 고를 수 있어요.
- * - 새 코드는 아래 "시안 토큰"을 쓰고, "옛 이름" 블록은 화면을 새로 만들면서 하나씩 없앨 예정이에요.
+ * - 모든 화면이 아래 "시안 토큰"을 써요. (옛 이름 토큰은 9단계 정리에서 모두 지웠어요.)
  */
 
 :root {
@@ -109,27 +109,6 @@
 :root {
   /* 시안 토큰에서 계산하는 값 (라이트·다크 공통) */
   --brand-hover: color-mix(in srgb, var(--brand) 86%, var(--ink));
-
-  /* ===== 옛 이름: 지금 화면이 쓰는 값. 새 코드에서는 쓰지 않아요 ===== */
-  --text-primary: var(--ink);
-  --text-secondary: var(--ink-2);
-  --text-muted: var(--muted);
-  --text-on-primary: var(--on-brand);
-
-  --bg-body: var(--bg);
-  --bg-section: var(--bg);
-  --bg-card: var(--surface);
-  --bg-input: var(--surface);
-  --bg-hover: var(--skel);
-
-  --border-light: var(--line);
-  --border-medium: color-mix(in srgb, var(--line) 60%, var(--muted));
-  --border-strong: var(--muted);
-
-  --chart-carbs: var(--carbs);
-  --chart-protein: var(--protein);
-  --chart-fat: var(--fat);
-  --chart-calorie: var(--kcal);
 }
 
 /*

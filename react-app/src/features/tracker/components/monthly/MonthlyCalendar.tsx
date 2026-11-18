@@ -54,9 +54,13 @@ export default function MonthlyCalendar({ month, today, summaries, onSelectDate 
             .filter(Boolean)
             .join(', ');
 
+          // 선 색은 모든 칸에 늘 같은 값으로 두고, 선 두께만 칸 위치에 따라 켜요.
+          // 색을 칸마다 붙였다 뗐다 하면, 달을 넘길 때 자리가 바뀐 칸의 선이 기본색(진한 글자색)에서
+          // 옅은 색으로 바뀌는 0.15초 동안 진한 선이 잠깐 보여요(transition-colors 때문).
           const lineClassName = [
-            index % 7 > 0 ? 'border-l border-l-(--line-soft)' : '',
-            index < 35 ? 'border-b border-b-(--line-soft)' : '',
+            'border-(--line-soft)',
+            index % 7 > 0 ? 'border-l' : '',
+            index < 35 ? 'border-b' : '',
           ].join(' ');
 
           return (

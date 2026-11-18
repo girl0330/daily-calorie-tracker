@@ -17,7 +17,9 @@ registerHooks({
 });
 
 const { getWeekRange } = await import('../src/utils/date.ts');
-const { getWeeklyReport } = await import('../src/features/tracker/utils/weeklyReport.ts');
+const { getWeeklyReport, getReportSignature, getCalorieRatio, getWeekOfMonth } = await import(
+  '../src/features/tracker/utils/weeklyReport.ts'
+);
 
 const food = (overrides = {}) => ({
   id: 1, userId: 'test-user', mealType: 'breakfast', foodName: '예시 음식',
@@ -61,17 +63,18 @@ test('유효하지 않은 Date는 명시적으로 거절한다', () => {
   assert.throws(() => getWeekRange(new Date('invalid')), RangeError);
 });
 
-test('기록이 없어도 7일을 반환하고 비중은 계산 불가로 표시한다', () => {
+test('기록이 없어도 7일을 반환하고 평균은 0이다', () => {
   const report = getWeeklyReport([], new Date(2026, 9, 21));
   assert.equal(report.recordedDays, 0);
   assert.equal(report.totalCalories, 0);
+  assert.equal(report.averageCalories, 0);
   assert.deepEqual(report.nutrients, { carbs: 0, protein: 0, fat: 0 });
   assert.equal(report.days.length, 7);
   assert.ok(report.days.every(day => !day.hasRecord && day.calories === 0));
-  assert.ok(report.meals.every(meal => meal.caloriePercentage === null));
+  assert.deepEqual(Object.keys(report.mealNutrients).sort(), ['breakfast', 'dinner', 'lunch']);
 });
 
-test('주 경계 포함, 범위 밖 제외, 날짜별·시간대별 합계와 비중을 계산한다', () => {
+test('주 경계 포함, 범위 밖 제외, 날짜별·시간대별 합계와 평균을 계산한다', () => {
   const foods = [
     food(),
     food({ id: 2, mealType: 'lunch', carbs: 20, protein: 10, fat: 4 }),
@@ -87,17 +90,47 @@ test('주 경계 포함, 범위 밖 제외, 날짜별·시간대별 합계와 �
   assert.equal(report.days[0].calories, 234);
   assert.equal(report.days[6].calories, 234);
   assert.equal(report.days.reduce((sum, day) => sum + day.calories, 0), 468);
-  assert.deepEqual(report.meals.map(meal => meal.calories), [78, 156, 234]);
-  assert.ok(Math.abs(report.meals.reduce((sum, meal) => sum + meal.caloriePercentage, 0) - 100) < 1e-10);
+  // 평균은 기록한 날(2일)로만 나눠요.
+  assert.equal(report.averageCalories, 234);
+  assert.deepEqual(report.mealNutrients, {
+    breakfast: { carbs: 10, protein: 5, fat: 2 },
+    lunch: { carbs: 20, protein: 10, fat: 4 },
+    dinner: { carbs: 30, protein: 15, fat: 6 },
+  });
   assert.deepEqual(foods, before);
 });
 
-test('0kcal 기록은 기록 일수에 포함하고 비중은 null이다', () => {
+test('0kcal 기록도 기록한 날로 센다', () => {
   const report = getWeeklyReport([food({ carbs: 0, protein: 0, fat: 0 })], new Date(2026, 9, 21));
   assert.equal(report.recordedDays, 1);
   assert.equal(report.days[0].hasRecord, true);
   assert.equal(report.days[1].hasRecord, false);
-  assert.ok(report.meals.every(meal => meal.caloriePercentage === null));
+  assert.equal(report.averageCalories, 0);
+});
+
+test('탄·단·지 칼로리 비중은 합이 100이고, 기록이 없으면 모두 0이다', () => {
+  // 탄 50g(200kcal), 단 30g(120kcal), 지 20g(180kcal) → 40%, 24%, 36%
+  assert.deepEqual(getCalorieRatio({ carbs: 50, protein: 30, fat: 20 }), { carbs: 40, protein: 24, fat: 36 });
+  // 반올림해도 합이 100이 되게 지방에서 맞춰요.
+  const ratio = getCalorieRatio({ carbs: 1, protein: 1, fat: 1 });
+  assert.equal(ratio.carbs + ratio.protein + ratio.fat, 100);
+  assert.deepEqual(getCalorieRatio({ carbs: 0, protein: 0, fat: 0 }), { carbs: 0, protein: 0, fat: 0 });
+});
+
+test('리포트 서명값은 하루 칼로리나 목표가 바뀌면 달라지고, 음식 이름만 바뀌면 같다', () => {
+  const day = new Date(2026, 9, 21);
+  const goal = { kcal: 1900, carbs: 238, protein: 95, fat: 63 };
+  const base = getReportSignature(getWeeklyReport([food()], day), goal);
+
+  assert.equal(getReportSignature(getWeeklyReport([food({ foodName: '다른 이름' })], day), goal), base);
+  assert.notEqual(getReportSignature(getWeeklyReport([food({ carbs: 20 })], day), goal), base);
+  assert.notEqual(getReportSignature(getWeeklyReport([food()], day), { ...goal, kcal: 2000 }), base);
+  assert.notEqual(getReportSignature(getWeeklyReport([food()], day), null), base);
+});
+
+test('몇째 주인지는 그 주 목요일이 든 달로 센다', () => {
+  assert.deepEqual(getWeekOfMonth(new Date(2026, 10, 2)), { month: 11, week: 1 });
+  assert.deepEqual(getWeekOfMonth(new Date(2026, 9, 26)), { month: 10, week: 5 });
 });
 
 test('소수 영양소는 집계 중 반올림하지 않는다', () => {

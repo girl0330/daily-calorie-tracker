@@ -30,7 +30,7 @@ const WEEKDAYS = ['월', '화', '수', '목', '금', '토', '일'];
 const MAX_SIGNATURE_LENGTH = 2000;
 const MAX_ITEMS = 3;
 const MAX_LINE_LENGTH = 120;
-/** 리포트 말투. 두 번째 PR은 '다정하게'로 고정이에요. */
+/** 리포트 말투. 말투 고르기는 빼기로 해서(2026-11-18) 늘 '다정하게'예요. */
 const TONE = 'soft';
 
 // AI에게 주는 지시. 2026-11-17 사용자와 함께 정했어요. 바꾸기 전에 먼저 이야기해요.
