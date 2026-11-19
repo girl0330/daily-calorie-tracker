@@ -133,22 +133,17 @@ function App() {
           }
         />
 
-        {/* 로그인 후 공통 Layout */}
-        <Route
-          element={
-            isPasswordRecoveryFromStore ? (
-              <Navigate to="/reset-password" replace />
-            ) : userFromStore ? (
-              <AppLayout />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        >
+        {/* 앱 공통 Layout. 로그인 안 해도 일일·월간·주간 화면은 볼 수 있어요.
+            기능(검색·추가·리포트 만들기 등)은 화면 안의 GuestGuard가 막고 로그인 안내창을 띄워요. */}
+        <Route element={isPasswordRecoveryFromStore ? <Navigate to="/reset-password" replace /> : <AppLayout />}>
           <Route path="/" element={<DailyTrackerPage />} />
           <Route path="/monthly" element={<MonthlyTrackerPage />} />
           <Route path="/weekly-report" element={<WeeklyReportPage />} />
-          <Route path="/mypage" element={<MyPage />} />
+          {/* 마이페이지는 로그인한 사람만. 로그인이 끝나면 다시 마이페이지로 돌아와요. */}
+          <Route
+            path="/mypage"
+            element={userFromStore ? <MyPage /> : <Navigate to="/login" replace state={{ from: '/mypage' }} />}
+          />
           {/* 개발 서버에서만 생기는 공통 부품 확인 페이지 */}
           {import.meta.env.DEV && <Route path="/dev/components" element={<ComponentsPreviewPage />} />}
         </Route>

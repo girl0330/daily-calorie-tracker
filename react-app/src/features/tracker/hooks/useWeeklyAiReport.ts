@@ -14,6 +14,8 @@ export const useWeeklyAiReport = (userId: UserId, startDate: string) =>
   useQuery({
     queryKey: weeklyAiReportQueryKeys.detail(userId, startDate),
     queryFn: () => getWeeklyAiReportApi(userId, startDate),
+    // 로그인 안 한 사람(userId가 빈 값)은 서버에 묻지 않아요.
+    enabled: !!userId,
   });
 
 /**
