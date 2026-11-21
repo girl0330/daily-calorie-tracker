@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { addWeeks, format } from 'date-fns';
 import Button from '../../components/common/Button';
 import DateHeader from '../../components/common/DateHeader';
+import GuestGuard from '../../components/common/GuestGuard';
 import { useGoalSettings } from '../../features/goals/hooks/useGoalSettings';
 import { getActiveGoal } from '../../features/goals/utils/goalCalc';
 import WeeklyAiCard from '../../features/tracker/components/weekly/WeeklyAiCard';
@@ -10,7 +11,7 @@ import WeeklyCalorieChart from '../../features/tracker/components/weekly/WeeklyC
 import WeeklyNutritionPanel from '../../features/tracker/components/weekly/WeeklyNutritionPanel';
 import WeeklyStats from '../../features/tracker/components/weekly/WeeklyStats';
 import { useWeeklyReport } from '../../features/tracker/hooks/useWeeklyReport';
-import { getWeekOfMonth } from '../../features/tracker/utils/weeklyReport';
+import { getWeekOfMonth, getWeeklyReport } from '../../features/tracker/utils/weeklyReport';
 import { useAuthStore } from '../../store/authStore';
 import { getWeekRange, parseRecordDate, toRecordDate } from '../../utils/date';
 import WeeklyReportSkeleton from './WeeklyReportSkeleton';
@@ -37,13 +38,13 @@ export default function WeeklyReportPage() {
   const isCurrentWeek = week.startDate === getWeekRange(today).startDate;
   const { week: weekNumber } = getWeekOfMonth(monday);
 
-  const { data: report, isLoading, isError, isFetching, refetch } = useWeeklyReport(userId, selectedWeekDate);
+  const { data: fetchedReport, isLoading, isError, isFetching, refetch } = useWeeklyReport(userId, selectedWeekDate);
+  // 로그인 안 한 사람은 서버에 묻지 않고, 기록이 하나도 없는 빈 주로 보여 줘요.
+  const report = userId ? fetchedReport : getWeeklyReport([], monday);
   const { data: goalSettings, isLoading: isGoalLoading, isError: isGoalError } = useGoalSettings(userId);
 
   // 막대에서 고른 날(YYYY-MM-DD). null이면 일주일 보기예요.
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-
-  if (!userId) return null;
 
   const goal = getActiveGoal(goalSettings);
 
@@ -92,15 +93,20 @@ export default function WeeklyReportPage() {
 
           {/* 목표를 못 불러왔을 때는 '정하라'고 안내하지 않아요. */}
           {!goal && !isGoalError && (
-            <p className="m-0 -mt-2 text-[13px] break-keep text-(--ink-2)">
-              목표를 정하면 목표를 넘은 날과 달성률을 보여 줘요.{' '}
-              <Link to="/mypage" className="font-bold text-(--brand) underline underline-offset-3">
-                목표 설정하기
-              </Link>
-            </p>
+            <GuestGuard>
+              <p className="m-0 -mt-2 text-[13px] break-keep text-(--ink-2)">
+                목표를 정하면 목표를 넘은 날과 달성률을 보여 줘요.{' '}
+                <Link to="/mypage" className="font-bold text-(--brand) underline underline-offset-3">
+                  목표 설정하기
+                </Link>
+              </p>
+            </GuestGuard>
           )}
 
-          <WeeklyAiCard userId={userId} report={report} goal={goal} isCurrentWeek={isCurrentWeek} />
+          {/* 로그인 안 한 사람은 AI 리포트를 만들 수 없어요. 버튼을 누르면 로그인 안내창이 떠요. */}
+          <GuestGuard>
+            <WeeklyAiCard userId={userId ?? ''} report={report} goal={goal} isCurrentWeek={isCurrentWeek} />
+          </GuestGuard>
 
           <div className="grid items-start gap-x-12 gap-y-7 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
             <WeeklyCalorieChart

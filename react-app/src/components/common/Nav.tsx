@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useAuthStore } from '../../store/authStore';
 
 type MenuItem = {
   to: string;
@@ -69,8 +70,13 @@ const menuLinkClassName = ({ isActive }: { isActive: boolean }) =>
       : 'font-medium text-(--ink-2) hover:bg-(--skel) hover:text-(--ink)'
   }`;
 
+// 로그인 안 한 사람에게는 마이페이지를 빼고 보여 줘요.
+const GUEST_MENU_ITEMS = MENU_ITEMS.filter(item => item.to !== '/mypage');
+
 export default function Nav() {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
+  const isLoggedIn = useAuthStore(state => state.user !== null);
+  const menuItems = isLoggedIn ? MENU_ITEMS : GUEST_MENU_ITEMS;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [prevPathname, setPrevPathname] = useState(pathname);
 
@@ -132,7 +138,7 @@ export default function Nav() {
         </div>
 
         <nav aria-label="페이지" className="flex flex-col gap-1">
-          {MENU_ITEMS.map(item => (
+          {menuItems.map(item => (
             <NavLink key={item.to} to={item.to} className={menuLinkClassName}>
               {({ isActive }) => (
                 <>
@@ -147,6 +153,22 @@ export default function Nav() {
             </NavLink>
           ))}
         </nav>
+
+        {/* 로그인 안 한 사람: 메뉴 맨 아래에 로그인 버튼과 회원가입 링크. 로그인이 끝나면 보던 화면으로 돌아와요. */}
+        {!isLoggedIn && (
+          <div className="flex flex-col items-center gap-2.5 border-t border-(--line) px-3 pt-4 lg:mt-auto lg:border-t-0 lg:px-0 lg:pt-0">
+            <Link
+              to="/login"
+              state={{ from: pathname + search }}
+              className="flex h-11 w-full items-center justify-center rounded-[10px] border border-(--brand) bg-(--brand) text-sm font-bold text-(--bg) transition-colors duration-150 hover:bg-(--brand-hover)"
+            >
+              로그인
+            </Link>
+            <Link to="/sign-up" className="text-sm text-(--ink-2) hover:underline hover:underline-offset-3">
+              회원가입
+            </Link>
+          </div>
+        )}
       </aside>
     </>
   );

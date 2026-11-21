@@ -1,5 +1,5 @@
 import { useRef, useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
 import TextField from '../../components/common/TextField';
 import { loginApi } from '../../service/UserService';
@@ -9,9 +9,13 @@ import AuthLayout, { AuthLink, AuthNotice } from './AuthLayout';
 
 type LoginErrors = { email?: string; password?: string };
 
-/** 로그인 화면. 로그인하지 않은 채로 앱을 열거나, 로그아웃·탈퇴하면 이 화면으로 와요. */
+/** 로그인 화면. 로그인 안내창·메뉴의 로그인 버튼으로 오거나, 로그아웃·탈퇴하면 이 화면으로 와요. */
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  // 로그인 안내창이나 마이페이지에서 왔다면 로그인 뒤 그 주소로 돌려보내요. 앱 안 주소('/'로 시작)만 받아요.
+  const from: unknown = location.state?.from;
+  const returnTo = typeof from === 'string' && from.startsWith('/') && !from.startsWith('//') ? from : '/';
   const setUser = useAuthStore(state => state.setUser);
 
   const [email, setEmail] = useState('');
@@ -41,7 +45,7 @@ export default function Login() {
       setIsPending(true);
       const data = await loginApi(email.trim(), password);
       setUser(data.user);
-      navigate('/', { replace: true });
+      navigate(returnTo, { replace: true });
     } catch (error) {
       setIsPending(false);
       setFormError(

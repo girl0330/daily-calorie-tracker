@@ -4,6 +4,7 @@ import { addDays, format, isToday } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Button from '../../components/common/Button';
 import DateHeader from '../../components/common/DateHeader';
+import GuestGuard from '../../components/common/GuestGuard';
 import FoodAddBar from '../../features/foods/components/FoodAddBar';
 import FoodTable from '../../features/foods/components/FoodTable';
 import { useFoods } from '../../features/foods/hooks/useFoods';
@@ -51,8 +52,6 @@ export default function DailyTrackerPage() {
     const timer = setTimeout(() => setHighlight(null), HIGHLIGHT_MS);
     return () => clearTimeout(timer);
   }, [highlight]);
-
-  if (!userId) return null;
 
   const foods = allFoods.filter(food => food.recordDate === recordDate);
   const totals = toTotals(totalNutrients(foods));
@@ -105,38 +104,43 @@ export default function DailyTrackerPage() {
 
           {/* 목표를 못 불러왔을 때는 '정하라'고 안내하지 않아요. */}
           {!goal && !isGoalError && (
-            <p className="m-0 -mt-2 text-[13px] text-(--ink-2)">
-              목표를 정하면 남은 칼로리와 달성률을 보여 줘요.{' '}
-              <Link to="/mypage" className="font-bold text-(--brand) underline underline-offset-3">
-                목표 설정하기
-              </Link>
-            </p>
+            <GuestGuard>
+              <p className="m-0 -mt-2 text-[13px] text-(--ink-2)">
+                목표를 정하면 남은 칼로리와 달성률을 보여 줘요.{' '}
+                <Link to="/mypage" className="font-bold text-(--brand) underline underline-offset-3">
+                  목표 설정하기
+                </Link>
+              </p>
+            </GuestGuard>
           )}
 
-          {/* 날짜를 바꾸면 key가 바뀌어서 검색창과 열린 검색판이 처음 상태로 돌아가요. */}
-          <FoodAddBar
-            key={recordDate}
-            userId={userId}
-            recordDate={recordDate}
-            meal={addMeal}
-            onMealChange={setAddMeal}
-            inputRef={addInputRef}
-            onAdded={handleAdded}
-          />
+          {/* 로그인 안 한 사람은 검색창과 표를 볼 수만 있어요. 누르면 로그인 안내창이 떠요. */}
+          <GuestGuard>
+            {/* 날짜를 바꾸면 key가 바뀌어서 검색창과 열린 검색판이 처음 상태로 돌아가요. */}
+            <FoodAddBar
+              key={recordDate}
+              userId={userId ?? ''}
+              recordDate={recordDate}
+              meal={addMeal}
+              onMealChange={setAddMeal}
+              inputRef={addInputRef}
+              onAdded={handleAdded}
+            />
 
-          <FoodTable
-            userId={userId}
-            foods={foods}
-            totals={totals}
-            editingId={editingId}
-            onEditingChange={setEditingId}
-            highlightId={highlight?.id ?? null}
-            onEdited={handleEdited}
-            recordDate={recordDate}
-            addingMeal={addingMeal}
-            onAddingChange={setAddingMeal}
-            onAdded={handleAdded}
-          />
+            <FoodTable
+              userId={userId ?? ''}
+              foods={foods}
+              totals={totals}
+              editingId={editingId}
+              onEditingChange={setEditingId}
+              highlightId={highlight?.id ?? null}
+              onEdited={handleEdited}
+              recordDate={recordDate}
+              addingMeal={addingMeal}
+              onAddingChange={setAddingMeal}
+              onAdded={handleAdded}
+            />
+          </GuestGuard>
         </>
       )}
     </div>

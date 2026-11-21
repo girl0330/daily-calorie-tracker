@@ -5,6 +5,7 @@ import { ko } from 'date-fns/locale';
 import BottomSheet from '../../components/common/BottomSheet';
 import Button from '../../components/common/Button';
 import DateHeader from '../../components/common/DateHeader';
+import GuestGuard from '../../components/common/GuestGuard';
 import Skeleton from '../../components/common/Skeleton';
 import { useFoods } from '../../features/foods/hooks/useFoods';
 import { useGoalSettings } from '../../features/goals/hooks/useGoalSettings';
@@ -32,8 +33,6 @@ export default function MonthlyTrackerPage() {
   const { data: goalSettings, isLoading: isGoalLoading, isError: isGoalError } = useGoalSettings(userId);
 
   const summaries = useMemo(() => (foods ? summarizeByDate(foods) : null), [foods]);
-
-  if (!userId) return null;
 
   const today = new Date();
   const isThisMonth = isSameMonth(month, today);
@@ -67,12 +66,23 @@ export default function MonthlyTrackerPage() {
           onCurrent={() => setMonth(startOfMonth(new Date()))}
         />
 
-        <div className="max-md:hidden">{showGoal && <MonthlyGoal goal={goal} layout="desktop" />}</div>
+        {/* 로그인 안 한 사람이 '목표 설정하기'를 누르면 로그인 안내창이 떠요. */}
+        <div className="max-md:hidden">
+          {showGoal && (
+            <GuestGuard>
+              <MonthlyGoal goal={goal} layout="desktop" />
+            </GuestGuard>
+          )}
+        </div>
       </div>
 
       <div className="md:hidden">
         {isGoalLoading && <Skeleton className="h-9 rounded-lg" />}
-        {showGoal && <MonthlyGoal goal={goal} layout="mobile" />}
+        {showGoal && (
+          <GuestGuard>
+            <MonthlyGoal goal={goal} layout="mobile" />
+          </GuestGuard>
+        )}
       </div>
 
       {isError ? (
@@ -90,7 +100,10 @@ export default function MonthlyTrackerPage() {
           />
 
           {/* 모바일 칸의 색 점 설명 */}
-          <p aria-hidden="true" className="m-0 flex shrink-0 items-center justify-end gap-3 text-[10px] text-(--ink-2) md:hidden">
+          <p
+            aria-hidden="true"
+            className="m-0 flex shrink-0 items-center justify-end gap-3 text-[10px] text-(--ink-2) md:hidden"
+          >
             kcal
             {NUTRIENTS.map(({ key, short, dotClassName }) => (
               <span key={key} className="inline-flex items-center gap-1">
