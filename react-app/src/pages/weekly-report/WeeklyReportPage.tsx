@@ -22,7 +22,7 @@ const formatWeekRange = (start: Date, end: Date) =>
     ? `${format(start, 'M월 d일')}~${format(end, 'd일')}`
     : `${format(start, 'M월 d일')}~${format(end, 'M월 d일')}`;
 
-// 주간 리포트: 날짜 헤더 → 4칸 요약 → AI 카드 → 막대 + 영양소 묶음
+// 주간 리포트: 날짜 헤더 → 4칸 요약 → AI 카드 → 칼로리 막대 → 영양소 세 칸
 export default function WeeklyReportPage() {
   const userId = useAuthStore(state => state.user?.id);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -43,22 +43,34 @@ export default function WeeklyReportPage() {
   const report = userId ? fetchedReport : getWeeklyReport([], monday);
   const { data: goalSettings, isLoading: isGoalLoading, isError: isGoalError } = useGoalSettings(userId);
 
-  // 막대에서 고른 날(YYYY-MM-DD). null이면 일주일 보기예요.
+  // 지금 보고 있는 날(YYYY-MM-DD). null이면 일주일 보기예요.
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  // 막대에서 마지막으로 누른 날. 날짜 탭이 이 날을 가리켜요. null이면 기본 날(아래 defaultDay)이에요.
+  const [pickedDate, setPickedDate] = useState<string | null>(null);
 
   const goal = getActiveGoal(goalSettings);
 
   const moveToWeek = (date: Date) => {
     setSelectedDate(null);
+    setPickedDate(null);
     setSearchParams({ date: toRecordDate(date) });
   };
 
-  // 같은 막대를 다시 누르면 일주일 보기로 돌아가요.
-  const handleSelectDate = (recordDate: string | null) =>
-    setSelectedDate(prev => (recordDate !== null && prev === recordDate ? null : recordDate));
+  // 막대를 누르면 그날을 보고, 같은 막대를 다시 누르면 일주일 보기로 돌아가요.
+  const handleSelectBar = (recordDate: string) => {
+    setPickedDate(recordDate);
+    setSelectedDate(prev => (prev === recordDate ? null : recordDate));
+  };
 
-  const selectedDay = report?.days.find(day => day.recordDate === selectedDate && day.hasRecord) ?? null;
-  const lastRecordedDay = report ? ([...report.days].reverse().find(day => day.hasRecord) ?? null) : null;
+  const findDay = (recordDate: string | null) => report?.days.find(day => day.recordDate === recordDate) ?? null;
+  // 날짜 탭의 기본 날: 이번 주면 오늘, 지난주면 마지막으로 기록한 날(없으면 일요일)
+  const defaultDay = report
+    ? isCurrentWeek
+      ? findDay(toRecordDate(today))
+      : ([...report.days].reverse().find(day => day.hasRecord) ?? report.days[report.days.length - 1])
+    : null;
+  const selectedDay = findDay(selectedDate);
+  const pickedDay = findDay(pickedDate) ?? defaultDay;
 
   return (
     <div className="mx-auto flex w-full max-w-300 flex-col gap-5 px-4 pt-5 pb-12 md:gap-7 md:px-6 md:pt-8">
@@ -108,22 +120,21 @@ export default function WeeklyReportPage() {
             <WeeklyAiCard userId={userId ?? ''} report={report} goal={goal} isCurrentWeek={isCurrentWeek} />
           </GuestGuard>
 
-          <div className="grid items-start gap-x-12 gap-y-7 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-            <WeeklyCalorieChart
-              days={report.days}
-              goal={goal}
-              today={today}
-              selectedDate={selectedDay?.recordDate ?? null}
-              onSelectDate={handleSelectDate}
-            />
-            <WeeklyNutritionPanel
-              report={report}
-              goal={goal}
-              selectedDay={selectedDay}
-              dayTabTarget={selectedDay ?? lastRecordedDay}
-              onSelectDate={recordDate => setSelectedDate(recordDate)}
-            />
-          </div>
+          {/* 칼로리 막대를 위에 길게 두고, 그 아래에 영양소 세 칸을 나란히 둬요. */}
+          <WeeklyCalorieChart
+            days={report.days}
+            goal={goal}
+            today={today}
+            selectedDate={selectedDay?.recordDate ?? null}
+            onSelectDate={handleSelectBar}
+          />
+          <WeeklyNutritionPanel
+            report={report}
+            goal={goal}
+            selectedDay={selectedDay}
+            pickedDay={pickedDay}
+            onSelectDate={recordDate => setSelectedDate(recordDate)}
+          />
         </>
       )}
     </div>
