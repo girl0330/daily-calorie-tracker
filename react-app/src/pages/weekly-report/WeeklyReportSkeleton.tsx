@@ -34,27 +34,32 @@ export default function WeeklyReportSkeleton() {
         <Skeleton className="h-3.5 w-[84%] bg-(--surface)" />
       </div>
 
-      <div aria-hidden="true" className="grid gap-x-12 gap-y-7 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-        {/* 막대 */}
-        <div>
-          <div className="h-8 border-b border-(--ink)" />
-          <div className="grid h-[232px] grid-cols-7 items-end gap-2 border-b border-(--line) pb-8 max-md:h-48">
-            {BAR_HEIGHTS.map(height => (
-              <span key={height} className={`mx-auto block w-[min(44px,60%)] ${height}`}>
-                <Skeleton className="size-full rounded-t-md rounded-b-none" />
-              </span>
-            ))}
-          </div>
+      {/* 칼로리 막대 */}
+      <div aria-hidden="true">
+        <div className="h-8 border-b border-(--ink)" />
+        <div className="grid h-[232px] grid-cols-7 items-end gap-2 border-b border-(--line) pb-8 max-md:h-48">
+          {BAR_HEIGHTS.map(height => (
+            <span key={height} className={`mx-auto block w-[min(44px,60%)] ${height}`}>
+              <Skeleton className="size-full rounded-t-md rounded-b-none" />
+            </span>
+          ))}
         </div>
+      </div>
 
-        {/* 영양소 */}
-        <div className="flex flex-col gap-3.5">
-          <div className="h-8 border-b border-(--ink)" />
-          {Array.from({ length: 3 }, (_, index) => (
-            <div key={index} className="grid grid-cols-[64px_minmax(0,1fr)_96px] items-center gap-3">
-              <Skeleton className="h-3.5 w-12" />
-              <Skeleton className="h-2 rounded-full" />
-              <Skeleton className="ml-auto h-3.5 w-20" />
+      {/* 영양소: 제목 → 탭 → 세 칸 */}
+      <div aria-hidden="true">
+        <div className="h-8 border-b border-(--ink)" />
+        <div className="h-10.5 border-b border-(--line)" />
+        <div className="mt-5 grid gap-x-8 gap-y-7 md:grid-cols-3">
+          {Array.from({ length: 3 }, (_, column) => (
+            <div key={column} className="flex flex-col gap-3.5">
+              <div className="h-[41px] border-b border-(--line)" />
+              {Array.from({ length: 3 }, (_, index) => (
+                <div key={index} className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-3">
+                  <Skeleton className="h-3.5 w-12" />
+                  <Skeleton className="h-2 rounded-full" />
+                </div>
+              ))}
             </div>
           ))}
         </div>
