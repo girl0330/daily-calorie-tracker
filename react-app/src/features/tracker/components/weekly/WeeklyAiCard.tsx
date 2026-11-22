@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Button from '../../../../components/common/Button';
 import Skeleton from '../../../../components/common/Skeleton';
+import { DailyLimitError } from '../../../../lib/aiLimit';
 import type { Goal } from '../../../goals/types';
 import type { UserId } from '../../../../types/types';
 import { useCreateWeeklyAiReport, useWeeklyAiReport } from '../../hooks/useWeeklyAiReport';
@@ -51,15 +52,18 @@ function SparkTitle({ note }: { note?: string }) {
 /**
  * 시안의 AI 주간 리포트 카드. 다섯 가지 화면이 있어요.
  * 처음(리포트 만들기) / 만드는 중 / 완성 / 바뀜 안내(만든 뒤 기록이나 목표가 바뀜) / 오류(다시 시도)
+ * 오류 중 하루 횟수를 다 쓴 경우는 다시 시도 버튼 없이 내일 다시 만들라고 안내해요.
  */
 export default function WeeklyAiCard({ userId, report, goal, isCurrentWeek }: WeeklyAiCardProps) {
   const { data: saved, isLoading } = useWeeklyAiReport(userId, report.startDate);
-  const { mutate: createReport, isPending, isError, variables } = useCreateWeeklyAiReport(userId);
+  const { mutate: createReport, isPending, isError, error, variables } = useCreateWeeklyAiReport(userId);
 
   // 만들기 상태는 버튼을 누른 주에서만 보여요. 만드는 중에 다른 주로 가면 그 주는 원래 화면이에요.
   const isThisWeek = variables?.report.startDate === report.startDate;
   const isCreating = isPending && isThisWeek;
   const isFailed = isError && isThisWeek && !isPending;
+  // 하루 횟수를 다 써서 못 만든 경우. 함수가 알려 준 횟수를 안내에 써요.
+  const dailyLimit = error instanceof DailyLimitError ? error.limit : null;
 
   const hasRecord = report.recordedDays > 0;
   const create = () => createReport({ report, goal });
@@ -101,16 +105,20 @@ export default function WeeklyAiCard({ userId, report, goal, isCurrentWeek }: We
         <>
           <SparkTitle />
           <p className="m-0 text-[17px] leading-normal font-bold tracking-[-0.01em] text-(--err) md:text-xl">
-            리포트를 만들지 못했어요.
+            {dailyLimit ? '오늘 리포트를 모두 만들었어요.' : '리포트를 만들지 못했어요.'}
           </p>
           <p className="m-0 -mt-2 text-sm break-keep text-(--ink-2)">
-            잠시 후 다시 시도해 주세요. 기록은 그대로 남아 있어요.
+            {dailyLimit
+              ? `AI 리포트는 하루 ${dailyLimit}번까지 만들 수 있어요. 내일 다시 만들어 주세요.`
+              : '잠시 후 다시 시도해 주세요. 기록은 그대로 남아 있어요.'}
           </p>
-          <div>
-            <Button size="lg" onClick={create}>
-              다시 시도
-            </Button>
-          </div>
+          {!dailyLimit && (
+            <div>
+              <Button size="lg" onClick={create}>
+                다시 시도
+              </Button>
+            </div>
+          )}
         </>
       )}
 

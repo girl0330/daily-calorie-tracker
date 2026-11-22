@@ -1,3 +1,4 @@
+import { toAiError } from '../../../lib/aiLimit';
 import { supabase } from '../../../lib/supabase';
 import type { UserId } from '../../../types/types';
 
@@ -62,7 +63,8 @@ export const createWeeklyAiReportApi = async (startDate: string, signature: stri
     body: { weekStart: startDate, signature },
   });
 
-  if (error) throw error;
+  // 하루 횟수를 다 썼으면 DailyLimitError가 돼요(lib/aiLimit).
+  if (error) throw await toAiError(error, 5);
   if (!data) throw new Error('리포트를 받지 못했어요.');
   return toReport(data);
 };

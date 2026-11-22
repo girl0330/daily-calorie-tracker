@@ -1,7 +1,7 @@
 // AI 음식 검색: 검색어를 받아 OpenAI에게 영양 정보 후보를 물어보고, 정해진 모양으로 돌려줘요.
 // - 돌려주는 모양: { status: 'ok' | 'too_broad' | 'not_food', candidates: [...], suggestions: [...] }
 // - 로그인한 사용자만 부를 수 있어요(Authorization 헤더의 토큰을 Supabase에 확인해요).
-// - 지금은 하루 횟수 제한이 없어요. 앱을 다 만든 뒤 다시 걸 거예요(ai_usage 표, use_ai_quota 함수는 DB에 남아 있어요).
+// - 한 사람이 하루 50번까지 쓸 수 있어요(_shared/quota.ts). 넘으면 429예요. 저장된 결과를 돌려줄 때는 세지 않아요.
 // - 같은 검색어(정리한 뒤 똑같은 것)를 30일 안에 찾은 적이 있으면 OpenAI를 부르지 않고 저장된 결과를 돌려줘요
 //   (food_search_cache 표). 모든 사용자가 함께 쓰는 표라서 이 함수만 서버 전용 키로 읽고 써요.
 // - OpenAI 키와 모델 이름은 Supabase Secrets(OPENAI_API_KEY, OPENAI_MODEL)에서만 읽어요.
@@ -9,6 +9,7 @@
 import { getServiceClient, getUserClient } from '../_shared/auth.ts';
 import { corsHeaders, json } from '../_shared/http.ts';
 import { askOpenAiJson, OpenAiError, openAiErrorStatus } from '../_shared/openai.ts';
+import { spendAiQuota } from '../_shared/quota.ts';
 
 type Candidate = {
   name: string;
@@ -240,7 +241,11 @@ Deno.serve(async request => {
   const cached = await readCache(query);
   if (cached) return json(cached);
 
-  // 4) OpenAI에 정해진 모양(JSON 스키마)으로 답하게 해요.
+  // 4) 오늘 횟수를 1 늘려요. 이미 다 썼으면 OpenAI를 부르지 않고 429로 알려요.
+  const quotaResponse = await spendAiQuota(auth.supabase, 'food_search');
+  if (quotaResponse) return quotaResponse;
+
+  // 5) OpenAI에 정해진 모양(JSON 스키마)으로 답하게 해요.
   let result: SearchResult;
   try {
     result = toSearchResult(
@@ -256,7 +261,7 @@ Deno.serve(async request => {
     throw error;
   }
 
-  // 5) 정리한 결과(ok, too_broad, not_food)를 저장하고 돌려줘요. 오류는 위에서 이미 끝나서 저장되지 않아요.
+  // 6) 정리한 결과(ok, too_broad, not_food)를 저장하고 돌려줘요. 오류는 위에서 이미 끝나서 저장되지 않아요.
   await writeCache(query, result);
   return json(result);
 });
