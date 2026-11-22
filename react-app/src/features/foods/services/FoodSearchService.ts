@@ -1,3 +1,4 @@
+import { toAiError } from '../../../lib/aiLimit';
 import { supabase } from '../../../lib/supabase';
 
 /** AI 검색이 돌려주는 후보 한 개. 양(serving)은 화면에 이름 옆·아래로 보여 줘요. */
@@ -21,7 +22,7 @@ export type FoodSearchResult = {
 
 /**
  * AI 음식 검색. Supabase Edge Function 'food-search'를 불러요(supabase/functions/food-search).
- * 함수가 로그인 확인, OpenAI 호출, 숫자 정리(0~999.9g)를 해요.
+ * 함수가 로그인 확인, 하루 횟수 확인, OpenAI 호출, 숫자 정리(0~999.9g)를 해요.
  * 로그인한 사용자의 토큰은 supabase 클라이언트가 알아서 붙여요.
  */
 export const searchFoodsApi = async (query: string): Promise<FoodSearchResult> => {
@@ -29,7 +30,8 @@ export const searchFoodsApi = async (query: string): Promise<FoodSearchResult> =
     body: { query },
   });
 
-  if (error) throw error;
+  // 하루 횟수를 다 썼으면 DailyLimitError가 돼요(lib/aiLimit).
+  if (error) throw await toAiError(error, 50);
 
   return {
     status: data?.status ?? 'not_food',

@@ -3,12 +3,13 @@
 //   그래서 앱 밖에서 함수를 불러도 아무 내용이나 AI에게 보낼 수 없어요.
 // - 로그인한 사용자 본인의 토큰으로 읽고 써서 RLS가 적용돼요(본인 기록만).
 // - 한 사람·한 주에 리포트 하나예요. 다시 만들면 덮어써요.
-// - 지금은 하루 횟수 제한이 없어요. 앱을 다 만든 뒤 다시 정해요.
+// - 한 사람이 하루 5번까지 만들 수 있어요(_shared/quota.ts). 넘으면 429예요. 기록이 없어 못 만든 경우는 세지 않아요.
 // - 앱은 supabase.functions.invoke('weekly-report', { body: { weekStart, signature } })로 불러요.
 import type { SupabaseClient } from 'npm:@supabase/supabase-js@2';
 import { getUserClient } from '../_shared/auth.ts';
 import { corsHeaders, json } from '../_shared/http.ts';
 import { askOpenAiJson, OpenAiError, openAiErrorStatus } from '../_shared/openai.ts';
+import { spendAiQuota } from '../_shared/quota.ts';
 
 type MealType = 'breakfast' | 'lunch' | 'dinner';
 
@@ -236,7 +237,11 @@ Deno.serve(async request => {
   }
   if (built.recordedDays === 0) return json({ error: 'no_records' }, 400);
 
-  // 4) OpenAI에게 정리를 부탁해요.
+  // 4) 오늘 횟수를 1 늘려요. 이미 다 썼으면 OpenAI를 부르지 않고 429로 알려요.
+  const quotaResponse = await spendAiQuota(supabase, 'weekly_report');
+  if (quotaResponse) return quotaResponse;
+
+  // 5) OpenAI에게 정리를 부탁해요.
   let report: AiReport | null;
   try {
     report = toReport(
@@ -253,7 +258,7 @@ Deno.serve(async request => {
   }
   if (!report) return json({ error: 'bad_upstream_response' }, 502);
 
-  // 5) 저장해요. 같은 주의 리포트가 있으면 덮어써요.
+  // 6) 저장해요. 같은 주의 리포트가 있으면 덮어써요.
   const { data, error } = await supabase
     .from('weekly_reports')
     .upsert({
